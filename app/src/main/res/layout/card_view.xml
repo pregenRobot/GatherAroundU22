@@ -77,13 +77,13 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 >
-                <LinearLayout
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/event_participants"
                     android:orientation="horizontal"
                     >
-                </LinearLayout>
+                </TextView>
 
             </HorizontalScrollView>
 

@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 /**
@@ -61,9 +63,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>{
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.CardViewItem);
             eventName = (TextView)itemView.findViewById(R.id.event_name);
-            eventTime = (TextView)itemView.findViewById(R.id.event_name);
+            eventTime = (TextView)itemView.findViewById(R.id.event_time);
             eventDate = (TextView)itemView.findViewById(R.id.event_date);
             eventLocation = (TextView)itemView.findViewById(R.id.event_location);
+            eventParticipants = (TextView)itemView.findViewById(R.id.event_participants);
 
         }
 
