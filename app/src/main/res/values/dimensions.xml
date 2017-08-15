@@ -2,5 +2,7 @@
 <resources>
     <dimen name="card_view_height">150dp</dimen>
     <dimen name="cardmargin">16dp</dimen>
+    <dimen name="cardviewcorner">16dp</dimen>
+    <dimen name="recyclerviewhorizontalpadding">8dp</dimen>
 
 </resources>

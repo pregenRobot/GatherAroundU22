@@ -35,7 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="true"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/recyclerview_background"
         app:layout_behavior="@string/bottom_sheet_behavior"
         >
         <LinearLayout
@@ -45,6 +45,8 @@
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:id="@+id/rv"
+                android:layout_marginLeft="@dimen/recyclerviewhorizontalpadding"
+                android:layout_marginRight="@dimen/recyclerviewhorizontalpadding"
                 >
 
             </android.support.v7.widget.RecyclerView>
@@ -52,7 +54,5 @@
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
-
-
 
 </android.support.design.widget.CoordinatorLayout>

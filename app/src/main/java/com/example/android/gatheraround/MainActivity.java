@@ -1,6 +1,7 @@
 package com.example.android.gatheraround;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.widget.NestedScrollView;
@@ -9,6 +10,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
 
         events = new ArrayList<Events>();
 
@@ -93,13 +97,14 @@ public class MainActivity extends AppCompatActivity {
 
         llm = new LinearLayoutManager(context);
 
-        String[] participants = {"Tamim","Chiharu","Azmain","Miyoshi"};
+        String[] participants = {"Tamim","Chiharu","Azmain","Miyoshi","Steve Jobs","Michael Jackson","手塚治虫"};
 
         events.add(new Events(1302719286,"U22 project",participants,new LatLng(37.652832,219.839478),"Saizeriya"));
         events.add(new Events(1502419296,"U22 project",participants,new LatLng(32.652832,19.839478),"Hiroo"));
         events.add(new Events(1901719266,"U22 project",participants,new LatLng(19.652832,39.839478),"Canada"));
         events.add(new Events(1204219286,"U22 project",participants,new LatLng(100.652832,13.839478),"Tokyo Monorail"));
-        RVAdapter adapter = new RVAdapter(events);
+        RVAdapter adapter = new RVAdapter(this,events);
+
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(context));
     }

@@ -1,16 +1,23 @@
 package com.example.android.gatheraround;
 
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.res.Resources;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
 import java.util.List;
+
+import static android.R.attr.x;
 
 /**
  * Created by tamimazmain on 2017/08/14.
@@ -18,10 +25,19 @@ import java.util.List;
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>{
 
+    Context mContext;
+    Resources res;
+
+
     List<Events> events;
     Calculations calculations = new Calculations();
-    RVAdapter(List<Events> events){
+    RVAdapter(Context context,List<Events> events){
         this.events = events;
+        mContext = context;
+    }
+    public int findResource(){
+        int color =  mContext.getResources().getColor(R.color.white);
+        return  color;
     }
 
     @Override
@@ -41,8 +57,22 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>{
         eventViewHolder.eventLocation.setText(events.get(i).getLocationName());
         eventViewHolder.eventDate.setText(calculations.UnixTimeConverter(events.get(i).getUnixTimeStamp())[0]);
         eventViewHolder.eventTime.setText(calculations.UnixTimeConverter(events.get(i).getUnixTimeStamp())[1]);
-        eventViewHolder.eventParticipants.setText(calculations.ParticipantConcatenation(events.get(i).getParticipants()));
 
+        LinearLayout.LayoutParams params=new LinearLayout.LayoutParams
+                (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        //TODO(2):Change code to dynamically add textviews with the proper parameters to the LinearLayout;
+        //eventViewHolder.eventParticipants.setText(calculations.ParticipantConcatenation(events.get(i).getParticipants()));
+        for (String x: events.get(i).getParticipants()) {
+            TextView tv=new TextView(mContext);
+            params.leftMargin=50;
+            tv.setText(x);
+            tv.setTextSize((float) 16);
+            tv.setPadding(10, 25, 10, 25);
+            tv.setLayoutParams(params);
+            tv.setTextColor(findResource());
+            eventViewHolder.eventParticipants.addView(tv) ;
+        }
     }
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -56,17 +86,19 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>{
         TextView eventTime;
         TextView eventLocation;
         TextView eventDate;
-        TextView eventParticipants;
+
+        //TODO(1):Change the type of eventParticipants to Linear Layout;
+        LinearLayout eventParticipants;
 
 
         EventViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView)itemView.findViewById(R.id.CardViewItem);
-            eventName = (TextView)itemView.findViewById(R.id.event_name);
-            eventTime = (TextView)itemView.findViewById(R.id.event_time);
-            eventDate = (TextView)itemView.findViewById(R.id.event_date);
-            eventLocation = (TextView)itemView.findViewById(R.id.event_location);
-            eventParticipants = (TextView)itemView.findViewById(R.id.event_participants);
+            cv = itemView.findViewById(R.id.CardViewItem);
+            eventName = itemView.findViewById(R.id.event_name);
+            eventTime = itemView.findViewById(R.id.event_time);
+            eventDate = itemView.findViewById(R.id.event_date);
+            eventLocation = itemView.findViewById(R.id.event_location);
+            eventParticipants = itemView.findViewById(R.id.event_participants);
 
         }
 

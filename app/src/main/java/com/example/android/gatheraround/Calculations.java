@@ -25,12 +25,12 @@ public class Calculations {
         sdf.setTimeZone(TimeZone.getTimeZone("GMT-9")); // give a timezone reference for formating (see comment at the bottom
         String formattedDate = sdf.format(date);
 
-        Year = formattedDate.substring(0,3);
-        Month = formattedDate.substring(5,6);
-        Day = formattedDate.substring(8,9);
+        Year = formattedDate.substring(0,4);
+        Month = formattedDate.substring(5,7);
+        Day = formattedDate.substring(8,10);
 
-        Hour = formattedDate.substring(11,12);
-        Minute = formattedDate.substring(14,15);
+        Hour = formattedDate.substring(11,13);
+        Minute = formattedDate.substring(14,16);
 
 
         returnDate[0] = Month + " / " + Day;
@@ -43,7 +43,7 @@ public class Calculations {
         String returner="";
 
         for (String x:participants) {
-            returner = returner + ", " + x;
+            returner = returner + x + ", ";
         }
         return returner;
     }

@@ -6,4 +6,6 @@
     <color name="cardbackground">#129970</color>
     <color name="white">#FFFF</color>
     <color name="cardbackground2">#15c18d</color>
+    <color name="recyclerview_background">#8dc1b2</color>
+    <color name="eventparticipanttextviewback">#83f7d5</color>
 </resources>
