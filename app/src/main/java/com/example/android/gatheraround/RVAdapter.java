@@ -61,8 +61,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>{
         LinearLayout.LayoutParams params=new LinearLayout.LayoutParams
                 (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-        //TODO(2):Change code to dynamically add textviews with the proper parameters to the LinearLayout;
-        //eventViewHolder.eventParticipants.setText(calculations.ParticipantConcatenation(events.get(i).getParticipants()));
+
         for (String x: events.get(i).getParticipants()) {
             TextView tv=new TextView(mContext);
             params.leftMargin=50;
@@ -87,7 +86,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>{
         TextView eventLocation;
         TextView eventDate;
 
-        //TODO(1):Change the type of eventParticipants to Linear Layout;
         LinearLayout eventParticipants;
 
 
