@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/CardViewItem"
+    >
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/cardbackground"
+            >
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                tools:text="Dick Museum Tour"
+                android:textSize="18sp"
+                android:padding="@dimen/cardmargin"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:id="@+id/event_name"
+                />
+            <TextView
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="18dp"
+                android:padding="@dimen/cardmargin"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                tools:text="8/24"
+                android:textAlignment="viewEnd"
+                android:id="@+id/event_date"
+                />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/card_view_height"
+            android:background="@color/cardbackground2"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                tools:text="Time:"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/cardmargin"
+                android:id="@+id/event_time"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                tools:text="Location:"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/cardmargin"
+                android:clickable="true"
+                android:id="@+id/event_location"
+                />
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/event_participants"
+                    android:orientation="horizontal"
+                    >
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>
