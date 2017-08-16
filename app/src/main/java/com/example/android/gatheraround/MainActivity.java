@@ -1,6 +1,7 @@
 package com.example.android.gatheraround;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -14,11 +15,13 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -31,16 +34,21 @@ import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
 
     Button eventListButton;
-    private BottomSheetBehavior mBottomsheetbehvior;
+    public static BottomSheetBehavior mBottomsheetbehvior;
     RecyclerView rv;
     LinearLayoutManager llm;
     Context context;
-    public List<Events> events;
-    private GoogleMap mMap;
+    public ArrayList<Events> events;
+    //public ArrayList<People> people;
+    public static GoogleMap mMap;
+    ImageButton contactsbutton;
+    Intent contactsintent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         events = new ArrayList<Events>();
+        //people = new ArrayList<People>();
+        Intent intent = getIntent();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -110,14 +118,27 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         String[] participants = {"Tamim","Chiharu","Azmain","Miyoshi","Steve Jobs","Michael Jackson","手塚治虫"};
 
         //Temporary Data
-        events.add(new Events(1302719286,"U22 project",participants,new LatLng(37.652832,219.839478),"Saizeriya"));
-        events.add(new Events(1502419296,"U22 project",participants,new LatLng(32.652832,19.839478),"Hiroo"));
-        events.add(new Events(1901719266,"U22 project",participants,new LatLng(19.652832,39.839478),"Canada"));
-        events.add(new Events(1204219286,"U22 project",participants,new LatLng(100.652832,13.839478),"Tokyo Monorail"));
+        events.add(new Events(1302719286,"Tour de France",participants,new LatLng(48.864716,2.349014),"Paris"));
+        events.add(new Events(1502419296,"Soccer Tournament",participants,new LatLng(-22.970722, -43.182365),"Rio de Janeiro"));
+        events.add(new Events(1901719266,"Olympics",participants,new LatLng(49.246292,-123.116226),"Vancouver"));
+        events.add(new Events(1204219286,"School",participants,new LatLng(35.654267, 139.722372),"Hiroo"));
         RVAdapter adapter = new RVAdapter(this,events);
-
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(context));
+        //
+        //people.add(new People("Tamim Azmain",R.drawable.angelinajolie,new LatLng(48.964716,2.449014)));
+
+        //
+
+        contactsbutton = (ImageButton) findViewById(R.id.contactsbutton);
+        contactsbutton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                contactsintent = new Intent(MainActivity.this,ContactActivity.class);
+                MainActivity.this.startActivity(contactsintent);
+            }
+        });
+
     }
 
     @Override
@@ -128,6 +149,18 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng school = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(school).title("Sample Marker"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(school));
+
+        for (Events x: events) {
+            mMap.addMarker(new MarkerOptions().position(x.getLocation()).title(x.getLocationName()));
+        }
     }
+
+    public void moveMap(LatLng location){
+        final CameraPosition movelocation  = CameraPosition.builder().
+                target(location).zoom(14).build();
+        MainActivity.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(movelocation));
+    }
+
+
 }
 

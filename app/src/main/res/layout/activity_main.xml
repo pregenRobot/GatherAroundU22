@@ -26,6 +26,19 @@
             android:layout_margin="8dp"
             android:text="EventList Button"
             android:id="@+id/eventlistbutton"
+            android:layout_alignParentBottom="true"
+            />
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/contactsbutton"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="12dp"
+            android:id="@+id/contactsbutton"
+            android:clickable="true"
             />
     </RelativeLayout>
 
