@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,7 +15,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +28,7 @@ import java.util.List;
 import static android.R.attr.onClick;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
 
     Button eventListButton;
     private BottomSheetBehavior mBottomsheetbehvior;
@@ -30,22 +36,25 @@ public class MainActivity extends AppCompatActivity {
     LinearLayoutManager llm;
     Context context;
     public List<Events> events;
+    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         events = new ArrayList<Events>();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
         //Find Button
-        eventListButton = (Button) findViewById(R.id.eventlistbutton);
+        eventListButton = findViewById(R.id.eventlistbutton);
 
         //Find bottom sheet
         android.support.v4.widget.NestedScrollView bottomsheet =
-                (android.support.v4.widget.NestedScrollView) findViewById(R.id.bottomsheet);
+                findViewById(R.id.bottomsheet);
 
         //Add bottomsheet behavior to view
         mBottomsheetbehvior = BottomSheetBehavior.from(bottomsheet);
@@ -92,13 +101,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Recyler View
-        rv = (RecyclerView) findViewById(R.id.rv);
+        rv = findViewById(R.id.rv);
         rv.setHasFixedSize(true);
 
         llm = new LinearLayoutManager(context);
 
+        //Temporary Data
         String[] participants = {"Tamim","Chiharu","Azmain","Miyoshi","Steve Jobs","Michael Jackson","手塚治虫"};
 
+        //Temporary Data
         events.add(new Events(1302719286,"U22 project",participants,new LatLng(37.652832,219.839478),"Saizeriya"));
         events.add(new Events(1502419296,"U22 project",participants,new LatLng(32.652832,19.839478),"Hiroo"));
         events.add(new Events(1901719266,"U22 project",participants,new LatLng(19.652832,39.839478),"Canada"));
@@ -108,4 +119,15 @@ public class MainActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(context));
     }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        //Add a marker in Sydney and move the camera
+        LatLng school = new LatLng(-34, 151);
+        mMap.addMarker(new MarkerOptions().position(school).title("Sample Marker"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(school));
+    }
 }
+

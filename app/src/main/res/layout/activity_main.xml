@@ -10,25 +10,24 @@
     android:paddingRight="0dp"
     android:paddingTop="0dp"
     tools:context=".MainActivity">
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        >
-        <RelativeLayout
+        android:layout_height="match_parent">
+        <fragment
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            >
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:text="EventList Button"
-                    android:id="@+id/eventlistbutton"
-                    />
-
-        </RelativeLayout>
-    </ScrollView>
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="EventList Button"
+            android:id="@+id/eventlistbutton"
+            />
+    </RelativeLayout>
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/bottomsheet"
@@ -54,5 +53,4 @@
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
-
 </android.support.design.widget.CoordinatorLayout>
