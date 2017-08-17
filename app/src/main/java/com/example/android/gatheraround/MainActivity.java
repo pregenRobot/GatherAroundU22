@@ -19,6 +19,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import com.google.android.gms.common.data.DataHolder;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -40,34 +41,31 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     RecyclerView rv;
     LinearLayoutManager llm;
     Context context;
-    public ArrayList<Events> events;
-    //public ArrayList<People> people;
     public static GoogleMap mMap;
     ImageButton contactsbutton;
     Intent contactsintent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        events = new ArrayList<Events>();
-        //people = new ArrayList<People>();
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        myDataHolder dataHolder = new myDataHolder();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        eventListButton = findViewById(R.id.eventlistbutton);
-
         android.support.v4.widget.NestedScrollView bottomsheet =
                 findViewById(R.id.bottomsheet);
-
         mBottomsheetbehvior = BottomSheetBehavior.from(bottomsheet);
         mBottomsheetbehvior.setHideable(true);
         mBottomsheetbehvior.setPeekHeight(400);
         mBottomsheetbehvior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
+        eventListButton = findViewById(R.id.eventlistbutton);
         eventListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,7 +84,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        //Bottomsheet callbacks
         mBottomsheetbehvior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -106,22 +103,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
-
-        //Recyler View
         rv = findViewById(R.id.rv);
         rv.setHasFixedSize(true);
 
         llm = new LinearLayoutManager(context);
         //Temporary Data
-        String[] participants = {"Tamim","Chiharu","Azmain","Miyoshi","Steve Jobs","Michael Jackson","手塚治虫"};
 
-        //Temporary Data
-        events.add(new Events(1302719286,"Tour de France",participants,new LatLng(48.864716,2.349014),"Paris"));
-        events.add(new Events(1502419296,"Soccer Tournament",participants,new LatLng(-22.970722, -43.182365),"Rio de Janeiro"));
-        events.add(new Events(1901719266,"Olympics",participants,new LatLng(49.246292,-123.116226),"Vancouver"));
-        events.add(new Events(1204219286,"School",participants,new LatLng(35.654267, 139.722372),"Hiroo"));
 
-        RVAdapter adapter = new RVAdapter(this,events);
+        RVAdapter adapter = new RVAdapter(this,dataHolder.getEventList());
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(context));
 
@@ -150,7 +139,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng school = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(school).title("Sample Marker"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(school));
-        for (Events x: events) {
+        for (Events x: myDataHolder.getEventList()) {
             mMap.addMarker(new MarkerOptions().position(x.getLocation()).title(x.getLocationName()));
         }
     }
@@ -160,7 +149,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 target(location).zoom(14).build();
         MainActivity.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(movelocation));
     }
-
 
 }
 

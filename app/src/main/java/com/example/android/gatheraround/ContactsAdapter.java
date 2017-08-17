@@ -17,9 +17,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
- * Created by tamimazmain on 2017/08/17.
- */
 
 public class ContactsAdapter extends ArrayAdapter<People> {
 
@@ -43,7 +40,7 @@ public class ContactsAdapter extends ArrayAdapter<People> {
             listItemView = LayoutInflater.from(getContext()).inflate(
                     R.layout.contact_individual_list, parent, false);
         }
-        LinearLayout card = (LinearLayout) listItemView.findViewById(R.id.cardItem);
+        LinearLayout card = listItemView.findViewById(R.id.cardItem);
 
         if(position%2==0){
             card.setBackgroundColor(getcardbackground());
@@ -53,11 +50,11 @@ public class ContactsAdapter extends ArrayAdapter<People> {
 
         final People currentPerson = getItem(position);
 
-        TextView personName = (TextView) listItemView.findViewById(R.id.personName);
+        TextView personName = listItemView.findViewById(R.id.personName);
 
         personName.setText(currentPerson.getName());
 
-        TextView personLocation = (TextView) listItemView.findViewById(R.id.personLocation);
+        TextView personLocation = listItemView.findViewById(R.id.personLocation);
 
         personLocation.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -74,7 +71,7 @@ public class ContactsAdapter extends ArrayAdapter<People> {
 
 
 
-        ImageView personImage = (ImageView) listItemView.findViewById(R.id.personImage);
+        ImageView personImage = listItemView.findViewById(R.id.personImage);
 
         personImage.setImageResource(currentPerson.getImage());
         return listItemView;

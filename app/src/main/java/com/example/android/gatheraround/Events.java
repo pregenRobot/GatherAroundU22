@@ -2,6 +2,10 @@ package com.example.android.gatheraround;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+
+import static com.example.android.gatheraround.MainActivity.participants;
+
 /**
  * Created by tamimazmain on 2017/08/14.
  */
@@ -9,11 +13,11 @@ import com.google.android.gms.maps.model.LatLng;
 public class Events {
     long mUnixTimeStanp;
     private String mName;
-    private String[] mParticipants;
+    private ArrayList<Participants> mParticipants;
     private LatLng mLocation;
     private String mLocationName;
 
-    Events(long unixTimeStanp, String name,String[] participants,LatLng Latilong,String locationname){
+    Events(long unixTimeStanp, String name,ArrayList<Participants> participants,LatLng Latilong,String locationname){
         mUnixTimeStanp = unixTimeStanp;
         mName = name;
         mParticipants = participants;
@@ -27,7 +31,7 @@ public class Events {
     public String getName(){
         return mName;
     }
-    public String[] getParticipants(){
+    public ArrayList<Participants> getParticipants(){
         return mParticipants;
     }
     public LatLng getLocation(){
