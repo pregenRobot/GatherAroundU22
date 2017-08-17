@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.NestedScrollView;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -48,27 +50,24 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         events = new ArrayList<Events>();
         //people = new ArrayList<People>();
-        Intent intent = getIntent();
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        //Find Button
         eventListButton = findViewById(R.id.eventlistbutton);
 
-        //Find bottom sheet
         android.support.v4.widget.NestedScrollView bottomsheet =
                 findViewById(R.id.bottomsheet);
 
-        //Add bottomsheet behavior to view
         mBottomsheetbehvior = BottomSheetBehavior.from(bottomsheet);
         mBottomsheetbehvior.setHideable(true);
         mBottomsheetbehvior.setPeekHeight(400);
         mBottomsheetbehvior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
         eventListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,7 +112,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         rv.setHasFixedSize(true);
 
         llm = new LinearLayoutManager(context);
-
         //Temporary Data
         String[] participants = {"Tamim","Chiharu","Azmain","Miyoshi","Steve Jobs","Michael Jackson","手塚治虫"};
 
@@ -122,13 +120,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         events.add(new Events(1502419296,"Soccer Tournament",participants,new LatLng(-22.970722, -43.182365),"Rio de Janeiro"));
         events.add(new Events(1901719266,"Olympics",participants,new LatLng(49.246292,-123.116226),"Vancouver"));
         events.add(new Events(1204219286,"School",participants,new LatLng(35.654267, 139.722372),"Hiroo"));
+
         RVAdapter adapter = new RVAdapter(this,events);
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(context));
-        //
-        //people.add(new People("Tamim Azmain",R.drawable.angelinajolie,new LatLng(48.964716,2.449014)));
-
-        //
 
         contactsbutton = (ImageButton) findViewById(R.id.contactsbutton);
         contactsbutton.setOnClickListener(new View.OnClickListener(){
@@ -139,23 +134,28 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+//        Intent intent = getIntent();
+//        double latitude = intent.getDoubleExtra("latitude",0);
+//        double longitude = intent.getDoubleExtra("longitude",0);
+//        Log.v("MainActivity",(String)latitude + (String) longitude);
+//        if(longitude == 0 && latitude == 0) {
+//            LatLng personLocation = new LatLng(latitude,longitude);
+//            moveCamera(personLocation);
+//        }
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        //Add a marker in Sydney and move the camera
         LatLng school = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(school).title("Sample Marker"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(school));
-
         for (Events x: events) {
             mMap.addMarker(new MarkerOptions().position(x.getLocation()).title(x.getLocationName()));
         }
     }
+    public void moveCamera(LatLng location){
 
-    public void moveMap(LatLng location){
         final CameraPosition movelocation  = CameraPosition.builder().
                 target(location).zoom(14).build();
         MainActivity.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(movelocation));

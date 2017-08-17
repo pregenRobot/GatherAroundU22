@@ -15,13 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.ArrayList;
-
-import static android.R.attr.resource;
 
 /**
  * Created by tamimazmain on 2017/08/17.
@@ -70,7 +64,9 @@ public class ContactsAdapter extends ArrayAdapter<People> {
             public void onClick(View view){
 
                 mainActivityintent = new Intent(getContext(),MainActivity.class);
-
+                //mainActivityintent.putExtra("location",currentPerson.getLocation());
+                mainActivityintent.putExtra("latitude",currentPerson.getLocation().latitude);
+                mainActivityintent.putExtra("longitude",currentPerson.getLocation().longitude);
                 getContext().startActivity(mainActivityintent);
 
             }
@@ -82,8 +78,6 @@ public class ContactsAdapter extends ArrayAdapter<People> {
 
         personImage.setImageResource(currentPerson.getImage());
         return listItemView;
-
-
 
     }
 

@@ -31,6 +31,11 @@ public class ContactActivity extends AppCompatActivity {
         ContactsAdapter contactadapter = new ContactsAdapter(this,people);
 
         contanctListView.setAdapter(contactadapter);
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
 
     }
+
 }
