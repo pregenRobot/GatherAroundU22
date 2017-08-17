@@ -42,7 +42,7 @@ public class ContactsAdapter extends ArrayAdapter<People> {
         }
         LinearLayout card = listItemView.findViewById(R.id.cardItem);
 
-        if(position%2==0){
+        if(position%2!=0){
             card.setBackgroundColor(getcardbackground());
         }else{
             card.setBackgroundColor(getcardbackground2());

@@ -7,31 +7,30 @@
     android:orientation="vertical"
     android:name="ContactsActivity"
     android:label="@string/app_name"
-    android:background="@color/cardbackground2"
+    android:background="@color/cardbackground"
     >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:orientation="horizontal"
         >
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:background="@color/colorPrimaryDark"
             android:text="Contacts"
             android:textColor="@color/white"
             android:textSize="22sp"
             android:gravity="center_vertical"
-            android:paddingLeft="18dp"
+            android:paddingLeft="@dimen/menubarhorizontalpadding"
             android:textStyle="bold"
             />
     </LinearLayout>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="18"
+        android:layout_weight="9"
         android:id="@+id/contactListView"
         >
     </ListView>

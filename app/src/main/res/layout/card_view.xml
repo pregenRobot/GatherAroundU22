@@ -8,11 +8,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/CardViewItem"
     card_view:cardCornerRadius="@dimen/cardviewcorner"
-    card_view:cardElevation="16dp"
+    card_view:cardElevation="8dp"
     card_view:cardBackgroundColor="@color/cardbackground2"
-    android:layout_marginTop="16dp"
-
     >
+    <!--android:layout_marginTop="8dp"-->
     <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="wrap_content"

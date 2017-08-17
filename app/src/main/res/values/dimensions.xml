@@ -4,5 +4,6 @@
     <dimen name="cardmargin">16dp</dimen>
     <dimen name="cardviewcorner">16dp</dimen>
     <dimen name="recyclerviewhorizontalpadding">8dp</dimen>
+    <dimen name="menubarhorizontalpadding">18dp</dimen>
 
 </resources>

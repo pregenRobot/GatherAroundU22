@@ -4,8 +4,6 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
-import static com.example.android.gatheraround.MainActivity.participants;
-
 /**
  * Created by tamimazmain on 2017/08/14.
  */
