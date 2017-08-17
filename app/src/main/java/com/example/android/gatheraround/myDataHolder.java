@@ -12,6 +12,13 @@ public class myDataHolder {
     private static ArrayList<Events> eventList;
     private ArrayList<Participants> eventParticipantManager;
 
+    /**
+     * ちはるへのメッセージ
+     *
+     * これはデータ管理用クラスにしたよ
+     * jSonナンチャラカンチャラから習得した情報をここでアップデートしておいてね
+     * **/
+
     public myDataHolder(){
         eventList = new ArrayList<Events>();
         peopleInContacts = new ArrayList<People>();
