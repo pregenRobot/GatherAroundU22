@@ -11,11 +11,12 @@ import java.util.ArrayList;
 public class Events {
     long mUnixTimeStanp;
     private String mName;
-    private ArrayList<Participants> mParticipants;
+    private Participants mParticipants;
     private LatLng mLocation;
     private String mLocationName;
+    private Calculations calcref = new Calculations();
 
-    Events(long unixTimeStanp, String name,ArrayList<Participants> participants,LatLng Latilong,String locationname){
+    Events(long unixTimeStanp, String name,Participants participants,LatLng Latilong,String locationname){
         mUnixTimeStanp = unixTimeStanp;
         mName = name;
         mParticipants = participants;
@@ -29,7 +30,7 @@ public class Events {
     public String getName(){
         return mName;
     }
-    public ArrayList<Participants> getParticipants(){
+    public Participants getParticipants(){
         return mParticipants;
     }
     public LatLng getLocation(){

@@ -38,6 +38,12 @@ public class Calculations {
         returnDate[2] = Year + "-" + Month + "-" + Day;
         return returnDate;
     }
+    public String UnixTimeConverterString(long unixTimeStamp){
+        Date date = new Date(unixTimeStamp*1000);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT-9"));
+        return  sdf.format(date);
+    }
 
     public String ParticipantConcatenation(String[] participants){
         String returner="";

@@ -62,7 +62,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>{
         //Creates parameters for Linear Layout holding Participants
         LinearLayout.LayoutParams params=new LinearLayout.LayoutParams
                 (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        for (People x: events.get(i).getParticipants().get(i).getPeopleParticipating()) {
+        for (People x: events.get(i).getParticipants().getPeopleParticipating()) {
             TextView tv=new TextView(mContext);
             params.leftMargin=50;
             tv.setText(x.getName());

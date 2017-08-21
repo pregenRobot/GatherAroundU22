@@ -25,4 +25,12 @@ public class Participants {
     public int getIndex(){
         return  index;
     }
+
+    public String toString(){
+        String returnnerString = "";
+        for(People x:peopleParticipating){
+            returnnerString = returnnerString + x.getName() + ",";
+        }
+        return returnnerString;
+    }
 }

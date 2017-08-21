@@ -3,21 +3,31 @@ package com.example.android.gatheraround;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.google.android.gms.common.data.DataHolder;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -28,9 +38,13 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.absListViewStyle;
+import static android.R.attr.name;
 import static android.R.attr.onClick;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
@@ -44,15 +58,17 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public static GoogleMap mMap;
     ImageButton contactsbutton;
     Intent contactsintent;
+    DatabaseHelper eventsDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         myDataHolder dataHolder = new myDataHolder();
+        context = this;
+
+        eventsDB = new DatabaseHelper(context);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -123,14 +139,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-//        Intent intent = getIntent();
-//        double latitude = intent.getDoubleExtra("latitude",0);
-//        double longitude = intent.getDoubleExtra("longitude",0);
-//        Log.v("MainActivity",(String)latitude + (String) longitude);
-//        if(longitude == 0 && latitude == 0) {
-//            LatLng personLocation = new LatLng(latitude,longitude);
-//            moveCamera(personLocation);
-//        }
     }
 
     @Override
@@ -142,6 +150,67 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         for (Events x: myDataHolder.getEventList()) {
             mMap.addMarker(new MarkerOptions().position(x.getLocation()).title(x.getLocationName()));
         }
+
+
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(final LatLng latLng) {
+                Log.v("Map Clicked",latLng.toString());
+
+
+                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+
+                View mView = getLayoutInflater().inflate(R.layout.edit_text_popup,null);
+
+                final EditText eventNameEdit = (EditText) mView.findViewById(R.id.event_name_edit);
+                TextView doneButton = (TextView) mView.findViewById(R.id.donebuttoneventadd);
+                TextView cancelButton = (TextView) mView.findViewById(R.id.canclebuttoneventadd);
+                final EditText locationNameEdit = (EditText) mView.findViewById(R.id.event_location__name_edit);
+                final EditText participantsEdit = (EditText) mView.findViewById(R.id.event_participants_edit);
+
+                mBuilder.setView(mView);
+                final AlertDialog dialog = mBuilder.create();
+                dialog.show();
+
+                doneButton.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        boolean insertData = eventsDB.addData(
+                                eventNameEdit.getText().toString(),
+                                1704419236,
+                                new Participants(new ArrayList<People>(){{
+                                    add(myDataHolder.getContactList().get(1));
+                                    add(myDataHolder.getContactList().get(3));
+                                    add(myDataHolder.getContactList().get(2));
+                                    add(myDataHolder.getContactList().get(4));
+                                }}),
+                                latLng,
+                                locationNameEdit.getText().toString()
+                        );
+
+                        if (insertData == true) {
+                            Toast.makeText(MainActivity.this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
+                            Log.v("Database","Data Successfully Inserted!");
+                        } else {
+                            Toast.makeText(MainActivity.this, "Something went wrong :(.", Toast.LENGTH_LONG).show();
+                            Log.v("Database","Data Insert Failed!");
+                        }
+                    }
+                });
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+
+
+
+
+            }
+        });
+
     }
     public void moveCamera(LatLng location){
 

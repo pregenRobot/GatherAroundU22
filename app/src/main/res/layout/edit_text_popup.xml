@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/popupeventadder"
+    android:background="@drawable/event_edittext"
     >
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,8 +23,7 @@
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
             android:textStyle="bold"
-            android:textColor="@color/white"
-            android:id="@+id/event_name"
+            android:id="@+id/event_name_edit"
             android:background="@drawable/event_edittext2"
             android:layout_margin="8dp"
             />
@@ -37,12 +38,12 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            tools:text="Select Time and Date"
+            android:text="Select Time and Date"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:gravity="center"
             android:paddingLeft="@dimen/cardmargin"
-            android:id="@+id/event_time"
+            android:id="@+id/event_time_edit"
             android:textStyle="bold"
             android:clickable="true"
             />
@@ -50,18 +51,10 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                tools:text="Location:"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                android:gravity="center_vertical"
-                android:layout_margin="8dp"
-                android:textStyle="bold"
-                />
+            android:orientation="horizontal"
+            android:inAnimation="@android:anim/slide_in_left"
+            >
+
             <EditText
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -72,30 +65,64 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/cardmargin"
                 android:clickable="true"
-                android:id="@+id/event_location"
+                android:id="@+id/event_location__name_edit"
                 android:background="@drawable/event_edittext"
                 android:layout_margin="8dp"
-                android:editable="false"
+                android:inputType="textCapWords"
                 />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:layout_marginBottom="8dp"
             >
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/event_participants"
+                android:id="@+id/event_participants_edit"
                 android:orientation="horizontal"
                 android:background="@drawable/event_edittext"
                 android:layout_margin="8dp"
-                android:hint="Enter participants"
+                android:hint="Enter Participants"
                 android:paddingLeft="16dp"
+
                 >
             </EditText>
         </LinearLayout>
-    </LinearLayout>
 
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/cardbackground"
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cancel"
+            android:gravity="center"
+            android:padding="12dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:clickable="true"
+            android:id="@+id/canclebuttoneventadd"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Done"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:clickable="true"
+            android:id="@+id/donebuttoneventadd"
+            />
+    </LinearLayout>
 
 </LinearLayout>
