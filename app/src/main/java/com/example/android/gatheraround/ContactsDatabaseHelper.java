@@ -9,20 +9,24 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
+import static com.example.android.gatheraround.R.id.event_name;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
+/**
+ * Created by tamimazmain on 2017/08/21.
+ */
+
+public class ContactsDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "eventList.db";
     private static final String TABLE_NAME = "event_table";
     public static final String COL1 = "ID";
-    private static final String COL2 = "EVENTNAME";
-    private static final String COL3 = "UNIXTIMESTAMP";
-    private static final String COL4 = "PARTICIPANTS";
-    private static final String COL5 = "LOCATION";
-    private static final String COL6 = "LOCATIONNAME";
+    private static final String COL2 = "PERSONNAME";
+    private static final String COL3 = "LOCATION";
+    private static final String COL4 = "IMAGE";
+
     private Context context;
 
-    public DatabaseHelper(Context context) {
+    public ContactsDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1/**version**/);
         this.context = context;
     }
@@ -30,7 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String createTable = "CREATE TABLE " + TABLE_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + " EVENTNAME TEXT, UNIXTIMESTAMP INTEGER, PARTICIPANTS TEXT, LOCATION TEXT, LOCATIONNAME TEXT)";
+                + " PERSONNAME TEXT, LOCATION TEXT, IMAGESOURCE INTEGER)";
         sqLiteDatabase.execSQL(createTable);
 
     }
@@ -41,19 +45,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean addData(String event_name,long unixtime, Participants participants, LatLng location, String locationName){
+    public boolean addData(String person_name, LatLng location, int imageResource){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
         Gson gson = new Gson();
-        String gsonParticipants = gson.toJson(participants,Participants.class);
         String gsonLocation = gson.toJson(location,LatLng.class);
 
-        contentValues.put(COL2,event_name);
-        contentValues.put(COL3, unixtime);
-        contentValues.put(COL4, gsonParticipants);
-        contentValues.put(COL5, gsonLocation);
-        contentValues.put(COL6, locationName);
+        contentValues.put(COL2,person_name);
+        contentValues.put(COL3, gsonLocation);
+        contentValues.put(COL4, imageResource);
+
 
         long result  = db.insert(TABLE_NAME, null, contentValues);
 
@@ -69,5 +71,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor data = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
         return data;
     }
-
 }

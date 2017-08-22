@@ -160,7 +160,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
 
-                View mView = getLayoutInflater().inflate(R.layout.edit_text_popup,null);
+                View mView = getLayoutInflater().inflate(R.layout.edit_event_popup,null);
 
                 final EditText eventNameEdit = (EditText) mView.findViewById(R.id.event_name_edit);
                 TextView doneButton = (TextView) mView.findViewById(R.id.donebuttoneventadd);
