@@ -202,6 +202,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void onClick(View view) {
                         dialog.dismiss();
+                        Log.v("Main Activty: ","Event Adder Dismissed");
                     }
                 });
 
