@@ -30,18 +30,68 @@
             android:id="@+id/eventlistbutton"
             android:layout_alignParentBottom="true"
             />
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+        <!--<ImageButton-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:src="@drawable/contactsbutton"-->
+            <!--android:scaleType="fitCenter"-->
+            <!--android:background="@null"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_margin="12dp"-->
+            <!--android:id="@+id/contactsbutton"-->
+            <!--android:clickable="true"-->
+            <!--/>-->
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:src="@drawable/contactsbutton"
-            android:scaleType="fitCenter"
-            android:background="@null"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_margin="12dp"
             android:id="@+id/contactsbutton"
             android:clickable="true"
+            app:backgroundTint="@color/cardbackground2"
+            app:fabSize="normal"
             />
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/zoomunpressed"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="12dp"
+            android:id="@+id/zoomOut"
+            android:clickable="true"
+            app:backgroundTint="@color/cardbackground2"
+            app:fabSize="normal"
+            app:borderWidth="-120000dp"
+            />
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/zoom2unpressed"
+            android:id="@+id/zoomIn"
+            android:clickable="true"
+            app:backgroundTint="@color/cardbackground2"
+            app:fabSize="normal"
+            app:borderWidth="-120000dp"
+            app:layout_anchor="@id/zoomOut"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_below="@+id/zoomOut"
+            />
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/messageunpressed"
+            android:id="@+id/chatbutton"
+            android:clickable="true"
+            app:backgroundTint="@color/cardbackground2"
+            app:fabSize="normal"
+            android:layout_marginRight="12dp"
+            android:layout_below="@+id/contactsbutton"
+            android:layout_alignStart="@+id/contactsbutton" />
     </RelativeLayout>
 
     <android.support.v4.widget.NestedScrollView

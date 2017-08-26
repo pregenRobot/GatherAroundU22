@@ -19,19 +19,6 @@
         android:padding="10dp"
         />
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:layout_marginLeft="18dp"
-        android:layout_marginRight="18dp"
-        android:hint="Enter name"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:id="@+id/nameinitial"
-        />
-    <EditText
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:layout_width="match_parent"

@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.data.*;
 import com.google.android.gms.common.data.DataHolder;
@@ -26,12 +28,20 @@ import java.util.List;
 public class ContactActivity extends AppCompatActivity {
     FloatingActionButton addcontacts;
 
+    private String tempName;
+    private String tempUniqueId;
+    private int tempImageResource;
+
+    Context context = this;
 
     @Override
     protected void onCreate(Bundle SavedInstances){
         super.onCreate(SavedInstances);
         setContentView(R.layout.contact_list);
-
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
         myDataHolder dataHolder = new myDataHolder();
 
         ListView contanctListView = (ListView) findViewById(R.id.contactListView);
@@ -40,7 +50,7 @@ public class ContactActivity extends AppCompatActivity {
         contanctListView.setAdapter(contactadapter);
         addcontacts = (FloatingActionButton) findViewById(R.id.fabcontacts);
 
-
+        final ContactsDatabaseHelper contactManager = new ContactsDatabaseHelper(context);
 
         addcontacts.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,10 +62,13 @@ public class ContactActivity extends AppCompatActivity {
                 final AlertDialog dialog = mBuilder.create();
                 dialog.show();
 
-                final EditText nameedit = (EditText) mView.findViewById(R.id.nameinitial);
                 final EditText uniqueidedit = (EditText) mView.findViewById(R.id.uniquecodeinital);
                 TextView cancelbutton = (TextView) mView.findViewById(R.id.contactsCancelInitial);
                 TextView doneButton = (TextView) mView.findViewById(R.id.contactsSearch);
+
+                tempUniqueId = uniqueidedit.getText().toString();
+
+                Log.v("Data Search",tempUniqueId);
 
                 cancelbutton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -66,35 +79,48 @@ public class ContactActivity extends AppCompatActivity {
                 doneButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
                         final AlertDialog.Builder m2Builder = new AlertDialog.Builder(ContactActivity.this);
                         View m2View = getLayoutInflater().inflate(R.layout.contactadd_dialog,null);
 
                         m2Builder.setView(m2View);
                         final AlertDialog dialog2 = m2Builder.create();
-                        dialog2.show();
 
-                        final EditText nameedit2 = (EditText) m2View.findViewById(R.id.name_edit_text);
-                        final TextView uniqueidfinal = (TextView) m2View.findViewById(R.id.uniquecodetext);
+
+                        EditText nameedit2 = (EditText) m2View.findViewById(R.id.name_edit_text);
+                        TextView uniqueidfinal = (TextView) m2View.findViewById(R.id.uniquecodetext);
                         TextView cancelbutton2 = (TextView) m2View.findViewById(R.id.contactsCancel);
                         TextView doneButton2 = (TextView) m2View.findViewById(R.id.contactsDone);
 
+                        uniqueidfinal.setText(tempUniqueId);
+
+                        dialog2.show();
                         cancelbutton2.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 dialog.dismiss();
+                                dialog2.dismiss();
                             }
                         });
+                        doneButton2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
 
+                                boolean insertData = contactManager.addData(tempName,R.drawable.angelinajolie,null,"hello");
 
+                                if (insertData == true) {
+                                    Toast.makeText(ContactActivity.this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
+                                    Log.v("Database","Data Successfully Inserted!");
+                                } else {
+                                    Toast.makeText(ContactActivity.this, "Something went wrong :(.", Toast.LENGTH_LONG).show();
+                                    Log.v("Database","Data Insert Failed!");
+                                }
+                            }
+                        });
                     }
                 });
             }
         });
-
-    }
-    @Override
-    protected void onResume(){
-        super.onResume();
 
     }
 

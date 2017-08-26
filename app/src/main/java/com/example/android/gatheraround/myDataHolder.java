@@ -23,12 +23,12 @@ public class myDataHolder {
         eventList = new ArrayList<Events>();
         peopleInContacts = new ArrayList<People>();
         eventParticipantManager = new ArrayList<Participants>();
-        peopleInContacts.add(new People("Tamim Azmain",R.drawable.angelinajolie,new LatLng(48.964716,2.449014)));
-        peopleInContacts.add(new People("Chiharu Miyoshi",R.drawable.stevejobs,new LatLng(40.730610, -73.935242)));
-        peopleInContacts.add(new People("Steve Jobs",R.drawable.tedzukaosamu,new LatLng(-36.848461, 174.763336)));
-        peopleInContacts.add(new People("MichaelJackson",R.drawable.unpressedbuttoncontacts,new LatLng(-34,45)));
-        peopleInContacts.add(new People("Mory",R.drawable.unpressedbuttoncontacts,new LatLng(-37,45)));
-        peopleInContacts.add(new People("手塚",R.drawable.unpressedbuttoncontacts,new LatLng(-34,45)));
+        peopleInContacts.add(new People("Tamim Azmain",R.drawable.angelinajolie,new LatLng(48.964716,2.449014),"ta1130"));
+        peopleInContacts.add(new People("Chiharu Miyoshi",R.drawable.stevejobs,new LatLng(40.730610, -73.935242),"chiharum"));
+        peopleInContacts.add(new People("Steve Jobs",R.drawable.tedzukaosamu,new LatLng(-36.848461, 174.763336),"steve_jobs"));
+        peopleInContacts.add(new People("MichaelJackson",R.drawable.unpressedbuttoncontacts,new LatLng(-34,45),"michael"));
+        peopleInContacts.add(new People("Mory",R.drawable.unpressedbuttoncontacts,new LatLng(-37,45),"mooory"));
+        peopleInContacts.add(new People("手塚",R.drawable.unpressedbuttoncontacts,new LatLng(-34,45),"atom"));
 
 
         eventList.add(new Events(1302719286,"Tour de France",new Participants(new ArrayList<People>(){{

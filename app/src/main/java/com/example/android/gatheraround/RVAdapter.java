@@ -80,7 +80,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>{
                 Log.v("RV Adapter",events.get(i).getLocationName());
 
                 final CameraPosition location  = CameraPosition.builder().
-                        target(events.get(i).getLocation()).zoom(14).build();
+                        target(events.get(i).getLocation()).zoom(18).build();
 
                 MainActivity.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(location));
                 //mView.getBackground().setColorFilter(Color.parseColor(<Color code of your choice>), PorterDuff.Mode.DARKEN);

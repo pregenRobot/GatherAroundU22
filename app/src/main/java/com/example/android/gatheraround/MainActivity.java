@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.NestedScrollView;
@@ -35,6 +36,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -56,7 +58,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     LinearLayoutManager llm;
     Context context;
     public static GoogleMap mMap;
-    ImageButton contactsbutton;
+    FloatingActionButton contactsbutton;
     Intent contactsintent;
     DatabaseHelper eventsDB;
 
@@ -130,7 +132,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(context));
 
-        contactsbutton = (ImageButton) findViewById(R.id.contactsbutton);
+        contactsbutton = (FloatingActionButton) findViewById(R.id.contactsbutton);
         contactsbutton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -147,19 +149,19 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng school = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(school).title("Sample Marker"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(school));
-        for (Events x: myDataHolder.getEventList()) {
-            mMap.addMarker(new MarkerOptions().position(x.getLocation()).title(x.getLocationName()));
+        for (Events x: myDataHolder.getEventList()){
+            mMap.addCircle(new CircleOptions().center(x.getLocation())
+                    .radius(50)
+                    .fillColor(R.color.cardbackground2)
+                    .strokeColor(R.color.cardbackground)
+            );
         }
-
-
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(final LatLng latLng) {
                 Log.v("Map Clicked",latLng.toString());
 
-
                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-
                 View mView = getLayoutInflater().inflate(R.layout.edit_event_popup,null);
 
                 final EditText eventNameEdit = (EditText) mView.findViewById(R.id.event_name_edit);
@@ -205,13 +207,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         Log.v("Main Activty: ","Event Adder Dismissed");
                     }
                 });
-
-
-
-
             }
         });
-
     }
     public void moveCamera(LatLng location){
 
