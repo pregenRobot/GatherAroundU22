@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import static com.example.android.gatheraround.R.id.personImage;
+
 
 public class ContactsAdapter extends ArrayAdapter<People> {
 
@@ -42,11 +44,7 @@ public class ContactsAdapter extends ArrayAdapter<People> {
         }
         LinearLayout card = listItemView.findViewById(R.id.cardItem);
 
-        if(position%2!=0){
-            card.setBackgroundColor(getcardbackground());
-        }else{
-            card.setBackgroundColor(getcardbackground2());
-        }
+
 
         final People currentPerson = getItem(position);
 
@@ -71,7 +69,14 @@ public class ContactsAdapter extends ArrayAdapter<People> {
 
 
 
-        ImageView personImage = listItemView.findViewById(R.id.personImage);
+        de.hdodenhof.circleimageview.CircleImageView personImage = listItemView.findViewById(R.id.personImage);
+        if(position%2!=0){
+            card.setBackgroundColor(getcardbackground());
+            personImage.setBorderColor(getcardbackground2());
+        }else{
+            card.setBackgroundColor(getcardbackground2());
+            personImage.setBorderColor(getcardbackground());
+        }
 
         personImage.setImageResource(currentPerson.getImage());
         return listItemView;

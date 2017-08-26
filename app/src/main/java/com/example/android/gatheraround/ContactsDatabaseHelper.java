@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 import java.io.ByteArrayOutputStream;
 
 import static android.R.attr.bitmap;
+import static android.R.attr.id;
 import static com.example.android.gatheraround.R.id.event_name;
 
 /**
@@ -42,7 +43,7 @@ private static final String DATABASE_NAME = "contactList.db";
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String createTable = "CREATE TABLE " + TABLE_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + " PERSON_NAME TEXT, IMAGESOURCE BLOB, LOCATION TEXT, UNIQUE_ID TEXT)";
+                + " PERSON_NAME TEXT, IMAGESOURCE INTEGER, LOCATION TEXT, UNIQUE_ID TEXT)";
         sqLiteDatabase.execSQL(createTable);
 
         Log.v("onCreate","Database Created!");
@@ -67,17 +68,10 @@ private static final String DATABASE_NAME = "contactList.db";
         String gsonLocation = "";
         if(location != null) {
             gsonLocation = gson.toJson(location, LatLng.class);
-        }else{
-            gsonLocation = null;
         }
 
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), imageSource);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] image = baos.toByteArray();
-
         contentValues.put(COL2, person_name);
-        contentValues.put(COL3, image);
+        contentValues.put(COL3, imageSource);
         contentValues.put(COL4, gsonLocation);
         contentValues.put(COL5, unique_id);
 
@@ -90,6 +84,15 @@ private static final String DATABASE_NAME = "contactList.db";
         }
 
     }
+    public static byte[] getBytes(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
+        return stream.toByteArray();
+    }
+    public static Bitmap getImage(byte[] image) {
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
+    }
+
     public Cursor showData(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor data = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);

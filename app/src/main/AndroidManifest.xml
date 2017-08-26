@@ -17,7 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
+        <activity android:name=".InitalBlankActivity"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,6 +26,8 @@
             </intent-filter>
         </activity>
         <activity android:label="@string/app_name" android:name=".ContactActivity"/>
+        <activity android:label="@string/app_name" android:name=".MainActivity"/>
+        <activity android:label="@string/app_name" android:name=".myInfoActivity"/>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

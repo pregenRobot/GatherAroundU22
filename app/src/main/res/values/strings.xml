@@ -2,4 +2,6 @@
     <string name="app_name">Gather Around</string>
     <string name="uniquecode_create_contact"><font size="18">Unique Code</font></string>
     <string name="enter_name_addcontact"><font size="18">Enter name</font></string>
+    <string name="personNameFirst">Tamim</string>
+    <string name="personNameLast">Azmain</string>
 </resources>

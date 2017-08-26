@@ -1,6 +1,7 @@
 package com.example.android.gatheraround;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -33,11 +34,24 @@ public class ContactActivity extends AppCompatActivity {
     private int tempImageResource;
 
     Context context = this;
+    Intent myInfoIntent;
 
     @Override
     protected void onCreate(Bundle SavedInstances){
         super.onCreate(SavedInstances);
         setContentView(R.layout.contact_list);
+
+        TextView myInfo = (TextView) findViewById(R.id.myInfo);
+
+        myInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myInfoIntent = new Intent(ContactActivity.this,myInfoActivity.class);
+
+                ContactActivity.this.startActivity(myInfoIntent);
+            }
+        });
+
     }
     @Override
     protected void onResume(){
@@ -66,9 +80,7 @@ public class ContactActivity extends AppCompatActivity {
                 TextView cancelbutton = (TextView) mView.findViewById(R.id.contactsCancelInitial);
                 TextView doneButton = (TextView) mView.findViewById(R.id.contactsSearch);
 
-                tempUniqueId = uniqueidedit.getText().toString();
 
-                Log.v("Data Search",tempUniqueId);
 
                 cancelbutton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -85,6 +97,9 @@ public class ContactActivity extends AppCompatActivity {
 
                         m2Builder.setView(m2View);
                         final AlertDialog dialog2 = m2Builder.create();
+
+                        tempUniqueId = uniqueidedit.getText().toString();
+                        Log.v("Data Search",tempUniqueId);
 
 
                         EditText nameedit2 = (EditText) m2View.findViewById(R.id.name_edit_text);
