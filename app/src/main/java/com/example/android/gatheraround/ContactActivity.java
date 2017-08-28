@@ -2,25 +2,21 @@ package com.example.android.gatheraround;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.data.*;
-import com.google.android.gms.common.data.DataHolder;
-import com.google.android.gms.maps.model.LatLng;
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.example.android.gatheraround.data.ContactsDatabaseHelper;
 
 /**
  * Created by tamimazmain on 2017/08/16.
@@ -32,9 +28,15 @@ public class ContactActivity extends AppCompatActivity {
     private String tempName;
     private String tempUniqueId;
     private int tempImageResource;
+    ContactListCursorAdapter customAdapter;
+
+    Cursor contactListCursor;
+
+    ContactListCursorAdapter contactCursorAdapter;
 
     Context context = this;
     Intent myInfoIntent;
+    ContactsDatabaseHelper contactManager;
 
     @Override
     protected void onCreate(Bundle SavedInstances){
@@ -52,19 +54,33 @@ public class ContactActivity extends AppCompatActivity {
             }
         });
 
+
     }
     @Override
     protected void onResume(){
         super.onResume();
         myDataHolder dataHolder = new myDataHolder();
 
-        ListView contanctListView = (ListView) findViewById(R.id.contactListView);
-        ContactsAdapter contactadapter = new ContactsAdapter(this,dataHolder.getContactList());
-
-        contanctListView.setAdapter(contactadapter);
-        addcontacts = (FloatingActionButton) findViewById(R.id.fabcontacts);
-
+        final ListView contanctListView = (ListView) findViewById(R.id.contactListView);
+//        ContactsAdapter contactadapter = new ContactsAdapter(this,dataHolder.getContactList());
+//        contanctListView.setAdapter(contactadapter);
         final ContactsDatabaseHelper contactManager = new ContactsDatabaseHelper(context);
+
+        Thread thread = new Thread(new Runnable(){
+            @Override
+            public void run(){
+                contactListCursor = contactManager.getAllContacts();
+                customAdapter = new ContactListCursorAdapter(
+                        ContactActivity.this,
+                        contactListCursor,
+                        0);
+
+                contanctListView.setAdapter(customAdapter);
+            }
+        });
+        thread.start();
+
+        addcontacts = (FloatingActionButton) findViewById(R.id.fabcontacts);
 
         addcontacts.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +118,7 @@ public class ContactActivity extends AppCompatActivity {
                         Log.v("Data Search",tempUniqueId);
 
 
-                        EditText nameedit2 = (EditText) m2View.findViewById(R.id.name_edit_text);
+                        final EditText nameedit2 = (EditText) m2View.findViewById(R.id.name_edit_text);
                         TextView uniqueidfinal = (TextView) m2View.findViewById(R.id.uniquecodetext);
                         TextView cancelbutton2 = (TextView) m2View.findViewById(R.id.contactsCancel);
                         TextView doneButton2 = (TextView) m2View.findViewById(R.id.contactsDone);
@@ -121,7 +137,9 @@ public class ContactActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View view) {
 
-                                boolean insertData = contactManager.addData(tempName,R.drawable.angelinajolie,null,"hello");
+                                tempName = nameedit2.getText().toString();
+
+                                boolean insertData = contactManager.addData(tempName,R.drawable.angelinajolie,null,tempUniqueId);
 
                                 if (insertData == true) {
                                     Toast.makeText(ContactActivity.this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
@@ -130,6 +148,8 @@ public class ContactActivity extends AppCompatActivity {
                                     Toast.makeText(ContactActivity.this, "Something went wrong :(.", Toast.LENGTH_LONG).show();
                                     Log.v("Database","Data Insert Failed!");
                                 }
+                                finish();
+                                startActivity(getIntent());
                             }
                         });
                     }
@@ -139,4 +159,34 @@ public class ContactActivity extends AppCompatActivity {
 
     }
 
+//    private void populateListView() {
+//        Cursor cursor = myDb.getAllContacts();
+//
+//        int[] toViewIDs = new int[] {R.id.personName, R.id.personLocation};
+//        SimpleCursorAdapter myCursorAdapter;
+//        myCursorAdapter = new SimpleCursorAdapter(
+//                getBaseContext(),
+//                R.layout.contact_individual_list,
+//                cursor,
+//                formFieldNames,
+//                toViewIDs,
+//                0);
+//        ListView myList = (ListView) findViewById(R.id.contactListView);
+//        myList.setAdapter(myCursorAdapter);
+//    }
+//    new Handler().post(new Runnable() {
+//
+//        @Override
+//        public void run() {
+//            customAdapter = new MyCursorAdapter(
+//                    MainActivity.this,
+//                    mCursor,
+//                    0);
+//
+//            listView.setAdapter(customAdapter);
+//        }
+//
+//    });
+
 }
+

@@ -1,4 +1,4 @@
-package com.example.android.gatheraround;
+package com.example.android.gatheraround.custom_classes;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -13,12 +13,12 @@ public class People {
     private LatLng mLatilong;
     private String mUniqueId;
 
-    People(String name,int ImageResourceId, String UniqueId){
+    public People(String name,int ImageResourceId, String UniqueId){
         mName = name;
         mImageResource = ImageResourceId;
         mUniqueId = UniqueId;
     }
-    People(String name,int ImageResourceId, LatLng initLatlng, String UniqueId){
+    public People(String name,int ImageResourceId, LatLng initLatlng, String UniqueId){
         mName = name;
         mImageResource = ImageResourceId;
         mLatilong = initLatlng;

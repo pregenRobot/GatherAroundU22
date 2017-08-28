@@ -1,7 +1,8 @@
 package com.example.android.gatheraround;
 
-import android.provider.ContactsContract;
-
+import com.example.android.gatheraround.custom_classes.Events;
+import com.example.android.gatheraround.custom_classes.Participants;
+import com.example.android.gatheraround.custom_classes.People;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;

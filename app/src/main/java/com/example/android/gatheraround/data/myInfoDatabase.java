@@ -1,4 +1,4 @@
-package com.example.android.gatheraround;
+package com.example.android.gatheraround.data;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,13 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InterruptedIOException;
+import com.example.android.gatheraround.custom_classes.People;
 
-import static android.R.attr.id;
+import java.io.ByteArrayOutputStream;
 
 /**
  * Created by tamimazmain on 2017/08/26.
@@ -32,7 +30,7 @@ public class myInfoDatabase extends SQLiteOpenHelper {
 
     Context context;
 
-    myInfoDatabase(Context context){
+    public myInfoDatabase(Context context){
         super(context, DATABASE_NAME, null, 1/**version**/);
         this.context = context;
     }

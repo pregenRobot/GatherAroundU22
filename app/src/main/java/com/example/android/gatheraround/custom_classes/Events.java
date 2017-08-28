@@ -1,8 +1,8 @@
-package com.example.android.gatheraround;
+package com.example.android.gatheraround.custom_classes;
 
+import com.example.android.gatheraround.Calculations;
+import com.example.android.gatheraround.custom_classes.Participants;
 import com.google.android.gms.maps.model.LatLng;
-
-import java.util.ArrayList;
 
 /**
  * Created by tamimazmain on 2017/08/14.
@@ -16,7 +16,7 @@ public class Events {
     private String mLocationName;
     private Calculations calcref = new Calculations();
 
-    Events(long unixTimeStanp, String name,Participants participants,LatLng Latilong,String locationname){
+    public Events(long unixTimeStanp, String name,Participants participants,LatLng Latilong,String locationname){
         mUnixTimeStanp = unixTimeStanp;
         mName = name;
         mParticipants = participants;

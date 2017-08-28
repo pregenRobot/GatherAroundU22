@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.example.android.gatheraround.data.myInfoDatabase;
+
 import static com.example.android.gatheraround.R.layout.myinfo;
 
 /**

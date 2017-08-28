@@ -1,4 +1,6 @@
-package com.example.android.gatheraround;
+package com.example.android.gatheraround.custom_classes;
+
+import com.example.android.gatheraround.custom_classes.People;
 
 import java.util.ArrayList;
 

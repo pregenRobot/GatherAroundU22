@@ -1,4 +1,4 @@
-package com.example.android.gatheraround;
+package com.example.android.gatheraround.data;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.android.gatheraround.custom_classes.Participants;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
@@ -41,7 +42,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean addData(String event_name,long unixtime, Participants participants, LatLng location, String locationName){
+    public boolean addData(String event_name, long unixtime, Participants participants, LatLng location, String locationName){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
