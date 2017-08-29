@@ -11,17 +11,19 @@ import com.google.android.gms.maps.model.LatLng;
 public class Events {
     long mUnixTimeStanp;
     private String mName;
-    private Participants mParticipants;
+    private int mParticipants;
     private LatLng mLocation;
     private String mLocationName;
     private Calculations calcref = new Calculations();
+    private String mEventSummary;
 
-    public Events(long unixTimeStanp, String name,Participants participants,LatLng Latilong,String locationname){
+    public Events(long unixTimeStanp, String name,int participants,LatLng Latilong,String locationname, String eventsummary){
         mUnixTimeStanp = unixTimeStanp;
         mName = name;
         mParticipants = participants;
         mLocation = Latilong;
         mLocationName = locationname;
+        mEventSummary = eventsummary;
     }
 
     public long getUnixTimeStamp(){
@@ -30,7 +32,7 @@ public class Events {
     public String getName(){
         return mName;
     }
-    public Participants getParticipants(){
+    public int getParticipants(){
         return mParticipants;
     }
     public LatLng getLocation(){
@@ -39,5 +41,6 @@ public class Events {
     public String getLocationName(){
         return mLocationName;
     }
+    public String getEventSummary(){return mEventSummary;}
 
 }

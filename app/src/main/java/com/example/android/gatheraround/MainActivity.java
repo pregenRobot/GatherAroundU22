@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -150,7 +151,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 TextView doneButton = (TextView) mView.findViewById(R.id.donebuttoneventadd);
                 TextView cancelButton = (TextView) mView.findViewById(R.id.canclebuttoneventadd);
                 final EditText locationNameEdit = (EditText) mView.findViewById(R.id.event_location__name_edit);
-                final EditText participantsEdit = (EditText) mView.findViewById(R.id.event_participants_edit);
 
                 mBuilder.setView(mView);
                 final AlertDialog dialog = mBuilder.create();

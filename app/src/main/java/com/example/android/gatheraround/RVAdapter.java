@@ -1,8 +1,10 @@
 package com.example.android.gatheraround;
 
 import android.content.Context;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,9 @@ import com.example.android.gatheraround.custom_classes.Events;
 import com.example.android.gatheraround.custom_classes.People;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 /**
@@ -25,12 +30,15 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>{
     Context mContext;
     List<Events> events;
     Calculations calculations = new Calculations();
+    Context Appcontext;
 
     //Constructor
     RVAdapter(Context context,List<Events> events){
 
         this.events = events;
         mContext = context;
+        Appcontext = context.getApplicationContext();
+
     }
     //Gets resource ID_white
     public int findResource(){
@@ -59,20 +67,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>{
         eventViewHolder.eventLocation.setText(events.get(i).getLocationName());
         eventViewHolder.eventDate.setText(calculations.UnixTimeConverter(events.get(i).getUnixTimeStamp())[0]);
         eventViewHolder.eventTime.setText(calculations.UnixTimeConverter(events.get(i).getUnixTimeStamp())[1]);
-
-        //Creates parameters for Linear Layout holding Participants
-        LinearLayout.LayoutParams params=new LinearLayout.LayoutParams
-                (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        for (People x: events.get(i).getParticipants().getPeopleParticipating()) {
-            TextView tv=new TextView(mContext);
-            params.leftMargin=50;
-            tv.setText(x.getName());
-            tv.setTextSize((float) 16);
-            tv.setPadding(10, 25, 10, 25);
-            tv.setLayoutParams(params);
-            tv.setTextColor(findResource());
-            eventViewHolder.eventParticipants.addView(tv) ;
-        }
+        eventViewHolder.eventSummary.setText(events.get(i).getEventSummary());
+        eventViewHolder.eventParticipants.setText(events.get(i).getParticipants()+"");
 
         //Setting onClickListeners to Location view
         eventViewHolder.eventLocation.setOnClickListener(new View.OnClickListener(){
@@ -90,6 +86,24 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>{
             }
 
         });
+        eventViewHolder.eventSummary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater mLayoutInflator;
+                mLayoutInflator = LayoutInflater.from(Appcontext);
+                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
+                View mView = mLayoutInflator.inflate(R.layout.summarydialog,null);
+                TextView textView = mView.findViewById(R.id.mainText);
+                textView.setText(events.get(i).getEventSummary());
+
+                textView.setMovementMethod(new ScrollingMovementMethod());
+
+                mBuilder.setView(mView);
+                final AlertDialog dialog = mBuilder.create();
+                dialog.show();
+
+            }
+        });
     }
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -102,7 +116,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>{
         TextView eventTime;
         TextView eventLocation;
         TextView eventDate;
-        LinearLayout eventParticipants;
+        TextView eventSummary;
+        TextView eventParticipants;
 
 
         EventViewHolder(View itemView) {
@@ -113,8 +128,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>{
             eventTime = itemView.findViewById(R.id.event_time);
             eventDate = itemView.findViewById(R.id.event_date);
             eventLocation = itemView.findViewById(R.id.event_location);
-            eventParticipants = itemView.findViewById(R.id.event_participants);
-
+            eventParticipants = itemView.findViewById(R.id.event_participantNum);
+            eventSummary = itemView.findViewById(R.id.event_summary);
         }
 
     }
