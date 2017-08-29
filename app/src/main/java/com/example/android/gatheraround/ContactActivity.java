@@ -31,12 +31,8 @@ public class ContactActivity extends AppCompatActivity {
     ContactListCursorAdapter customAdapter;
 
     Cursor contactListCursor;
-
-    ContactListCursorAdapter contactCursorAdapter;
-
     Context context = this;
     Intent myInfoIntent;
-    ContactsDatabaseHelper contactManager;
 
     @Override
     protected void onCreate(Bundle SavedInstances){
@@ -59,8 +55,6 @@ public class ContactActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        myDataHolder dataHolder = new myDataHolder();
-
         final ListView contanctListView = (ListView) findViewById(R.id.contactListView);
 //        ContactsAdapter contactadapter = new ContactsAdapter(this,dataHolder.getContactList());
 //        contanctListView.setAdapter(contactadapter);
@@ -95,8 +89,6 @@ public class ContactActivity extends AppCompatActivity {
                 final EditText uniqueidedit = (EditText) mView.findViewById(R.id.uniquecodeinital);
                 TextView cancelbutton = (TextView) mView.findViewById(R.id.contactsCancelInitial);
                 TextView doneButton = (TextView) mView.findViewById(R.id.contactsSearch);
-
-
 
                 cancelbutton.setOnClickListener(new View.OnClickListener() {
                     @Override

@@ -27,7 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private Context context;
 
     private static final String[] ALL_COLUMNS = new String[]{
-            COL1,COL_NAME,COL_UNIXTIME,COL_PARTICIPANTS,COL_LOCATION,COL_LOCATIONNAME,COL_SUMMARY
+            COL_ID,COL_NAME,COL_UNIXTIME,COL_PARTICIPANTS,COL_LOCATION,COL_LOCATIONNAME,COL_SUMMARY
     };
 
     public DatabaseHelper(Context context) {
@@ -78,7 +78,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
     }
-    public Cursor getAllContacts(){
+    public Cursor getAllEvents(){
         SQLiteDatabase db = this.getReadableDatabase();
 
         String where = null;

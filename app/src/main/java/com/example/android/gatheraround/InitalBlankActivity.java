@@ -9,7 +9,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.android.gatheraround.data.ContactsDatabaseHelper;
+import com.example.android.gatheraround.data.DatabaseHelper;
 import com.example.android.gatheraround.data.myInfoDatabase;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Created by tamimazmain on 2017/08/26.
@@ -41,19 +43,40 @@ public class InitalBlankActivity extends AppCompatActivity {
 //        }
 
         final ContactsDatabaseHelper contactManager = new ContactsDatabaseHelper(context);
+        final DatabaseHelper eventDatabaseHelper = new DatabaseHelper(context);
+//
+//        boolean insertEventData = eventDatabaseHelper.addData(
+//                "Hello internet",
+//                1704419236, 20,
+//                new LatLng(23,3),
+//                "Memes",
+//                "Lorem Ipsum"
+//        );
+//        boolean insertEventData2 = eventDatabaseHelper.addData(
+//                "Hello internet My name is Tamim Azmain!",
+//                1704419236, 20,
+//                new LatLng(23,3),
+//                "Memes",
+//                "Lorem Ipsum"
+//        );
 
-        boolean insertData1 = contactManager.addData("Tamim Azman",R.drawable.tedzukaosamu,null,"ta1130");
-        boolean insertData2 = contactManager.addData("Chiharu Miyoshi",R.drawable.stevejobs,null,"chiharum");
-        boolean insertDat3 = contactManager.addData("手塚治虫",R.drawable.callpressed,null,"TedzukaOsamu");
-        boolean insertDat4 = contactManager.addData("Angelina Jolie",R.drawable.angelinajolie,null,"AngelinaJolie");
+//        if (insertEventData == true) {
+//            Toast.makeText(InitalBlankActivity.this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
+//            Log.v("Database","Data Successfully Inserted!"
+//            +DatabaseUtils.queryNumEntries(eventDatabaseHelper.getReadableDatabase(), eventDatabaseHelper.TABLE_NAME) + ""
+//            );
+//        } else {
+//            Toast.makeText(InitalBlankActivity.this, "Something went wrong :(.", Toast.LENGTH_LONG).show();
+//            Log.v("Database","Data Insert Failed!");
+//        }
 
-        if(insertDat4){
-            Log.v("ContactData Inserted!",
-                    DatabaseUtils.queryNumEntries(contactManager.getReadableDatabase(), contactManager.TABLE_NAME) + "");
-        }else{
-            Log.v("ContactData Failed!",
-                    DatabaseUtils.queryNumEntries(contactManager.getReadableDatabase(), contactManager.TABLE_NAME) + " hello");
-        }
+//        if(insertData){
+//            Log.v("ContactData Inserted!",
+//                    DatabaseUtils.queryNumEntries(contactManager.getReadableDatabase(), contactManager.TABLE_NAME) + "");
+//        }else{
+//            Log.v("ContactData Failed!",
+//                    DatabaseUtils.queryNumEntries(contactManager.getReadableDatabase(), contactManager.TABLE_NAME) + " hello");
+//        }
 
         MainActivityIntent = new Intent(InitalBlankActivity.this,MainActivity.class);
 

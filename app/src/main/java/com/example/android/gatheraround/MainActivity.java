@@ -2,6 +2,8 @@ package com.example.android.gatheraround;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
@@ -12,15 +14,19 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.gatheraround.custom_classes.Events;
 import com.example.android.gatheraround.custom_classes.Participants;
 import com.example.android.gatheraround.custom_classes.People;
+import com.example.android.gatheraround.data.ContactsDatabaseHelper;
 import com.example.android.gatheraround.data.DatabaseHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,8 +36,12 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+
+import static android.R.attr.x;
+import static android.os.Build.VERSION_CODES.M;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -42,28 +52,33 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     Context context;
     public static GoogleMap mMap;
     FloatingActionButton contactsbutton;
+    FloatingActionButton testButton;
     Intent contactsintent;
-    DatabaseHelper eventsDB;
+    Intent testIntent;
+
+    DatabaseHelper eventsDBHelper;
+    EventListCursorAdapter eventListCursorAdapter;
+    Cursor eventCursor;
+    Gson gson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        myDataHolder dataHolder = new myDataHolder();
         context = this;
 
-        eventsDB = new DatabaseHelper(context);
+        eventsDBHelper = new DatabaseHelper(context);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        android.support.v4.widget.NestedScrollView bottomsheet =
+        LinearLayout bottomsheet =
                 findViewById(R.id.bottomsheet);
         mBottomsheetbehvior = BottomSheetBehavior.from(bottomsheet);
         mBottomsheetbehvior.setHideable(true);
-        mBottomsheetbehvior.setPeekHeight(400);
+        mBottomsheetbehvior.setPeekHeight(ViewGroup.LayoutParams.MATCH_PARENT);
         mBottomsheetbehvior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
         eventListButton = findViewById(R.id.eventlistbutton);
@@ -104,16 +119,24 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
-        rv = findViewById(R.id.rv);
-        rv.setHasFixedSize(true);
 
         llm = new LinearLayoutManager(context);
-        //Temporary Data
+        final ListView eventListView =  (ListView) findViewById(R.id.eventlistview);
+        final DatabaseHelper eventManager = new DatabaseHelper(context);
 
+        Thread thread = new Thread(new Runnable(){
+            @Override
+            public void run(){
+                eventCursor = eventManager.getAllEvents();
+                eventListCursorAdapter = new EventListCursorAdapter(
+                        MainActivity.this,
+                        eventCursor,
+                        0);
 
-        RVAdapter adapter = new RVAdapter(this,dataHolder.getEventList());
-        rv.setAdapter(adapter);
-        rv.setLayoutManager(new LinearLayoutManager(context));
+                eventListView.setAdapter(eventListCursorAdapter);
+            }
+        });
+        thread.start();
 
         contactsbutton = (FloatingActionButton) findViewById(R.id.contactsbutton);
         contactsbutton.setOnClickListener(new View.OnClickListener(){
@@ -124,21 +147,32 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        testButton = (FloatingActionButton) findViewById(R.id.chatbutton);
+
+        testButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                testIntent = new Intent(MainActivity.this,testActivity.class);
+                MainActivity.this.startActivity(testIntent);
+            }
+        });
+
+
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         LatLng school = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(school).title("Sample Marker"));
+
+        Cursor c = eventsDBHelper.getAllEvents();
+
+        this.addEventMarkers(c);
+
         mMap.moveCamera(CameraUpdateFactory.newLatLng(school));
-        for (Events x: myDataHolder.getEventList()){
-            mMap.addCircle(new CircleOptions().center(x.getLocation())
-                    .radius(50)
-                    .fillColor(R.color.cardbackground2)
-                    .strokeColor(R.color.cardbackground)
-            );
-        }
+        final DatabaseHelper eventManager = new DatabaseHelper(context);
+        final ListView eventListView =  (ListView) findViewById(R.id.eventlistview);
+
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(final LatLng latLng) {
@@ -161,7 +195,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                     @Override
                     public void onClick(View view) {
-                        boolean insertData = eventsDB.addData(
+                        boolean insertData = eventsDBHelper.addData(
                                 eventNameEdit.getText().toString(),
                                 1704419236, 20,
                                 latLng,
@@ -176,6 +210,21 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             Toast.makeText(MainActivity.this, "Something went wrong :(.", Toast.LENGTH_LONG).show();
                             Log.v("Database","Data Insert Failed!");
                         }
+                        eventListCursorAdapter.notifyDataSetChanged();
+                        Thread thread = new Thread(new Runnable(){
+                            @Override
+                            public void run(){
+                                eventCursor = eventManager.getAllEvents();
+                                eventListCursorAdapter = new EventListCursorAdapter(
+                                        MainActivity.this,
+                                        eventCursor,
+                                        0);
+
+                                eventListView.setAdapter(eventListCursorAdapter);
+                            }
+                        });
+                        thread.start();
+
                     }
                 });
                 cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -193,6 +242,25 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         final CameraPosition movelocation  = CameraPosition.builder().
                 target(location).zoom(14).build();
         MainActivity.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(movelocation));
+    }
+    public void addEventMarkers(Cursor c){
+
+        gson = new Gson();
+
+        c.moveToFirst();
+        while (c.isAfterLast() == false)
+        {
+            Log.v("added Marker: ",c.getString(c.getColumnIndex(DatabaseHelper.COL_LOCATION)));
+            Log.v("Cursor column-index",c.getColumnIndex(DatabaseHelper.COL_ID)+ "");
+
+            final LatLng location = gson.fromJson(c.getString(c.getColumnIndex(DatabaseHelper.COL_LOCATION)),LatLng.class);
+            mMap.addCircle(new CircleOptions().center(location)
+                    .radius(10)
+                    .fillColor(R.color.cardbackground2)
+                    .strokeColor(R.color.cardbackground));
+
+            c.moveToNext();
+        }
     }
 
 }

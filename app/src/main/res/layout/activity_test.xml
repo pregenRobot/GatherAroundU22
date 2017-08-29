@@ -6,11 +6,9 @@
     android:layout_height="match_parent"
     tools:context="com.example.android.gatheraround.testActivity">
 
-    <TextView
-        android:id="@+id/testDisplay"
+    <ListView
+        android:id="@+id/testListView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="162dp"
-        tools:layout_editor_absoluteY="273dp" />
+        android:text="TextView" />
 </android.support.constraint.ConstraintLayout>

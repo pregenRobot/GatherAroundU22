@@ -94,28 +94,40 @@
             android:layout_alignStart="@+id/contactsbutton" />
     </RelativeLayout>
 
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/bottomsheet"
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/bottom_sheet_behavior"
+    android:clipToPadding="true"
+    android:orientation="vertical"
+    android:id="@+id/bottomsheet"
+    >
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="true"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/cardbackground"
+        android:gravity="center"
+        android:text="Event List"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        />
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"
         android:background="@color/recyclerview_background"
-        app:layout_behavior="@string/bottom_sheet_behavior"
         >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <android.support.v7.widget.RecyclerView
+            <ListView
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
-                android:id="@+id/rv"
+                android:id="@+id/eventlistview"
                 android:paddingLeft="@dimen/recyclerviewhorizontalpadding"
                 android:paddingRight="@dimen/recyclerviewhorizontalpadding"
                 >
-
-            </android.support.v7.widget.RecyclerView>
-
-        </LinearLayout>
-
-    </android.support.v4.widget.NestedScrollView>
+            </ListView>
+    </LinearLayout>
+</LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

@@ -93,7 +93,7 @@ public class EventListCursorAdapter extends CursorAdapter {
         nameText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
         dateText.setText(date);
         timeText.setText(time);
-        participantsText.setText(mCursor.getInt(mCursor.getColumnIndex(DatabaseHelper.COL_PARTICIPANTS)));
+        participantsText.setText(mCursor.getInt(mCursor.getColumnIndex(DatabaseHelper.COL_PARTICIPANTS))+"");
         summaryText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_SUMMARY)));
         locationText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_LOCATIONNAME)));
 
