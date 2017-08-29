@@ -151,6 +151,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 TextView doneButton = (TextView) mView.findViewById(R.id.donebuttoneventadd);
                 TextView cancelButton = (TextView) mView.findViewById(R.id.canclebuttoneventadd);
                 final EditText locationNameEdit = (EditText) mView.findViewById(R.id.event_location__name_edit);
+                final EditText summaryEdit = (EditText) mView.findViewById(R.id.event_summary_edit);
 
                 mBuilder.setView(mView);
                 final AlertDialog dialog = mBuilder.create();
@@ -162,15 +163,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onClick(View view) {
                         boolean insertData = eventsDB.addData(
                                 eventNameEdit.getText().toString(),
-                                1704419236,
-                                new Participants(new ArrayList<People>(){{
-                                    add(myDataHolder.getContactList().get(1));
-                                    add(myDataHolder.getContactList().get(3));
-                                    add(myDataHolder.getContactList().get(2));
-                                    add(myDataHolder.getContactList().get(4));
-                                }}),
+                                1704419236, 20,
                                 latLng,
-                                locationNameEdit.getText().toString()
+                                locationNameEdit.getText().toString(),
+                                summaryEdit.getText().toString()
                         );
 
                         if (insertData == true) {

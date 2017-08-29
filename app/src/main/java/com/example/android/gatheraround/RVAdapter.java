@@ -102,7 +102,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.EventViewHolder>{
                 final AlertDialog dialog = mBuilder.create();
                 dialog.show();
 
-                //
             }
         });
     }

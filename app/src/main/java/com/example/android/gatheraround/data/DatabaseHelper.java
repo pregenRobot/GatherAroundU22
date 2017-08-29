@@ -10,18 +10,25 @@ import com.example.android.gatheraround.custom_classes.Participants;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
+import static com.example.android.gatheraround.data.myInfoDatabase.COL1;
+
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "eventList.db";
-    private static final String TABLE_NAME = "event_table";
-    public static final String COL1 = "ID";
-    private static final String COL2 = "EVENTNAME";
-    private static final String COL3 = "UNIXTIMESTAMP";
-    private static final String COL4 = "PARTICIPANTS";
-    private static final String COL5 = "LOCATION";
-    private static final String COL6 = "LOCATIONNAME";
+    public static final String TABLE_NAME = "event_table";
+    public static final String COL_ID = "_id";
+    public static final String COL_NAME = "EVENTNAME";
+    public static final String COL_UNIXTIME = "UNIXTIMESTAMP";
+    public static final String COL_PARTICIPANTS = "PARTICIPANTS";
+    public static final String COL_LOCATION = "LOCATION";
+    public static final String COL_LOCATIONNAME = "LOCATIONNAME";
+    public static final String COL_SUMMARY = "SUMMARY";
     private Context context;
+
+    private static final String[] ALL_COLUMNS = new String[]{
+            COL1,COL_NAME,COL_UNIXTIME,COL_PARTICIPANTS,COL_LOCATION,COL_LOCATIONNAME,COL_SUMMARY
+    };
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1/**version**/);
@@ -30,8 +37,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String createTable = "CREATE TABLE " + TABLE_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + " EVENTNAME TEXT, UNIXTIMESTAMP INTEGER, PARTICIPANTS TEXT, LOCATION TEXT, LOCATIONNAME TEXT)";
+        String createTable = "CREATE TABLE " + TABLE_NAME + "( " +
+                COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL_NAME + " TEXT," +
+                COL_UNIXTIME + " INTEGER," +
+                COL_PARTICIPANTS + " INTEGER," +
+                COL_LOCATION + " TEXT," +
+                COL_LOCATIONNAME + " TEXT," +
+                COL_SUMMARY + " TEXT)";
         sqLiteDatabase.execSQL(createTable);
 
     }
@@ -42,22 +55,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean addData(String event_name, long unixtime, Participants participants, LatLng location, String locationName){
+    public boolean addData(String event_name, long unixtime, int participants, LatLng location, String locationName,String summary){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
         Gson gson = new Gson();
-        String gsonParticipants = gson.toJson(participants,Participants.class);
+
         String gsonLocation = gson.toJson(location,LatLng.class);
 
-        contentValues.put(COL2,event_name);
-        contentValues.put(COL3, unixtime);
-        contentValues.put(COL4, gsonParticipants);
-        contentValues.put(COL5, gsonLocation);
-        contentValues.put(COL6, locationName);
+        contentValues.put(COL_NAME,event_name);
+        contentValues.put(COL_UNIXTIME, unixtime);
+        contentValues.put(COL_PARTICIPANTS, participants);
+        contentValues.put(COL_LOCATION, gsonLocation);
+        contentValues.put(COL_LOCATIONNAME, locationName);
+        contentValues.put(COL_SUMMARY, summary);
 
         long result  = db.insert(TABLE_NAME, null, contentValues);
-
         if(result == -1){
             return false;
         }else{
@@ -65,6 +78,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
     }
+    public Cursor getAllContacts(){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String where = null;
+
+        Cursor c = db.query(true, TABLE_NAME, ALL_COLUMNS,where,null,null,null,/** COL_NAME + " ASC"**/null,null);
+        return c;
+
+    }
+
     public Cursor showData(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor data = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);

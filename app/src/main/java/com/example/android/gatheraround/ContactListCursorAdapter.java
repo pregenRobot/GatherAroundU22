@@ -32,6 +32,10 @@ public class ContactListCursorAdapter extends CursorAdapter {
 
     private LayoutInflater cursorInflater;
 
+
+
+
+
     public ContactListCursorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
 
