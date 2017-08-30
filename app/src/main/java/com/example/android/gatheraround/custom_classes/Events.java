@@ -4,6 +4,8 @@ import com.example.android.gatheraround.Calculations;
 import com.example.android.gatheraround.custom_classes.Participants;
 import com.google.android.gms.maps.model.LatLng;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
+
 /**
  * Created by tamimazmain on 2017/08/14.
  */
@@ -42,5 +44,10 @@ public class Events {
         return mLocationName;
     }
     public String getEventSummary(){return mEventSummary;}
+
+    public String toString(){
+        String returner = String.valueOf(mUnixTimeStanp) + " / " + mName + " / " + mParticipants + " / " + mLocation.toString() + " / " + mLocationName + " / " + mEventSummary;
+        return returner;
+    }
 
 }

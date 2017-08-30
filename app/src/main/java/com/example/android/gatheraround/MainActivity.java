@@ -79,7 +79,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     DatabaseHelper eventManager;
     ListView eventListView;
     private Map<MarkerOptions,Events> eventMarkerMap;
-    ArrayList<Events> receivedEventsfromData;
+    ArrayList<Events> returner = new ArrayList<>();
 
     int cYear = 2017;
     int cMonth = 7;
@@ -96,9 +96,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         Log.i("log", "starting getter");
 
-        DataGetterFromServer dataGetterFromServer = new DataGetterFromServer();
-        receivedEventsfromData = dataGetterFromServer.getDataFromServer();
-        Log.v("InsertedEntriesMain:",receivedEventsfromData.size()+"");
 
         Log.i("log", "finished getter");
 
@@ -211,20 +208,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         tempArrayList.add(new Events(234234323,"Hello2",0,new LatLng(11,2),"Tokyo","hello"));
         tempArrayList.add(new Events(234234323,"Hello3",0,new LatLng(20.435,4),"Tokyo","hello"));
 
-        DataGetterFromServer dataGetterFromServer = new DataGetterFromServer();
-        ArrayList<Events> eventsArrayList = dataGetterFromServer.getDataFromServer();
-        for (int a = 0; a < eventsArrayList.size(); a++){
-            tempArrayList.add(eventsArrayList.get(a));
-        }
 
         for(Events x:tempArrayList){
             Log.v("tempEvent:",x.getName());
         }
         eventMarkerMap = new HashMap<>();
-
-        DataGetterFromServer dataGetterFromServer1 = new DataGetterFromServer();
-
-        addMarkers(receivedEventsfromData);
 
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
@@ -716,7 +704,50 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 return  true;
             }
         });
+        Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/");
 
+        final ArrayList<Events> eventsArrayList = new ArrayList<Events>();
+
+
+        firebase.child("eventPostDetails").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.i("Firebase", dataSnapshot.getValue().toString());
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Log.i("Firebase", "name="+snapshot.child("name").getValue());
+
+                    long unixtime = (long)snapshot.child("unixTimeStamp").getValue();
+                    String event_name = snapshot.child("name").getValue().toString();
+                    int participants = Integer.parseInt(snapshot.child("participants").getValue().toString());
+                    double longitude = (double)snapshot.child("location/longitude").getValue();
+                    double latitude = (double)snapshot.child("location/latitude").getValue();
+                    String locationName = snapshot.child("locationName").getValue().toString();
+                    String summary = snapshot.child("eventSummary").getValue().toString();
+
+                    LatLng location = new LatLng(longitude, latitude);
+
+                    Events newEvents = new Events(unixtime,event_name,participants,location,locationName,summary);
+
+                    Log.v("FromServer:",newEvents.toString());
+
+//                    eventsArrayList.add(newEvents);
+                    newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
+                            .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("web_hi_res_512",100,100)));
+                    mMap.addMarker(newMarkerOptions);
+
+                }
+                Log.v("MarkerTobeAdded",eventsArrayList.size()+"");
+                addMarkers(eventsArrayList);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+        Log.v("InsertedEntriesReturn:",eventsArrayList.size()+"");
     }
     public void addEventMarkers(Cursor c){
 
@@ -734,6 +765,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     .strokeColor(R.color.cardbackground));
             c.moveToNext();
         }
+    }
+
+    public void appendMarkers(Events events){
+        returner.add(events);
     }
 
     public long concatenateUnixtime(int Year,int Month, int Day, int Hour, int Min){
@@ -768,8 +803,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     private MarkerOptions newMarkerOptions;
     public void addMarkers(ArrayList<Events> eventList){
-
-        Log.v("InsertedEntriesMarker:",eventList.size()+"");
 
         for(Events x:eventList){
             newMarkerOptions = new MarkerOptions().position(x.getLocation()).title(x.getName())

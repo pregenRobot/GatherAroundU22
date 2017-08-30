@@ -17,12 +17,14 @@ import java.util.ArrayList;
  */
 
 public class DataGetterFromServer {
+    ArrayList<Events> returnerArrayList = new ArrayList<Events>();
 
     public ArrayList<Events> getDataFromServer(){
 
         Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/");
 
         final ArrayList<Events> eventsArrayList = new ArrayList<Events>();
+
 
         firebase.child("eventPostDetails").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -46,6 +48,7 @@ public class DataGetterFromServer {
                     Log.v("InsertedEntriesServer:",eventsArrayList.size()+"");
 
                     eventsArrayList.add(newEvents);
+                    returnerArrayList = eventsArrayList;
                 }
             }
 
@@ -56,6 +59,7 @@ public class DataGetterFromServer {
         });
 
         Log.v("InsertedEntriesReturn:",eventsArrayList.size()+"");
-        return  eventsArrayList;
+        Log.v("EntriesReturner:",returnerArrayList.size()+"");
+        return  returnerArrayList;
     }
 }
