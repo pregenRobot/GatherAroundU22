@@ -79,6 +79,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Events newEvents = new Events(unixtime,event_name,participants,location,locationName,summary);
         dataSenderToServer.pushToServer(newEvents);
         long result  = db.insert(TABLE_NAME, null, contentValues);
+
         if(result == -1){
             return false;
         }else{

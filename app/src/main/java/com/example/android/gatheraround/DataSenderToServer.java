@@ -1,5 +1,7 @@
 package com.example.android.gatheraround;
 
+import android.util.Log;
+
 import com.example.android.gatheraround.custom_classes.Events;
 import com.firebase.client.Firebase;
 import com.firebase.client.core.Context;
@@ -19,5 +21,9 @@ public class DataSenderToServer{
 
         Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/eventPostDetails");
         firebase.push().setValue(newEvent);
+        Log.i("Firebase pushed", "pushed=" + newEvent.getName());
+
+        String key = firebase.getKey();
+        Log.i("Firebase event key", "key=" + key);
     }
 }

@@ -162,14 +162,12 @@ public class EventListCursorAdapter extends CursorAdapter {
                         }else{
                             Log.v("Delete: ", "Failed!"+mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
                         }
-                        
+
                         mainActivityIntent = new Intent(mContext,MainActivity.class);
                         mContext.startActivity(mainActivityIntent);
                     }
                 });
-
                 return true;
-                //Hello
             }
         });
 
