@@ -87,6 +87,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     int cHour = 23;
     int cMinute = 20;
     long unixTimestamp;
+    Intent mainActivityIntent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -217,6 +218,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(final LatLng latLng) {
+                Log.v("MapLongClicked:",latLng.toString());
 
                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
                 View mView = getLayoutInflater().inflate(R.layout.edit_event_popup,null);
@@ -680,6 +682,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             Toast.makeText(MainActivity.this, "Please fill in all the fields",Toast.LENGTH_SHORT).show();
                         }
                         dialog.dismiss();
+                        mainActivityIntent = new Intent(MainActivity.this,MainActivity.class);
+                        MainActivity.this.startActivity(mainActivityIntent);
                     }
                 });
                 cancelButton.setOnClickListener(new View.OnClickListener() {
