@@ -79,6 +79,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     long unixTimestamp;
     LocationManager mLocationManager;
 
+    //2017/8/30/18:18
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

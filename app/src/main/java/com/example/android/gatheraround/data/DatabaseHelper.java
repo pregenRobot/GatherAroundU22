@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.android.gatheraround.custom_classes.Events;
 import com.example.android.gatheraround.custom_classes.Participants;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
@@ -74,14 +73,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SUMMARY, summary);
 
         long result  = db.insert(TABLE_NAME, null, contentValues);
-        Events newEvents = new Events(unixtime,event_name,participants,location,locationName,summary);
-
         if(result == -1){
             return false;
         }else{
             return true;
         }
-
 
     }
     public Cursor getAllEvents(){
