@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -277,12 +278,30 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                                 Log.v("Year: ",cYear+"");
                                             }
                                         });
+                                        yplus.setOnTouchListener(new View.OnTouchListener() {
+                                            @Override
+                                            public boolean onTouch(View view, MotionEvent motionEvent) {
+                                                cYear++;
+                                                y.setText(cYear+"");
+                                                Log.v("Year: ",cYear+"");
+                                                return true;
+                                            }
+                                        });
                                         yminus.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
                                                 cYear--;
                                                 y.setText(cYear+"");
                                                 Log.v("Year: ",cYear+"");
+                                            }
+                                        });
+                                        yminus.setOnTouchListener(new View.OnTouchListener() {
+                                            @Override
+                                            public boolean onTouch(View view, MotionEvent motionEvent) {
+                                                cYear--;
+                                                y.setText(cYear+"");
+                                                Log.v("Year: ",cYear+"");
+                                                return true;
                                             }
                                         });
                                         mplus.setOnClickListener(new View.OnClickListener() {
@@ -298,6 +317,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                                 Log.v("Month: ",cMonth+"");
                                             }
                                         });
+                                        mplus.setOnTouchListener(new View.OnTouchListener() {
+                                            @Override
+                                            public boolean onTouch(View view, MotionEvent motionEvent) {
+                                                if(cMonth < 12) {
+                                                    cMonth++;
+                                                    m.setText(cMonth + "");
+                                                }else{
+                                                    cMonth = 1;
+                                                    m.setText(cMonth+"");
+                                                }
+                                                Log.v("Month: ",cMonth+"");
+                                                return true;
+                                            }
+                                        });
                                         mminus.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
@@ -309,6 +342,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                                     m.setText(cMonth+"");
                                                 }
                                                 Log.v("Month: ",cMonth+"");
+                                            }
+                                        });
+                                        mminus.setOnTouchListener(new View.OnTouchListener() {
+                                            @Override
+                                            public boolean onTouch(View view, MotionEvent motionEvent) {
+                                                if(cMonth > 0) {
+                                                    cMonth--;
+                                                    m.setText(cMonth + "");
+                                                }else{
+                                                    cMonth = 12;
+                                                    m.setText(cMonth+"");
+                                                }
+                                                Log.v("Month: ",cMonth+"");
+                                                return true;
                                             }
                                         });
                                         dplus.setOnClickListener(new View.OnClickListener() {
@@ -357,6 +404,54 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                                 Log.v("Day: ",cDate+"");
                                             }
                                         });
+                                        dplus.setOnTouchListener(new View.OnTouchListener() {
+                                            @Override
+                                            public boolean onTouch(View view, MotionEvent motionEvent) {
+                                                if(cMonth == 1||
+                                                        cMonth == 3 ||
+                                                        cMonth == 5 ||
+                                                        cMonth == 7 ||
+                                                        cMonth == 8 ||
+                                                        cMonth == 10 ||
+                                                        cMonth == 12
+                                                        ){
+                                                    if(cDate <31){
+                                                        cDate++;
+                                                        d.setText(cDate+"");
+                                                    }else{
+                                                        cDate = 1;
+                                                        d.setText(cDate+"");
+                                                    }
+                                                }else if(cMonth == 2 && cYear%4==0){
+                                                    if(cDate <29){
+                                                        cDate++;
+                                                        d.setText(cDate+"");
+                                                    }else{
+                                                        cDate = 1;
+                                                        d.setText(cDate+"");
+                                                    }
+                                                }else if(cMonth == 2 && cYear%4!=0){
+                                                    if(cDate <28){
+                                                        cDate++;
+                                                        d.setText(cDate+"");
+                                                    }else{
+                                                        cDate = 1;
+                                                        d.setText(cDate+"");
+                                                    }
+                                                }else{
+                                                    if(cDate <30){
+                                                        cDate++;
+                                                        d.setText(cDate+"");
+                                                    }else{
+                                                        cDate = 1;
+                                                        d.setText(cDate+"");
+                                                    }
+                                                }
+                                                Log.v("Day: ",cDate+"");
+
+                                                return true;
+                                            }
+                                        });
                                         dminus.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
@@ -389,6 +484,39 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                                 Log.v("Day: ",cDate+"");
                                             }
                                         });
+                                        dminus.setOnTouchListener(new View.OnTouchListener() {
+                                            @Override
+                                            public boolean onTouch(View view, MotionEvent motionEvent) {
+                                                if(cDate > 1) {
+                                                    cDate--;
+                                                    d.setText(cDate + "");
+                                                }else{
+                                                    if(cMonth == 1||
+                                                            cMonth == 3 ||
+                                                            cMonth == 5 ||
+                                                            cMonth == 7 ||
+                                                            cMonth == 8 ||
+                                                            cMonth == 10 ||
+                                                            cMonth == 12
+                                                            ){
+                                                        cDate = 31;
+                                                        d.setText(cDate+"");
+                                                    }else if(cMonth == 2 && cYear%4==0){
+                                                        cDate = 29;
+                                                        d.setText(cDate+"");
+                                                    }else if(cMonth == 2 && cYear%4!=0){
+                                                        cDate = 28;
+                                                        d.setText(cDate+"");
+                                                    }else{
+                                                        cDate = 30;
+                                                        d.setText(cDate+"");
+                                                    }
+                                                }
+                                                Log.v("Day: ",cDate+"");
+
+                                                return true;
+                                            }
+                                        });
                                         hplus.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
@@ -401,6 +529,21 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                                     h.setText(cHour+"");
                                                 }
                                                 Log.v("Hour: ",cHour+"");
+                                            }
+                                        });
+                                        hplus.setOnTouchListener(new View.OnTouchListener() {
+                                            @Override
+                                            public boolean onTouch(View view, MotionEvent motionEvent) {
+                                                if(cHour < 23) {
+                                                    cHour++;
+                                                    h.setText(cHour + "");
+                                                }else{
+                                                    cHour=0;
+                                                    h.setText(cHour+"");
+                                                }
+                                                Log.v("Hour: ",cHour+"");
+
+                                                return true;
                                             }
                                         });
                                         hminus.setOnClickListener(new View.OnClickListener() {
@@ -416,6 +559,21 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                                 Log.v("Hour: ",cHour+"");
                                             }
                                         });
+                                        hminus.setOnTouchListener(new View.OnTouchListener() {
+                                            @Override
+                                            public boolean onTouch(View view, MotionEvent motionEvent) {
+                                                if(cHour > 0) {
+                                                    cHour--;
+                                                    h.setText(cHour + "");
+                                                }else{
+                                                    cHour = 23;
+                                                    h.setText(cHour+"");
+                                                }
+                                                Log.v("Hour: ",cHour+"");
+
+                                                return true;
+                                            }
+                                        });
                                         minplus.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
@@ -429,6 +587,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                                 Log.v("Minute: ",cMinute+"");
                                             }
                                         });
+                                        minplus.setOnTouchListener(new View.OnTouchListener() {
+                                            @Override
+                                            public boolean onTouch(View view, MotionEvent motionEvent) {
+                                                if(cMinute < 59) {
+                                                    cMinute++;
+                                                    min.setText(cMinute + "");
+                                                }else{
+                                                    cMinute = 0;
+                                                    min.setText(cMinute+"");
+                                                }
+                                                Log.v("Minute: ",cMinute+"");
+                                                return true;
+                                            }
+                                        });
                                         minminus.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
@@ -440,6 +612,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                                     min.setText(cMinute+"");
                                                 }
                                                 Log.v("Minute: ",cMinute+"");
+                                            }
+                                        });
+                                        minminus.setOnTouchListener(new View.OnTouchListener() {
+                                            @Override
+                                            public boolean onTouch(View view, MotionEvent motionEvent) {
+                                                if(cMinute >= 1) {
+                                                    cMinute--;
+                                                    min.setText(cMinute + "");
+                                                }else{
+                                                    cMinute = 59;
+                                                    min.setText(cMinute+"");
+                                                }
+                                                Log.v("Minute: ",cMinute+"");
+                                                return true;
                                             }
                                         });
                                         done.setOnClickListener(new View.OnClickListener() {
