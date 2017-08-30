@@ -88,6 +88,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_main);
         context = this;
 
+        Log.i("log", "starting getter");
+
+        DataGetterFromServer dataGetterFromServer = new DataGetterFromServer();
+        dataGetterFromServer.getDataFromServer();
+
+        Log.i("log", "finished getter");
+
         eventsDBHelper = new DatabaseHelper(context);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -196,6 +203,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         tempArrayList.add(new Events(234234323,"Hello",0,new LatLng(35.652832,139.839478),"Tokyo","hello"));
         tempArrayList.add(new Events(234234323,"Hello",0,new LatLng(11,2),"Tokyo","hello"));
         tempArrayList.add(new Events(234234323,"Hello",0,new LatLng(20.435,4),"Tokyo","hello"));
+
+        DataGetterFromServer dataGetterFromServer = new DataGetterFromServer();
+        ArrayList<Events> eventsArrayList = dataGetterFromServer.getDataFromServer();
+        for (int a = 0; a < eventsArrayList.size(); a++){
+            tempArrayList.add(eventsArrayList.get(a));
+        }
 
         for(Events x:tempArrayList){
             Log.v("tempEvent:",x.getName());
