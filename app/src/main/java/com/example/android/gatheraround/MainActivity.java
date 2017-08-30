@@ -12,6 +12,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -21,6 +22,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,6 +83,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     ListView eventListView;
     private Map<MarkerOptions,Events> eventMarkerMap;
     ArrayList<Events> returner = new ArrayList<>();
+    BottomNavigationView bottomNavigationView;
 
     int cYear = 2017;
     int cMonth = 7;
@@ -746,6 +749,23 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
+        bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_individual:
+
+                            case R.id.action_corporate:
+
+                            case R.id.action_npo:
+
+                        }
+                        return true;
+                    }
+                });
 
     }
     public void addEventMarkers(Cursor c){
@@ -813,6 +833,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
         for(MarkerOptions x:eventMarkerMap.keySet()){
         }
+
 
     }
     public Bitmap resizeMapIcons(String iconName, int width, int height){

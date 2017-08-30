@@ -2,20 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_favorites"
+        android:id="@+id/action_npo"
         android:enabled="true"
         android:icon="@drawable/ic_language_black_24dp"
         android:title="Npo"
         app:showAsAction="ifRoom"
         />
     <item
-        android:id="@+id/action_schedules"
+        android:id="@+id/action_corporate"
         android:enabled="true"
         android:icon="@drawable/ic_account_balance_black_24dp"
         android:title="Corporate"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_music"
+        android:id="@+id/action_individual"
         android:enabled="true"
         android:icon="@drawable/ic_account_circle_black_24dp"
         android:title="Individual"
