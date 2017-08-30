@@ -5,14 +5,17 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.EventLog;
 import android.util.Log;
 
+import com.example.android.gatheraround.DataSenderToServer;
 import com.example.android.gatheraround.custom_classes.Participants;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
 import static com.example.android.gatheraround.R.id.d;
 import static com.example.android.gatheraround.data.myInfoDatabase.COL1;
+import com.example.android.gatheraround.custom_classes.Events;
 
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -26,6 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_LOCATION = "LOCATION";
     public static final String COL_LOCATIONNAME = "LOCATIONNAME";
     public static final String COL_SUMMARY = "SUMMARY";
+    DataSenderToServer dataSenderToServer = new DataSenderToServer();
     private Context context;
 
     private static final String[] ALL_COLUMNS = new String[]{
@@ -72,6 +76,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_LOCATIONNAME, locationName);
         contentValues.put(COL_SUMMARY, summary);
 
+        Events newEvents = new Events(unixtime,event_name,participants,location,locationName,summary);
+        dataSenderToServer.pushToServer(newEvents);
         long result  = db.insert(TABLE_NAME, null, contentValues);
         if(result == -1){
             return false;

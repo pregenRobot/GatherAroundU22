@@ -61,8 +61,6 @@ public class ContactsAdapter extends ArrayAdapter<People> {
             }
         });
 
-
-
         de.hdodenhof.circleimageview.CircleImageView personImage = listItemView.findViewById(R.id.personImage);
         if(position%2!=0){
             card.setBackgroundColor(getcardbackground());

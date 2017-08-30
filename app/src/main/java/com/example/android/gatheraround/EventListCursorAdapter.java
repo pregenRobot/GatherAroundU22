@@ -2,6 +2,7 @@ package com.example.android.gatheraround;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -39,6 +40,7 @@ public class EventListCursorAdapter extends CursorAdapter {
     DatabaseHelper dbHelper;
     Context mContext;
     String[] whereClause;
+    Intent mainActivityIntent;
 
     public EventListCursorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
@@ -162,7 +164,11 @@ public class EventListCursorAdapter extends CursorAdapter {
                         }
                     }
                 });
+                mainActivityIntent = new Intent(mContext,MainActivity.class);
+                mContext.startActivity(mainActivityIntent);
+
                 return true;
+                //Hello
             }
         });
 
