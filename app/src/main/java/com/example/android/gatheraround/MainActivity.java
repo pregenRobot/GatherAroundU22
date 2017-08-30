@@ -200,8 +200,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         for(Events x:tempArrayList){
             Log.v("tempEvent:",x.getName());
         }
+        eventMarkerMap = new HashMap<>();
 
-        addMarkers(new ArrayList<Events>());
+        addMarkers(tempArrayList);
         Log.v("Markers:","Supposed to be Added");
 
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
@@ -735,6 +736,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public void addMarkers(ArrayList<Events> eventList){
 
         Log.v("addMarker method","Going to add markers:");
+        for(Events x:eventList){
+            Log.v("theseEventspassed:",x.getName());
+        }
         for(Events x:eventList){
             MarkerOptions marker = new MarkerOptions().position(x.getLocation()).title(x.getName());
             eventMarkerMap.put(newMarker,x);
