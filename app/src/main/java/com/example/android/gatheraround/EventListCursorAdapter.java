@@ -112,7 +112,7 @@ public class EventListCursorAdapter extends CursorAdapter {
         card.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                whereClause = new String[] {mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME))};
+                whereClause = new String[] {String.valueOf(mCursor.getLong(mCursor.getColumnIndex(DatabaseHelper.COL_ID)))};
                 Log.v("Where clause:",whereClause[0]);
 
                 LayoutInflater mLayoutInflator;
@@ -155,13 +155,14 @@ public class EventListCursorAdapter extends CursorAdapter {
                     @Override
                     public void onClick(View view) {
 
-                        int tru = db.delete(dbHelper.TABLE_NAME, dbHelper.COL_NAME+"=?", whereClause);
+                        int tru = db.delete(dbHelper.TABLE_NAME, dbHelper.COL_ID+"=?", whereClause);
 
                         if(tru == 1){
                             Log.v("Delete: ", "SuccessFull!"+mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)-1));
                         }else{
                             Log.v("Delete: ", "Failed!"+mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
                         }
+                        dialog.dismiss();
 
                         mainActivityIntent = new Intent(mContext,MainActivity.class);
                         mContext.startActivity(mainActivityIntent);
