@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="400dp"
+    android:layout_height="match_parent"
     android:background="@color/cardbackground2"
     >
     <LinearLayout
@@ -11,6 +11,7 @@
         android:layout_weight="1"
         android:orientation="horizontal"
         android:layout_marginBottom="9dp"
+
         >
         <LinearLayout
             android:layout_width="0dp"
@@ -29,6 +30,7 @@
                 android:background="@color/cardbackground"
                 android:id="@+id/yplus"
                 android:clickable="true"
+                android:padding="8dp"
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -38,6 +40,7 @@
                 android:textSize="32sp"
                 android:text="2017"
                 android:id="@+id/y"
+                android:padding="8dp"
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -50,6 +53,7 @@
                 android:background="@color/cardbackground"
                 android:id="@+id/yminus"
                 android:clickable="true"
+                android:padding="8dp"
                 />
         </LinearLayout>
         <LinearLayout
@@ -69,6 +73,7 @@
                 android:background="@color/cardbackground"
                 android:id="@+id/mplus"
                 android:clickable="true"
+                android:padding="8dp"
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -78,6 +83,7 @@
                 android:gravity="center"
                 android:textSize="32sp"
                 android:id="@+id/m"
+                android:padding="8dp"
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -90,6 +96,7 @@
                 android:background="@color/cardbackground"
                 android:id="@+id/mminus"
                 android:clickable="true"
+                android:padding="8dp"
                 />
         </LinearLayout>
         <LinearLayout
@@ -109,6 +116,7 @@
                 android:background="@color/cardbackground"
                 android:id="@+id/dplus"
                 android:clickable="true"
+                android:padding="8dp"
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -118,6 +126,7 @@
                 android:textSize="32sp"
                 android:text="30"
                 android:id="@+id/d"
+                android:padding="8dp"
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -130,6 +139,7 @@
                 android:background="@color/cardbackground"
                 android:id="@+id/dminus"
                 android:clickable="true"
+                android:padding="8dp"
                 />
         </LinearLayout>
 
@@ -158,6 +168,7 @@
                 android:id="@+id/hplus"
                 android:clickable="true"
                 android:textStyle="bold"
+                android:padding="8dp"
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -167,6 +178,7 @@
                 android:gravity="center"
                 android:textSize="32sp"
                 android:id="@+id/h"
+                android:padding="8dp"
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -179,6 +191,7 @@
                 android:id="@+id/hminus"
                 android:clickable="true"
                 android:textStyle="bold"
+                android:padding="8dp"
                 />
         </LinearLayout>
         <LinearLayout
@@ -193,6 +206,7 @@
                 android:gravity="center"
                 android:textSize="32sp"
                 android:background="@color/cardbackground"
+                android:padding="8dp"
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -201,6 +215,7 @@
                 android:gravity="center"
                 android:textSize="32sp"
                 android:text=":"
+                android:padding="8dp"
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -209,6 +224,7 @@
                 android:gravity="center"
                 android:textSize="32sp"
                 android:background="@color/cardbackground"
+                android:padding="8dp"
                 />
         </LinearLayout>
         <LinearLayout
@@ -228,6 +244,7 @@
                 android:id="@+id/minplus"
                 android:clickable="true"
                 android:textStyle="bold"
+                android:padding="8dp"
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -237,6 +254,7 @@
                 android:textSize="32sp"
                 android:text="45"
                 android:id="@+id/min"
+                android:padding="8dp"
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -249,6 +267,7 @@
                 android:id="@+id/minminus"
                 android:clickable="true"
                 android:textStyle="bold"
+                android:padding="8dp"
                 />
         </LinearLayout>
 
@@ -270,6 +289,7 @@
             android:textStyle="bold"
             android:clickable="true"
             android:id="@+id/timeCancel"
+            android:padding="16dp"
             />
         <TextView
             android:layout_width="0dp"
@@ -281,6 +301,7 @@
             android:textStyle="bold"
             android:clickable="true"
             android:id="@+id/timeDone"
+            android:padding="16dp"
             />
 
     </LinearLayout>

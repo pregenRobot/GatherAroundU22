@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="300dp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Choose an Action"
+        android:background="@color/cardbackground"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:padding="18dp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Edit Info"
+        android:textSize="18sp"
+        android:background="@color/cardbackground2"
+        android:clickable="true"
+        android:id="@+id/editInfoAction"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:padding="18dp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Delete Entry"
+        android:textSize="18sp"
+        android:background="@color/cardbackground2"
+        android:clickable="true"
+        android:id="@+id/deleteEntryAction"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:padding="18dp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Cancel"
+        android:textSize="18sp"
+        android:background="@color/cardbackground2"
+        android:clickable="true"
+        android:id="@+id/cancelAction"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:padding="18dp"
+        />
+
+</LinearLayout>

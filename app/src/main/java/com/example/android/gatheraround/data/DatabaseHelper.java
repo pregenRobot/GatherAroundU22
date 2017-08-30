@@ -5,11 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.example.android.gatheraround.custom_classes.Participants;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
+import static com.example.android.gatheraround.R.id.d;
 import static com.example.android.gatheraround.data.myInfoDatabase.COL1;
 
 
@@ -87,11 +89,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return c;
 
     }
-
-    public Cursor showData(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor data = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
-        return data;
+    public boolean deleteEvent(long rowId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] row = new String[]{rowId+""};
+        Log.v("Deleting event",rowId+"");
+        boolean tru = db.delete(this.TABLE_NAME, this.COL_NAME+"=?", row) > 0;
+        return tru;
     }
+
 
 }

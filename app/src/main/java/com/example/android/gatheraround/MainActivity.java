@@ -2,11 +2,16 @@ package com.example.android.gatheraround;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
@@ -52,10 +57,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     RecyclerView rv;
     LinearLayoutManager llm;
     Context context;
-    FloatingActionButton contactsbutton;
-    FloatingActionButton testButton;
-    Intent contactsintent;
-    Intent testIntent;
+    //    FloatingActionButton contactsbutton;
+//    FloatingActionButton testButton;
+//    Intent contactsintent;
+//    Intent testIntent;
+    FloatingActionButton zoomIn;
+    FloatingActionButton zoomOut;
 
     DatabaseHelper eventsDBHelper;
     EventListCursorAdapter eventListCursorAdapter;
@@ -68,6 +75,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     int cHour = 23;
     int cMinute = 20;
     long unixTimestamp;
+    LocationManager mLocationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +89,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
         LinearLayout bottomsheet =
                 findViewById(R.id.bottomsheet);
         mBottomsheetbehvior = BottomSheetBehavior.from(bottomsheet);
@@ -93,15 +100,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         eventListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mBottomsheetbehvior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                if (mBottomsheetbehvior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
                     mBottomsheetbehvior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     eventListButton.setText("Hide");
-                }
-                else if(mBottomsheetbehvior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+                } else if (mBottomsheetbehvior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
                     mBottomsheetbehvior.setState(BottomSheetBehavior.STATE_HIDDEN);
                     eventListButton.setText("Event List Button");
-                }
-                else if(mBottomsheetbehvior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+                } else if (mBottomsheetbehvior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
                     mBottomsheetbehvior.setState(BottomSheetBehavior.STATE_EXPANDED);
                     eventListButton.setText("Peek");
                 }
@@ -113,11 +118,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_EXPANDED) {
                     eventListButton.setText("Peek");
-                }
-                else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     eventListButton.setText("Hide");
-                }
-                else if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                } else if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                     eventListButton.setText("Event List Button");
                 }
             }
@@ -127,14 +130,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
-
         llm = new LinearLayoutManager(context);
-        final ListView eventListView =  (ListView) findViewById(R.id.eventlistview);
+        final ListView eventListView = (ListView) findViewById(R.id.eventlistview);
         final DatabaseHelper eventManager = new DatabaseHelper(context);
 
-        Thread thread = new Thread(new Runnable(){
+        Thread thread = new Thread(new Runnable() {
             @Override
-            public void run(){
+            public void run() {
                 eventCursor = eventManager.getAllEvents();
                 eventListCursorAdapter = new EventListCursorAdapter(
                         MainActivity.this,
@@ -146,25 +148,45 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
         thread.start();
 
-        contactsbutton = (FloatingActionButton) findViewById(R.id.contactsbutton);
-        contactsbutton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                contactsintent = new Intent(MainActivity.this,ContactActivity.class);
-                MainActivity.this.startActivity(contactsintent);
-            }
-        });
+//        contactsbutton = (FloatingActionButton) findViewById(R.id.contactsbutton);
+//        contactsbutton.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view){
+//                contactsintent = new Intent(MainActivity.this,ContactActivity.class);
+//                MainActivity.this.startActivity(contactsintent);
+//            }
+//        });
+//
+//        testButton = (FloatingActionButton) findViewById(R.id.chatbutton);
+//
+//        testButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                testIntent = new Intent(MainActivity.this,testActivity.class);
+//                MainActivity.this.startActivity(testIntent);
+//            }
+//        });
+        zoomIn = (FloatingActionButton) findViewById(R.id.zoomIn);
+        zoomOut = (FloatingActionButton) findViewById(R.id.zoomOut);
 
-        testButton = (FloatingActionButton) findViewById(R.id.chatbutton);
-
-        testButton.setOnClickListener(new View.OnClickListener() {
+        zoomIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                testIntent = new Intent(MainActivity.this,testActivity.class);
-                MainActivity.this.startActivity(testIntent);
+                float zoomlevel = mMap.getCameraPosition().zoom;
+                zoomlevel = zoomlevel + 2;
+                final CameraPosition zoomLocation = CameraPosition.builder().target(mMap.getCameraPosition().target).zoom(zoomlevel).build();
+                MainActivity.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(zoomLocation));
             }
         });
-
+        zoomOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                float zoomlevel = mMap.getCameraPosition().zoom;
+                zoomlevel = zoomlevel - 2;
+                final CameraPosition zoomLocation = CameraPosition.builder().target(mMap.getCameraPosition().target).zoom(zoomlevel).build();
+                MainActivity.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(zoomLocation));
+            }
+        });
 
     }
 
@@ -176,6 +198,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         Cursor c = eventsDBHelper.getAllEvents();
 
         this.addEventMarkers(c);
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(school));
         final DatabaseHelper eventManager = new DatabaseHelper(context);
@@ -439,7 +466,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                         });
                 doneButton.setOnClickListener(new View.OnClickListener() {
-
                     @Override
                     public void onClick(View view) {
                         Long newUnixTime = unixTimestamp;
@@ -477,7 +503,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         }else{
                             Toast.makeText(MainActivity.this, "Please fill in all the fields",Toast.LENGTH_SHORT).show();
                         }
-
+                        dialog.dismiss();
                     }
                 });
                 cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -488,6 +514,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 });
             }
         });
+
     }
     public void moveCamera(LatLng location){
 
