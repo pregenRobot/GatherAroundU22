@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -189,7 +190,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        LatLng school = new LatLng(-34, 151);
+//        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        Criteria criteria = new Criteria();
+//        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+//        double lat = location.getLatitude();
+//        double lng = location.getLongitude();
+
+        LatLng school = new LatLng(37.422006, -122.084095);
 
         Cursor c = eventsDBHelper.getAllEvents();
 
@@ -726,10 +733,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     int participants = Integer.parseInt(snapshot.child("participants").getValue().toString());
                     double longitude = (double)snapshot.child("location/longitude").getValue();
                     double latitude = (double)snapshot.child("location/latitude").getValue();
+                    Log.v("LatLngCheck",event_name + " : " + String.valueOf(longitude) + ":" + String.valueOf(latitude));
                     String locationName = snapshot.child("locationName").getValue().toString();
                     String summary = snapshot.child("eventSummary").getValue().toString();
 
-                    LatLng location = new LatLng(longitude, latitude);
+                    LatLng location = new LatLng(latitude,longitude);
 
                     Events newEvents = new Events(unixtime,event_name,participants,location,locationName,summary);
 
