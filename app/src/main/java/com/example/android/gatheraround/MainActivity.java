@@ -68,6 +68,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     EventListCursorAdapter eventListCursorAdapter;
     Cursor eventCursor;
     Gson gson;
+    DatabaseHelper eventManager;
+    ListView eventListView;
 
     int cYear = 2017;
     int cMonth = 7;
@@ -76,6 +78,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     int cMinute = 20;
     long unixTimestamp;
     LocationManager mLocationManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,9 +137,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         final ListView eventListView = (ListView) findViewById(R.id.eventlistview);
         final DatabaseHelper eventManager = new DatabaseHelper(context);
 
-        Thread thread = new Thread(new Runnable() {
+        runOnUiThread(new Runnable(){
             @Override
-            public void run() {
+            public void run(){
                 eventCursor = eventManager.getAllEvents();
                 eventListCursorAdapter = new EventListCursorAdapter(
                         MainActivity.this,
@@ -146,7 +149,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 eventListView.setAdapter(eventListCursorAdapter);
             }
         });
-        thread.start();
 
 //        contactsbutton = (FloatingActionButton) findViewById(R.id.contactsbutton);
 //        contactsbutton.setOnClickListener(new View.OnClickListener(){
@@ -205,8 +207,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMyLocationEnabled(true);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(school));
-        final DatabaseHelper eventManager = new DatabaseHelper(context);
-        final ListView eventListView =  (ListView) findViewById(R.id.eventlistview);
+        eventManager = new DatabaseHelper(context);
+        eventListView =  (ListView) findViewById(R.id.eventlistview);
 
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
@@ -486,19 +488,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 Log.v("Database","Data Insert Failed!");
 
                             }
-                            eventListCursorAdapter.notifyDataSetChanged();
-                            runOnUiThread(new Runnable(){
-                                @Override
-                                public void run(){
-                                    eventCursor = eventManager.getAllEvents();
-                                    eventListCursorAdapter = new EventListCursorAdapter(
-                                            MainActivity.this,
-                                            eventCursor,
-                                            0);
-
-                                    eventListView.setAdapter(eventListCursorAdapter);
-                                }
-                            });
+                            upDateListView();
                             dialog.dismiss();
                         }else{
                             Toast.makeText(MainActivity.this, "Please fill in all the fields",Toast.LENGTH_SHORT).show();
@@ -554,6 +544,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         Log.v("Time Added:",(int) (c.getTimeInMillis() / 1000L)+"");
 
         return (int) (c.getTimeInMillis() / 1000L);
+    }
+
+    public void upDateListView(){
+        runOnUiThread(new Runnable(){
+            @Override
+            public void run(){
+                eventCursor = eventManager.getAllEvents();
+                eventListCursorAdapter = new EventListCursorAdapter(
+                        MainActivity.this,
+                        eventCursor,
+                        0);
+                eventListView.setAdapter(eventListCursorAdapter);
+            }
+        });
     }
 
 }

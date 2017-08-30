@@ -2,6 +2,7 @@ package com.example.android.gatheraround;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -25,6 +26,7 @@ import com.google.gson.Gson;
 
 import org.w3c.dom.Text;
 
+import static android.os.Build.VERSION_CODES.M;
 import static com.example.android.gatheraround.R.id.d;
 
 /**
@@ -39,6 +41,8 @@ public class EventListCursorAdapter extends CursorAdapter {
     DatabaseHelper dbHelper;
     Context mContext;
     String[] whereClause;
+    MainActivity mainA = new MainActivity();
+    Intent mainActivityIntent;
 
     public EventListCursorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
@@ -160,6 +164,8 @@ public class EventListCursorAdapter extends CursorAdapter {
                         }else{
                             Log.v("Delete: ", "Failed!"+mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
                         }
+                        mainActivityIntent = new Intent(mContext,MainActivity.class);
+                        mContext.startActivity(mainActivityIntent);
                     }
                 });
                 return true;
