@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -42,6 +44,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -52,11 +56,12 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Map;
 
 import static android.R.attr.x;
 import static android.os.Build.VERSION_CODES.M;
 
-public class MainActivity extends FragmentActivity implements OnMapReadyCallback,GoogleMap.OnMarkerClickListener {
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback{
 
     public static BottomSheetBehavior mBottomsheetbehvior;
     public static GoogleMap mMap;
@@ -73,7 +78,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     Gson gson;
     DatabaseHelper eventManager;
     ListView eventListView;
-    private HashMap<Marker,Events> eventMarkerMap;
+    private Map<MarkerOptions,Events> eventMarkerMap;
+    ArrayList<Events> receivedEventsfromData;
 
     int cYear = 2017;
     int cMonth = 7;
@@ -91,7 +97,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i("log", "starting getter");
 
         DataGetterFromServer dataGetterFromServer = new DataGetterFromServer();
-        dataGetterFromServer.getDataFromServer();
+        receivedEventsfromData = dataGetterFromServer.getDataFromServer();
 
         Log.i("log", "finished getter");
 
@@ -201,8 +207,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         ArrayList<Events> tempArrayList = new ArrayList<Events>();
         tempArrayList.add(new Events(234234323,"Hello",0,new LatLng(35.652832,139.839478),"Tokyo","hello"));
-        tempArrayList.add(new Events(234234323,"Hello",0,new LatLng(11,2),"Tokyo","hello"));
-        tempArrayList.add(new Events(234234323,"Hello",0,new LatLng(20.435,4),"Tokyo","hello"));
+        tempArrayList.add(new Events(234234323,"Hello2",0,new LatLng(11,2),"Tokyo","hello"));
+        tempArrayList.add(new Events(234234323,"Hello3",0,new LatLng(20.435,4),"Tokyo","hello"));
 
         DataGetterFromServer dataGetterFromServer = new DataGetterFromServer();
         ArrayList<Events> eventsArrayList = dataGetterFromServer.getDataFromServer();
@@ -215,13 +221,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
         eventMarkerMap = new HashMap<>();
 
-        addMarkers(tempArrayList);
-        Log.v("Markers:","Supposed to be Added");
+        DataGetterFromServer dataGetterFromServer1 = new DataGetterFromServer();
+
+        addMarkers(receivedEventsfromData);
 
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(final LatLng latLng) {
-                Log.v("Map Clicked",latLng.toString());
 
                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
                 View mView = getLayoutInflater().inflate(R.layout.edit_event_popup,null);
@@ -695,6 +701,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 });
             }
         });
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(final Marker marker) {
+
+
+                if (marker.equals(newMarkerOptions))
+                {
+                    MarkerOptions currentMarker = newMarkerOptions;
+                    Events currentEvent = eventMarkerMap.get(newMarkerOptions);
+                    Log.v("Marker Clicked!:",currentEvent.getName());
+                }
+                return  true;
+            }
+        });
 
     }
     public void addEventMarkers(Cursor c){
@@ -744,33 +764,35 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
-    private Marker newMarker;
+
     private MarkerOptions newMarkerOptions;
     public void addMarkers(ArrayList<Events> eventList){
 
-        Log.v("addMarker method","Going to add markers:");
+        Log.v("InsertedEntries:",eventList.size()+"");
+
         for(Events x:eventList){
-            Log.v("theseEventspassed:",x.getName());
-        }
-        for(Events x:eventList){
-            MarkerOptions marker = new MarkerOptions().position(x.getLocation()).title(x.getName());
-            eventMarkerMap.put(newMarker,x);
+            newMarkerOptions = new MarkerOptions().position(x.getLocation()).title(x.getName())
+                    .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("web_hi_res_512",100,100)));
+
+            String testMarker = newMarkerOptions.toString();
+            Log.v("TestMarker",testMarker);
+            eventMarkerMap.put(newMarkerOptions,x);
             Log.v("addMarkers","Markers added!" + x.getName());
-            mMap.addMarker(marker);
+            mMap.addMarker(newMarkerOptions);
+            Log.v("InsertedEvents:",x.getName());
+        }
+        for(MarkerOptions x:eventMarkerMap.keySet()){
+            Log.v("eventMarkerMap",eventMarkerMap.get(x).getName());
+            Log.v("number ofEntries",eventMarkerMap.size()+"");
         }
 
     }
-    @Override
-    public boolean onMarkerClick(final Marker marker) {
-
-        if (marker.equals(newMarker))
-        {
-            Marker currentMarker = newMarker;
-            Events currentEvent = eventMarkerMap.get(newMarker);
-            Log.v("Marker Clicked!:",currentEvent.getName());
-        }
-        return  true;
+    public Bitmap resizeMapIcons(String iconName, int width, int height){
+        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),getResources().getIdentifier(iconName, "drawable", getPackageName()));
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+        return resizedBitmap;
     }
+
 
 }
 
