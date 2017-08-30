@@ -28,7 +28,7 @@ public class InitalBlankActivity extends AppCompatActivity {
 
         myInfoDatabase myinfo = new myInfoDatabase(context);
 
-        boolean insertData = myinfo.initialize("Tamim Azmain",R.drawable.tedzukaosamu,"tamimAzmain");
+//        boolean insertData = myinfo.initialize("Tamim Azmain",R.drawable.tedzukaosamu,"tamimAzmain");
 
 //        if (insertData == true) {
 //            Toast.makeText(InitalBlankActivity.this, "Data Successfully Inserted! " +

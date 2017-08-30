@@ -19,7 +19,6 @@
             android:id="@+id/meal_image_order"
             android:layout_width="128dp"
             android:layout_height="128dp"
-            android:src="@drawable/angelinajolie"
             app:civ_border_width="8dp"
             app:civ_border_color="@color/cardbackground"
             android:layout_gravity="center"

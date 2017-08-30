@@ -211,15 +211,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         eventManager = new DatabaseHelper(context);
         eventListView =  (ListView) findViewById(R.id.eventlistview);
 
-        ArrayList<Events> tempArrayList = new ArrayList<Events>();
-        tempArrayList.add(new Events(234234323,"Hello",0,new LatLng(35.652832,139.839478),"Tokyo","hello"));
-        tempArrayList.add(new Events(234234323,"Hello2",0,new LatLng(11,2),"Tokyo","hello"));
-        tempArrayList.add(new Events(234234323,"Hello3",0,new LatLng(20.435,4),"Tokyo","hello"));
-
-
-        for(Events x:tempArrayList){
-            Log.v("tempEvent:",x.getName());
-        }
         eventMarkerMap = new HashMap<>();
 
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
@@ -705,7 +696,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onMarkerClick(final Marker marker) {
 
-
                 if (marker.equals(newMarkerOptions))
                 {
                     MarkerOptions currentMarker = newMarkerOptions;
@@ -718,8 +708,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/");
 
         final ArrayList<Events> eventsArrayList = new ArrayList<Events>();
-
-
         firebase.child("eventPostDetails").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -759,7 +747,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        Log.v("InsertedEntriesReturn:",eventsArrayList.size()+"");
     }
     public void addEventMarkers(Cursor c){
 
@@ -819,17 +806,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         for(Events x:eventList){
             newMarkerOptions = new MarkerOptions().position(x.getLocation()).title(x.getName())
                     .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("web_hi_res_512",100,100)));
-
             String testMarker = newMarkerOptions.toString();
-            Log.v("TestMarker",testMarker);
             eventMarkerMap.put(newMarkerOptions,x);
-            Log.v("addMarkers","Markers added!" + x.getName());
             mMap.addMarker(newMarkerOptions);
-            Log.v("InsertedEvents:",x.getName());
+
         }
         for(MarkerOptions x:eventMarkerMap.keySet()){
-            Log.v("eventMarkerMap",eventMarkerMap.get(x).getName());
-            Log.v("number ofEntries",eventMarkerMap.size()+"");
         }
 
     }

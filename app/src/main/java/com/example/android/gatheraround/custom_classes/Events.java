@@ -19,6 +19,10 @@ public class Events {
     private Calculations calcref = new Calculations();
     private String mEventSummary;
 
+    public static final String CATEGORY_NPO = "NPO";
+    public static final String CATEGORY_INDIVIDUAL = "INDIVIDUAL";
+    public static final String CATEGORY_CORPORATE = "CORPORATE";
+
     public Events(long unixTimeStanp, String name,int participants,LatLng Latilong,String locationname, String eventsummary){
         mUnixTimeStanp = unixTimeStanp;
         mName = name;

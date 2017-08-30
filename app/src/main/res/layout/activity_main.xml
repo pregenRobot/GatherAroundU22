@@ -28,32 +28,8 @@
             android:layout_margin="8dp"
             android:text="EventList Button"
             android:id="@+id/eventlistbutton"
-            android:layout_alignParentBottom="true"
+            android:layout_above="@+id/bottom_navigation"
             />
-        <!--<ImageButton-->
-            <!--android:layout_width="50dp"-->
-            <!--android:layout_height="50dp"-->
-            <!--android:src="@drawable/contactsbutton"-->
-            <!--android:scaleType="fitCenter"-->
-            <!--android:background="@null"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_alignParentEnd="true"-->
-            <!--android:layout_margin="12dp"-->
-            <!--android:id="@+id/contactsbutton"-->
-            <!--android:clickable="true"-->
-            <!--/>-->
-        <!--<android.support.design.widget.FloatingActionButton-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@drawable/contactsbutton"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_alignParentEnd="true"-->
-            <!--android:layout_margin="12dp"-->
-            <!--android:id="@+id/contactsbutton"-->
-            <!--android:clickable="true"-->
-            <!--app:backgroundTint="@color/cardbackground2"-->
-            <!--app:fabSize="normal"-->
-            <!--/>-->
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -82,17 +58,16 @@
             android:layout_marginRight="12dp"
             android:layout_below="@+id/zoomOut"
             />
-        <!--<android.support.design.widget.FloatingActionButton-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@drawable/messageunpressed"-->
-            <!--android:id="@+id/chatbutton"-->
-            <!--android:clickable="true"-->
-            <!--app:backgroundTint="@color/cardbackground2"-->
-            <!--app:fabSize="normal"-->
-            <!--android:layout_marginRight="12dp"-->
-            <!--android:layout_below="@+id/contactsbutton"-->
-            <!--android:layout_alignStart="@+id/contactsbutton" />-->
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            app:itemBackground="@color/cardbackground"
+            app:itemIconTint="@color/white"
+            app:itemTextColor="@color/white"
+            app:menu="@menu/bottom_navigation_main" />
+
     </RelativeLayout>
 
 <LinearLayout

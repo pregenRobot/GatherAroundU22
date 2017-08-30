@@ -131,17 +131,17 @@ public class ContactActivity extends AppCompatActivity {
 
                                 tempName = nameedit2.getText().toString();
 
-                                boolean insertData = contactManager.addData(tempName,R.drawable.angelinajolie,null,tempUniqueId);
+//                                boolean insertData = contactManager.addData(tempName,R.drawable.angelinajolie,null,tempUniqueId);
 
-                                if (insertData == true) {
-                                    Toast.makeText(ContactActivity.this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
-                                    Log.v("Database","Data Successfully Inserted!");
-                                } else {
-                                    Toast.makeText(ContactActivity.this, "Something went wrong :(.", Toast.LENGTH_LONG).show();
-                                    Log.v("Database","Data Insert Failed!");
-                                }
-                                finish();
-                                startActivity(getIntent());
+//                                if (insertData == true) {
+//                                    Toast.makeText(ContactActivity.this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
+//                                    Log.v("Database","Data Successfully Inserted!");
+//                                } else {
+//                                    Toast.makeText(ContactActivity.this, "Something went wrong :(.", Toast.LENGTH_LONG).show();
+//                                    Log.v("Database","Data Insert Failed!");
+//                                }
+//                                finish();
+//                                startActivity(getIntent());
                             }
                         });
                     }
