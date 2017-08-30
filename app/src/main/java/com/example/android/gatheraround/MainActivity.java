@@ -214,6 +214,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         eventManager = new DatabaseHelper(context);
         eventListView =  (ListView) findViewById(R.id.eventlistview);
 
+        ArrayList<Events> tempArrayList = new ArrayList<Events>();
+
+//        tempArrayList.add(new Events(234234323,"Hello",0,new LatLng(35.652832,139.839478),"Tokyo","hello"));
+//        tempArrayList.add(new Events(234234323,"Hello2",0,new LatLng(11,2),"Tokyo","hello"));
+//        tempArrayList.add(new Events(234234323,"Hello3",0,new LatLng(20.435,4),"Tokyo","hello"));
+
+
+        for(Events x:tempArrayList){
+            Log.v("tempEvent:",x.getName());
+        }
         eventMarkerMap = new HashMap<>();
 
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
@@ -667,7 +677,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     unixTimestamp, 20,
                                     latLng,
                                     locationNameEdit.getText().toString(),
-                                    summaryEdit.getText().toString()
+                                    summaryEdit.getText().toString(),
+                                    DatabaseHelper.CATEGORY_DEFAULT
                             );
                             if (insertData == true) {
                                 Toast.makeText(MainActivity.this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
@@ -727,10 +738,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.v("LatLngCheck",event_name + " : " + String.valueOf(longitude) + ":" + String.valueOf(latitude));
                     String locationName = snapshot.child("locationName").getValue().toString();
                     String summary = snapshot.child("eventSummary").getValue().toString();
+                    String category = snapshot.child("category").getValue().toString();
 
                     LatLng location = new LatLng(latitude,longitude);
 
-                    Events newEvents = new Events(unixtime,event_name,participants,location,locationName,summary);
+                    Events newEvents = new Events(unixtime, event_name, participants, location, locationName, summary, category);
 
                     Log.v("FromServer:",newEvents.toString());
 
@@ -841,7 +853,5 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
         return resizedBitmap;
     }
-
-
 }
 

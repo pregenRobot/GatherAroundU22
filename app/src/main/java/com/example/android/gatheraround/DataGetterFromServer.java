@@ -41,10 +41,11 @@ public class DataGetterFromServer {
                     double latitude = (double)snapshot.child("location/latitude").getValue();
                     String locationName = snapshot.child("locationName").getValue().toString();
                     String summary = snapshot.child("eventSummary").getValue().toString();
+                    String category = snapshot.child("category").getValue().toString();
 
                     LatLng location = new LatLng(longitude, latitude);
 
-                    Events newEvents = new Events(unixtime,event_name,participants,location,locationName,summary);
+                    Events newEvents = new Events(unixtime, event_name, participants, location, locationName, summary, category);
                     Log.v("InsertedEntriesServer:",eventsArrayList.size()+"");
 
                     eventsArrayList.add(newEvents);

@@ -18,36 +18,45 @@ public class Events {
     private String mLocationName;
     private Calculations calcref = new Calculations();
     private String mEventSummary;
+    private String mCategory;
 
-    public static final String CATEGORY_NPO = "NPO";
-    public static final String CATEGORY_INDIVIDUAL = "INDIVIDUAL";
-    public static final String CATEGORY_CORPORATE = "CORPORATE";
-
-    public Events(long unixTimeStanp, String name,int participants,LatLng Latilong,String locationname, String eventsummary){
+    public Events(long unixTimeStanp, String name,int participants,LatLng Latilong,String locationname, String eventsummary, String category){
         mUnixTimeStanp = unixTimeStanp;
         mName = name;
         mParticipants = participants;
         mLocation = Latilong;
         mLocationName = locationname;
         mEventSummary = eventsummary;
+        mCategory = category;
     }
 
     public long getUnixTimeStamp(){
         return mUnixTimeStanp;
     }
+
     public String getName(){
         return mName;
     }
+
     public int getParticipants(){
         return mParticipants;
     }
+
     public LatLng getLocation(){
         return mLocation;
     }
+
     public String getLocationName(){
         return mLocationName;
     }
-    public String getEventSummary(){return mEventSummary;}
+
+    public String getEventSummary(){
+        return mEventSummary;
+    }
+
+    public String getCategory(){
+        return mCategory;
+    }
 
     public String toString(){
         String returner = String.valueOf(mUnixTimeStanp) + " / " + mName + " / " + mParticipants + " / " + mLocation.toString() + " / " + mLocationName + " / " + mEventSummary;
