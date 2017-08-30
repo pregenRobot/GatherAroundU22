@@ -85,7 +85,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }else{
             return true;
         }
-
+//
     }
     public Cursor getAllEvents(){
         SQLiteDatabase db = this.getReadableDatabase();
