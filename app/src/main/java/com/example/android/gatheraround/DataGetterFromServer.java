@@ -43,6 +43,8 @@ public class DataGetterFromServer {
                     LatLng location = new LatLng(longitude, latitude);
 
                     Events newEvents = new Events(unixtime,event_name,participants,location,locationName,summary);
+                    Log.v("InsertedEntriesServer:",eventsArrayList.size()+"");
+
                     eventsArrayList.add(newEvents);
                 }
             }
@@ -53,6 +55,7 @@ public class DataGetterFromServer {
             }
         });
 
+        Log.v("InsertedEntriesReturn:",eventsArrayList.size()+"");
         return  eventsArrayList;
     }
 }

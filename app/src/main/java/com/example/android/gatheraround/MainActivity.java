@@ -98,6 +98,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         DataGetterFromServer dataGetterFromServer = new DataGetterFromServer();
         receivedEventsfromData = dataGetterFromServer.getDataFromServer();
+        Log.v("InsertedEntriesMain:",receivedEventsfromData.size()+"");
 
         Log.i("log", "finished getter");
 
@@ -768,7 +769,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private MarkerOptions newMarkerOptions;
     public void addMarkers(ArrayList<Events> eventList){
 
-        Log.v("InsertedEntries:",eventList.size()+"");
+        Log.v("InsertedEntriesMarker:",eventList.size()+"");
 
         for(Events x:eventList){
             newMarkerOptions = new MarkerOptions().position(x.getLocation()).title(x.getName())
