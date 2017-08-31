@@ -60,6 +60,7 @@ public class EventListCursorAdapter extends CursorAdapter {
         TextView summaryText = (TextView) view.findViewById(R.id.event_summary);
         TextView participantsText = (TextView) view.findViewById(R.id.event_participantNum);
         TextView locationText = (TextView) view.findViewById(R.id.event_location);
+        TextView categoryText = (TextView) view.findViewById(R.id.event_category);
         CardView card = (CardView) view.findViewById(R.id.CardViewItem);
 
         final Cursor mCursor = cursor;
@@ -78,6 +79,7 @@ public class EventListCursorAdapter extends CursorAdapter {
         participantsText.setText(mCursor.getInt(mCursor.getColumnIndex(DatabaseHelper.COL_PARTICIPANTS))+"");
         summaryText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_SUMMARY)));
         locationText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_LOCATIONNAME)));
+        categoryText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_CATEGORY)));
 
         locationText.setOnClickListener(new View.OnClickListener(){
             @Override
