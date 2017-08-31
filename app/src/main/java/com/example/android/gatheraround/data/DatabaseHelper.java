@@ -20,6 +20,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "eventList.db";
     public static final String TABLE_NAME = "event_table";
     public static final String COL_LOCALID = "_id";
+    // id for identifying within database
     public static final String COL_NAME = "EVENTNAME";
     public static final String COL_UNIXTIME = "UNIXTIMESTAMP";
     public static final String COL_PARTICIPANTS = "PARTICIPANTS";
@@ -28,6 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_SUMMARY = "SUMMARY";
     public static final String COL_CATEGORY = "CATEGORY";
     public static final String COL_GLOBALID = "GLOBALID";
+    // id for identifying on the server
     DataSenderToServer dataSenderToServer = new DataSenderToServer();
     public static final int DB_VERSION = 1;
 
@@ -128,7 +130,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         contentValues.put(COL_GLOBALID, key);
 
-        long result  = db.insert(TABLE_NAME, null, contentValues);
+        dataSenderToServer.addOneParticipants(key);
+
+        long result = db.insert(TABLE_NAME, null, contentValues);
 
         if(result == -1){
             return false;

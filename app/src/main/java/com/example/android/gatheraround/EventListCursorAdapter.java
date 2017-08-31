@@ -71,6 +71,9 @@ public class EventListCursorAdapter extends CursorAdapter {
         final LatLng location = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_LOCATION)),LatLng.class);
 
         nameText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
+
+        Log.i("bindView cursor check", "name=" + mCursor.getString((mCursor.getColumnIndex(DatabaseHelper.COL_NAME))));
+
         dateText.setText(date);
         timeText.setText(time);
         participantsText.setText(mCursor.getInt(mCursor.getColumnIndex(DatabaseHelper.COL_PARTICIPANTS))+"");
@@ -81,8 +84,7 @@ public class EventListCursorAdapter extends CursorAdapter {
         locationText.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                final CameraPosition camLocation  = CameraPosition.builder().
-                        target(location).zoom(18).build();
+                final CameraPosition camLocation  = CameraPosition.builder().target(location).zoom(18).build();
                 MainActivity.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camLocation));
             }
         });
@@ -115,6 +117,8 @@ public class EventListCursorAdapter extends CursorAdapter {
                 notifyDataSetChanged();
                 whereClause = new String[] {String.valueOf(mCursor.getLong(mCursor.getColumnIndex(DatabaseHelper.COL_LOCALID)))};
                 Log.v("Where clause:",whereClause[0]);
+
+                Log.i("Event onLongClick", "name=" + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
 
                 LayoutInflater mLayoutInflator;
                 mLayoutInflator = LayoutInflater.from(AppContext);

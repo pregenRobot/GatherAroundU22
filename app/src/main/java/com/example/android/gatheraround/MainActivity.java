@@ -659,13 +659,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                             boolean insertData = eventsDBHelper.addData(
                                     eventNameEdit.getText().toString(),
-                                    unixTimestamp, 20,
+                                    unixTimestamp,
+                                    0,
                                     latLng,
                                     locationNameEdit.getText().toString(),
                                     summaryEdit.getText().toString(),
                                     Events.CATEGORY_INDIVIDUAL
                             );
-                            if (insertData == true) {
+
+                            if (insertData) {
                                 Toast.makeText(MainActivity.this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
                                 Log.v("Database","Data Successfully Inserted!");
 
@@ -733,7 +735,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                     Log.v("FromServer:",newEvents.toString());
 
-//                    eventsArrayList.add(newEvents);
+                    eventsArrayList.add(newEvents);
                     newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
                             .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("web_hi_res_512",100,100)));
                     mMap.addMarker(newMarkerOptions);
@@ -748,8 +750,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
-        bottomNavigationView = (BottomNavigationView)
-                findViewById(R.id.bottom_navigation);
+        bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override

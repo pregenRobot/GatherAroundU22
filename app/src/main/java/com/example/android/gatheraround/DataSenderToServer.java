@@ -3,7 +3,11 @@ package com.example.android.gatheraround;
 import android.util.Log;
 
 import com.example.android.gatheraround.custom_classes.Events;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.MutableData;
+import com.firebase.client.Transaction;
 import com.firebase.client.core.Context;
 
 /**
@@ -36,5 +40,32 @@ public class DataSenderToServer{
     public void eraseEntry(String globalId){
         Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/eventPostDetails/" + globalId);
         firebase.removeValue();
+    }
+
+    public void addOneParticipants(String globalId){
+        Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/eventPostDetails/" + globalId + "/participants");
+        firebase.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+
+                if (mutableData.getValue() == null){
+                    mutableData.setValue(1);
+                }else{
+                    int count = mutableData.getValue(Integer.class);
+                    count++;
+                    mutableData.setValue(count);
+                }
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(FirebaseError firebaseError, boolean b, DataSnapshot dataSnapshot) {
+                if (b){
+                    Log.i("Firebase add", dataSnapshot.getValue().toString());
+                }else{
+                    Log.e("Failed to add", firebaseError.toString());
+                }
+            }
+        });
     }
 }
