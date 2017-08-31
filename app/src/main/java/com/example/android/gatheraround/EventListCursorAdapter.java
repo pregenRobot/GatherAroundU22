@@ -126,7 +126,6 @@ public class EventListCursorAdapter extends CursorAdapter {
                 View mView = mLayoutInflator.inflate(R.layout.canceldelete_editor,null);
 
                 final TextView cancelButton = (TextView) mView.findViewById(R.id.cancelAction);
-                final TextView updateButton = (TextView) mView.findViewById(R.id.editInfoAction);
                 final TextView deleteButton = (TextView) mView.findViewById(R.id.deleteEntryAction);
 
                 mBuilder.setView(mView);
@@ -141,13 +140,6 @@ public class EventListCursorAdapter extends CursorAdapter {
                     public void onDismiss(DialogInterface dialogInterface) {
                         notifyDataSetChanged();
                         Log.v("Where clause changed:",whereClause[0]);
-                    }
-                });
-
-                updateButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
                     }
                 });
                 cancelButton.setOnClickListener(new View.OnClickListener() {
