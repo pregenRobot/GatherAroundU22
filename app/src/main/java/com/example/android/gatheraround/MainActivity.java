@@ -292,15 +292,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                         Log.v("Year: ",cYear+"");
                                     }
                                 });
-//                                yminus.setOnTouchListener(new View.OnTouchListener() {
-//                                    @Override
-//                                    public boolean onTouch(View view, MotionEvent motionEvent) {
-//                                        cYear--;
-//                                        y.setText(cYear+"");
-//                                        Log.v("Year: ",cYear+"");
-//                                        return true;
-//                                    }
-//                                });
                                 mplus.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
