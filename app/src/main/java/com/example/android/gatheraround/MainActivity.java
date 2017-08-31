@@ -82,6 +82,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private Map<MarkerOptions,Events> eventMarkerMap;
     ArrayList<Events> returner = new ArrayList<>();
     BottomNavigationView bottomNavigationView;
+    Calculations calculations = new Calculations();
 
     int cYear = 2017;
     int cMonth = 7;
@@ -577,9 +578,42 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                         Log.v("TEST2",marker.toString());
                         for(Marker x:markArray){
-                            if(x == marker){
+                            if(marker.toString().equals(x.toString())){
                                 Events nowEvents = (Events) marker.getTag();
-                                Log.d("YOUCLICKEDMARKER",nowEvents.toString());
+                                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                                View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
+
+                                mBuilder.setView(mView);
+                                final AlertDialog dialog = mBuilder.create();
+                                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
+                                summaryText.setMovementMethod(new ScrollingMovementMethod());
+                                summaryText.setText(nowEvents.getEventSummary());
+                                TextView nameText = mView.findViewById(R.id.eventNameMark);
+                                nameText.setText(nowEvents.getName());
+                                String date = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[0];
+                                String time = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[1];
+                                TextView dateText = mView.findViewById(R.id.eventDateMark);
+                                dateText.setText(date);
+                                TextView timeText = mView.findViewById(R.id.eventTimeMark);
+                                timeText.setText(time);
+                                TextView locationText = mView.findViewById(R.id.eventLocationMark);
+                                locationText.setText(nowEvents.getLocationName());
+                                TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
+                                participantText.setText(nowEvents.getParticipants()+"");
+                                FloatingActionButton followButton =  (FloatingActionButton) mView.findViewById(R.id.follow);
+
+                                followButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+                                        dialog.dismiss();
+                                    }
+                                });
+                                dialog.show();
+
+                            }else{
+                                Log.v("No","No");
                             }
                         }
                         return true;
@@ -677,8 +711,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
         for(MarkerOptions x:eventMarkerMap.keySet()){
         }
-
-
     }
     public Bitmap resizeMapIcons(String iconName, int width, int height){
         Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),getResources().getIdentifier(iconName, "drawable", getPackageName()));
