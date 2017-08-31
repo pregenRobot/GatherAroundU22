@@ -20,6 +20,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.ExploreByTouchHelper;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -60,6 +61,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static com.example.android.gatheraround.R.id.map;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback,GoogleMap.OnMarkerClickListener{
@@ -511,19 +513,19 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 });
             }
         });
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(final Marker marker) {
-
-                if (marker.equals(newMarkerOptions))
-                {
-                    MarkerOptions currentMarker = newMarkerOptions;
-                    Events currentEvent = eventMarkerMap.get(newMarkerOptions);
-                    Log.v("Marker Clicked!:",currentEvent.getName());
-                }
-                return  true;
-            }
-        });
+//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//            @Override
+//            public boolean onMarkerClick(final Marker marker) {
+//
+//                if (marker.equals(newMarkerOptions))
+//                {
+//                    MarkerOptions currentMarker = newMarkerOptions;
+//                    Events currentEvent = eventMarkerMap.get(newMarkerOptions);
+//                    Log.v("Marker Clicked!:",currentEvent.getName());
+//                }
+//                return  true;
+//            }
+//        });
         Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/");
 
         final ArrayList<Events> eventsArrayList = new ArrayList<Events>();
@@ -555,8 +557,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.v("FromServer:",newEvents.toString());
 
                     eventsArrayList.add(newEvents);
-                    newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
-                            .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("web_hi_res_512",100,100)));
+                    if(newEvents.getCategory().equals(Events.CATEGORY_INDIVIDUAL)) {
+                        newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
+                                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("web_hi_res_512", 100, 100)));
+                    }else if(newEvents.getCategory().equals(Events.CATEGORY_CORPORATE)){
+                        newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
+                                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("corporate", 100, 100)));
+                    }else if(newEvents.getCategory().equals(Events.CATEGORY_NPO)){
+                        newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
+                                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("npo", 100, 100)));
+                    }
                     Marker mMarker = mMap.addMarker(newMarkerOptions);
                     mMarker.setTag(newEvents);
                     markArray.add(mMarker);
@@ -619,6 +629,58 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         return true;
                     }
                 });
+                bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
+                bottomNavigationView.setOnNavigationItemSelectedListener(
+                        new BottomNavigationView.OnNavigationItemSelectedListener() {
+                            @Override
+                            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case R.id.action_individual:
+                                        for(Marker x:markArray){
+                                            Events tempEvent = (Events) x.getTag();
+                                            String currentCategory = tempEvent.getCategory();
+                                            if(currentCategory.equals(Events.CATEGORY_INDIVIDUAL)){
+                                                x.setVisible(true);
+                                            }else if(currentCategory.equals(Events.CATEGORY_CORPORATE)){
+                                                x.setVisible(false);
+                                            }else if(currentCategory.equals(Events.CATEGORY_NPO)){
+                                                x.setVisible(false);
+                                            }
+                                        }
+                                        break;
+                                    case R.id.action_corporate:
+                                        for(Marker x:markArray){
+                                            Events tempEvent = (Events) x.getTag();
+                                            String currentCategory = tempEvent.getCategory();
+                                            if(currentCategory.equals(Events.CATEGORY_INDIVIDUAL)){
+                                                x.setVisible(false);
+                                            }else if(currentCategory.equals(Events.CATEGORY_CORPORATE)){
+                                                x.setVisible(true);
+                                            }else if(currentCategory.equals(Events.CATEGORY_NPO)){
+                                                x.setVisible(false);
+                                            }
+                                        }
+                                        break;
+                                    case R.id.action_npo:
+                                        for(Marker x:markArray){
+                                            Events tempEvent = (Events) x.getTag();
+                                            Log.v("CheckingBottom",x.toString() + "Has object" + tempEvent.toString()+
+                                                    "and it's category is: " + String.valueOf(tempEvent.getCategory())
+                                            );
+                                            String currentCategory = tempEvent.getCategory();
+                                            if(currentCategory.equals(Events.CATEGORY_INDIVIDUAL)){
+                                                x.setVisible(false);
+                                            }else if(currentCategory.equals(Events.CATEGORY_CORPORATE)){
+                                                x.setVisible(false);
+                                            }else if(currentCategory.equals(Events.CATEGORY_NPO)){
+                                                x.setVisible(true);
+                                            }
+                                        }
+                                        break;
+                                }
+                                return true;
+                            }
+                        });
 
             }
             @Override
@@ -626,22 +688,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
-        bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.action_individual:
 
-                            case R.id.action_corporate:
-
-                            case R.id.action_npo:
-
-                        }
-                        return true;
-                    }
-                });
         mMap.setOnMarkerClickListener(this);
     }
     public void addEventMarkers(Cursor c){
