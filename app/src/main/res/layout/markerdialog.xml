@@ -3,7 +3,93 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" 
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@drawable/dialog_bg"
+    >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="EventName"
+        android:gravity="center"
+        android:background="@color/cardbackground"
+        android:textColor="@color/white"
+        android:textSize="22dp"
+        android:textStyle="bold"
+        android:padding="18dp"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Date"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:padding="18dp"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Time"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:padding="18dp"
+
+            />
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Location Name"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:padding="18dp"
+        android:layout_margin="9dp"
+
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:text="Now these are only thoughts, of course, but pretty much all of the dialogue is laid out this way as well, speech marks blown away by the gritty blast of Jones's realism. Here's a young policeman, for example, who has come round to the big man's house to ask him a few questions:Now these are only thoughts, of course, but pretty much all of the dialogue is laid out this way as well, speech marks blown away by the gritty blast of Jones's realism. Here's a young policeman, for example, who has come round to the big man's house to ask him a few questions:Now these are only thoughts, of course, but pretty much all of the dialogue is laid out this way as well, speech marks blown away by the gritty blast of Jones's realism. Here's a young policeman, for example, who has come round to the big man's house to ask him a few questions:Now these are only thoughts, of course, but pretty much all of the dialogue is laid out this way as well, speech marks blown away by the gritty blast of Jones's realism. Here's a young policeman, for example, who has come round to the big man's house to ask him a few questions:"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:background="@drawable/event_edittext"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="18dp"
+        android:scrollbars="vertical"
+        android:maxLines="8"
+        android:id="@+id/summaryTextBrowser"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Participants"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:padding="18dp"
+        android:layout_margin="9dp"
+        />
 
 
 </LinearLayout>

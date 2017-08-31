@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -25,6 +27,7 @@ import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -234,6 +237,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                 mBuilder.setView(mView);
                 final AlertDialog dialog = mBuilder.create();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
                 unixTimestamp = 0;
                 eventTimeEdit.setOnClickListener(new View.OnClickListener() {
@@ -866,6 +870,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 //        {
 //
 //        }
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
+        mBuilder.setView(mView);
+        final AlertDialog dialog = mBuilder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
+        summaryText.setMovementMethod(new ScrollingMovementMethod());
+        dialog.show();
+
         return true;
     }
 }
