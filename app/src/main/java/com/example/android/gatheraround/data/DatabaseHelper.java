@@ -24,7 +24,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private Context context;
     private static final String DATABASE_NAME = "eventList.db";
     public static final String TABLE_NAME = "event_table";
-    public static final String TABLE_NAME_2 = "event_table_2";
     public static final String COL_ID = "_id";
     public static final String COL_NAME = "EVENTNAME";
     public static final String COL_UNIXTIME = "UNIXTIMESTAMP";
@@ -34,9 +33,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_SUMMARY = "SUMMARY";
     public static final String COL_CATEGORY = "CATEGORY";
     DataSenderToServer dataSenderToServer = new DataSenderToServer();
-    public static final int DB_VERSION = 2;
+    public static final int DB_VERSION = 1;
 
-    public static final String CATEGORY_DEFAULT = "individual";
 
     private static final String[] ALL_COLUMNS = new String[]{
             COL_ID,COL_NAME,COL_UNIXTIME,COL_PARTICIPANTS,COL_LOCATION,COL_LOCATIONNAME,COL_SUMMARY,COL_CATEGORY
@@ -49,16 +47,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String createTable = "CREATE TABLE " + TABLE_NAME_2 + "( " +
+        String createTable = "CREATE TABLE " + TABLE_NAME + "( " +
                 COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COL_NAME + " TEXT," +
                 COL_UNIXTIME + " INTEGER," +
                 COL_PARTICIPANTS + " INTEGER," +
                 COL_LOCATION + " TEXT," +
                 COL_LOCATIONNAME + " TEXT," +
-                COL_SUMMARY + " TEXT" +
+                COL_SUMMARY + " TEXT," +
                 COL_CATEGORY + " TEXT)";
         sqLiteDatabase.execSQL(createTable);
+
+        Log.v("DatabaseHelper","Database Created!");
 
     }
 
@@ -106,6 +106,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //                }
 //            }
 //        }
+        db.execSQL("DROP IF TABLE EXISTS " + TABLE_NAME);
+        onCreate(db);
     }
 
     public boolean addData(String event_name, long unixtime, int participants, LatLng location, String locationName,String summary, String category){
@@ -133,13 +135,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }else{
             return true;
         }
-//
     }
     public Cursor getAllEvents(){
         SQLiteDatabase db = this.getReadableDatabase();
-
+        if(db == null){
+            Log.v("SQLITE DATABASE","NULL!");
+        }else{
+            Log.v("SQLITE DATABASE","NOT NULL!");
+        }
         String where = null;
-
         Cursor c = db.query(true, TABLE_NAME, ALL_COLUMNS,where,null,null,null,/** COL_NAME + " ASC"**/null,null);
         return c;
 

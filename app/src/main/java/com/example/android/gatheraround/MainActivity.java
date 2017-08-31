@@ -1,5 +1,7 @@
 package com.example.android.gatheraround;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -63,8 +65,9 @@ import java.util.Map;
 
 import static android.R.attr.x;
 import static android.os.Build.VERSION_CODES.M;
+import static com.example.android.gatheraround.R.id.map;
 
-public class MainActivity extends FragmentActivity implements OnMapReadyCallback{
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback,GoogleMap.OnMarkerClickListener{
 
     public static BottomSheetBehavior mBottomsheetbehvior;
     public static GoogleMap mMap;
@@ -92,6 +95,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     int cMinute = 20;
     long unixTimestamp;
     Intent mainActivityIntent;
+    SupportMapFragment mapFragment;
+    Intent selfIntent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -106,8 +111,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         eventsDBHelper = new DatabaseHelper(context);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(map);
         mapFragment.getMapAsync(this);
         LinearLayout bottomsheet =
                 findViewById(R.id.bottomsheet);
@@ -193,11 +198,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-//        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        Criteria criteria = new Criteria();
-//        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-//        double lat = location.getLatitude();
-//        double lng = location.getLongitude();
 
         LatLng school = new LatLng(37.422006, -122.084095);
 
@@ -211,19 +211,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMyLocationEnabled(true);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(school));
-        eventManager = new DatabaseHelper(context);
         eventListView =  (ListView) findViewById(R.id.eventlistview);
-
-        ArrayList<Events> tempArrayList = new ArrayList<Events>();
-
-//        tempArrayList.add(new Events(234234323,"Hello",0,new LatLng(35.652832,139.839478),"Tokyo","hello"));
-//        tempArrayList.add(new Events(234234323,"Hello2",0,new LatLng(11,2),"Tokyo","hello"));
-//        tempArrayList.add(new Events(234234323,"Hello3",0,new LatLng(20.435,4),"Tokyo","hello"));
-
-
-        for(Events x:tempArrayList){
-            Log.v("tempEvent:",x.getName());
-        }
         eventMarkerMap = new HashMap<>();
 
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
@@ -678,24 +666,25 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     latLng,
                                     locationNameEdit.getText().toString(),
                                     summaryEdit.getText().toString(),
-                                    DatabaseHelper.CATEGORY_DEFAULT
+                                    Events.CATEGORY_INDIVIDUAL
                             );
                             if (insertData == true) {
                                 Toast.makeText(MainActivity.this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
                                 Log.v("Database","Data Successfully Inserted!");
+
+                                upDateListView();
+                                dialog.dismiss();
+                                selfIntent = new Intent(MainActivity.this,MainActivity.class);
+                                MainActivity.this.startActivity(selfIntent);
                             } else {
                                 Toast.makeText(MainActivity.this, "Something went wrong :(.", Toast.LENGTH_LONG).show();
                                 Log.v("Database","Data Insert Failed!");
 
                             }
-                            upDateListView();
-                            dialog.dismiss();
                         }else{
                             Toast.makeText(MainActivity.this, "Please fill in all the fields",Toast.LENGTH_SHORT).show();
                         }
-                        dialog.dismiss();
-                        mainActivityIntent = new Intent(MainActivity.this,MainActivity.class);
-                        MainActivity.this.startActivity(mainActivityIntent);
+
                     }
                 });
                 cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -725,7 +714,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         firebase.child("eventPostDetails").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.i("Firebase", dataSnapshot.getValue().toString());
+//                Log.i("Firebase", dataSnapshot.getValue().toString()); <-コメントアウトしないと、データが何も入ってなかったらエラーが出る
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Log.i("Firebase", "name="+snapshot.child("name").getValue());
@@ -778,7 +767,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         return true;
                     }
                 });
-
+        mMap.setOnMarkerClickListener(this);
     }
     public void addEventMarkers(Cursor c){
 
@@ -822,12 +811,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         runOnUiThread(new Runnable(){
             @Override
             public void run(){
-                eventCursor = eventManager.getAllEvents();
-                eventListCursorAdapter = new EventListCursorAdapter(
-                        MainActivity.this,
-                        eventCursor,
-                        0);
-                eventListView.setAdapter(eventListCursorAdapter);
+                if(eventCursor != null) {
+                    eventCursor = eventsDBHelper.getAllEvents();
+                    eventListCursorAdapter = new EventListCursorAdapter(
+                            MainActivity.this,
+                            eventCursor,
+                            0);
+                    eventListView.setAdapter(eventListCursorAdapter);
+                }else{
+                    Log.v("Event Cursor","Null");
+                }
             }
         });
     }
@@ -852,6 +845,25 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),getResources().getIdentifier(iconName, "drawable", getPackageName()));
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
         return resizedBitmap;
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        if(mMap != null){ //prevent crashing if the map doesn't exist yet (eg. on starting activity)
+            mMap.clear();
+
+        }
+    }
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+
+        Log.v("Marker","Marker Clicked!");
+//        if (marker.equals(myMarker))
+//        {
+//
+//        }
+        return true;
     }
 }
 

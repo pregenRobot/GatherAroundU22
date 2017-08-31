@@ -24,8 +24,6 @@ public class DataGetterFromServer {
         Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/");
 
         final ArrayList<Events> eventsArrayList = new ArrayList<Events>();
-
-
         firebase.child("eventPostDetails").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
