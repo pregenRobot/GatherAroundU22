@@ -12,6 +12,8 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -104,10 +106,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_main);
         context = this;
 
-        Log.i("log", "starting getter");
-
-
-        Log.i("log", "finished getter");
+        ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if(networkInfo == null || !networkInfo.isConnected()){
+            Toast.makeText(MainActivity.this, "You are not connected to the Internet.", Toast.LENGTH_LONG).show();
+        }
 
         eventsDBHelper = new DatabaseHelper(context);
 
