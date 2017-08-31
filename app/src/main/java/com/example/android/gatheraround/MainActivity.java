@@ -24,8 +24,10 @@ import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,9 +41,11 @@ import android.widget.Toast;
 
 import com.example.android.gatheraround.custom_classes.Events;
 import com.example.android.gatheraround.data.DatabaseHelper;
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -546,11 +550,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     String locationName = snapshot.child("locationName").getValue().toString();
                     String summary = snapshot.child("eventSummary").getValue().toString();
                     String category = snapshot.child("category").getValue().toString();
+                    String globalId = snapshot.child("key").getValue().toString();
 
                     LatLng location = new LatLng(latitude,longitude);
 
-
-                    Events newEvents = new Events(unixtime, event_name, participants, location, locationName, summary, category);
+                    Events newEvents = new Events(unixtime, event_name, participants, location, locationName, summary, category, globalId);
 
                     Log.v("FromServer:",newEvents.toString());
 
@@ -573,13 +577,17 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
+
                         for(Marker x:markArray){
+
                             Log.v("TEST",x.toString());
                         }
+
                         Log.v("TEST2",marker.toString());
+
                         for(Marker x:markArray){
                             if(marker.toString().equals(x.toString())){
-                                Events nowEvents = (Events) marker.getTag();
+                                final Events nowEvents = (Events) marker.getTag();
                                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
                                 View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
 
@@ -606,6 +614,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 followButton.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
+
+                                        DataSenderToServer dataSenderToServer = new DataSenderToServer();
+                                        dataSenderToServer.addOneParticipants(nowEvents.getGlobalId());
+
+                                        Toast.makeText(MainActivity.this, "You have followed this Event.", Toast.LENGTH_LONG).show();
 
                                         dialog.dismiss();
                                     }
@@ -744,6 +757,116 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         dialog.show();
 
         return true;
+    }
+
+    public void search(View view){
+
+        LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        final View adbLayout = inflater.inflate(R.layout.search_dialog_layout, null);
+
+        final EditText searchEditText = (EditText)adbLayout.findViewById(R.id.searchTextEdit);
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+        View.OnClickListener listener = new View.OnClickListener(){
+            public void onClick(View view){
+
+                final String text;
+
+                SpannableStringBuilder spannableStringBuilder = (SpannableStringBuilder)searchEditText.getText();
+                if(spannableStringBuilder == null){
+                    text = null;
+                }else{
+                    text = spannableStringBuilder.toString();
+                }
+
+                Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/");
+                Query query = firebase.orderByChild("key").equalTo(text);
+
+                query.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                        long unixtime = (long)dataSnapshot.child("unixTimeStamp").getValue();
+                        String event_name = dataSnapshot.child("name").getValue().toString();
+                        int participants = Integer.parseInt(dataSnapshot.child("participants").getValue().toString());
+                        double longitude = (double)dataSnapshot.child("location/longitude").getValue();
+                        double latitude = (double)dataSnapshot.child("location/latitude").getValue();
+                        String locationName = dataSnapshot.child("locationName").getValue().toString();
+                        String summary = dataSnapshot.child("eventSummary").getValue().toString();
+                        String category = dataSnapshot.child("category").getValue().toString();
+                        String globalId = dataSnapshot.child("key").getValue().toString();
+
+                        LatLng location = new LatLng(longitude, latitude);
+
+                        Events nowEvents = new Events(unixtime, event_name, participants, location, locationName, summary, category, globalId);
+
+                        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                        View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
+
+                        mBuilder.setView(mView);
+                        final AlertDialog dialog = mBuilder.create();
+                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
+                        summaryText.setMovementMethod(new ScrollingMovementMethod());
+                        summaryText.setText(nowEvents.getEventSummary());
+                        TextView nameText = mView.findViewById(R.id.eventNameMark);
+                        nameText.setText(nowEvents.getName());
+                        String date = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[0];
+                        String time = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[1];
+                        TextView dateText = mView.findViewById(R.id.eventDateMark);
+                        dateText.setText(date);
+                        TextView timeText = mView.findViewById(R.id.eventTimeMark);
+                        timeText.setText(time);
+                        TextView locationText = mView.findViewById(R.id.eventLocationMark);
+                        locationText.setText(nowEvents.getLocationName());
+                        TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
+                        participantText.setText(nowEvents.getParticipants()+"");
+                        FloatingActionButton followButton =  (FloatingActionButton) mView.findViewById(R.id.follow);
+
+                        followButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                DataSenderToServer dataSenderToServer = new DataSenderToServer();
+                                dataSenderToServer.addOneParticipants(text);
+
+                                Toast.makeText(MainActivity.this, "You have followed this Event.", Toast.LENGTH_LONG).show();
+
+                                dialog.dismiss();
+                            }
+                        });
+                        dialog.show();
+
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                });
+            }
+        };
+
+        adbLayout.findViewById(R.id.searchButton).setOnClickListener(listener);
+
+        alertDialog.setView(adbLayout);
+        alertDialog.show();
     }
 }
 

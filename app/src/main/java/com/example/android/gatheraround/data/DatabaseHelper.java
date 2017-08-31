@@ -125,7 +125,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_SUMMARY, summary);
         contentValues.put(COL_CATEGORY, category);
 
-        Events newEvents = new Events(unixtime,event_name,participants,location,locationName,summary, category);
+        Events newEvents = new Events(unixtime,event_name,participants,location,locationName,summary, category, "contemporary");
         String key = dataSenderToServer.pushToServer(newEvents);
 
         contentValues.put(COL_GLOBALID, key);

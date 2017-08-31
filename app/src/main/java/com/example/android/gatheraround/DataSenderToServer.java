@@ -31,6 +31,8 @@ public class DataSenderToServer{
         String key = push.getKey();
         Log.i("Firebase event key", "key=" + key);
 
+        firebase.child(key + "/key").setValue(key);
+
         firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/eventPostTitles");
         firebase.push().setValue(key);
 
