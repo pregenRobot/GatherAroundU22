@@ -112,6 +112,7 @@ public class EventListCursorAdapter extends CursorAdapter {
         card.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
+                notifyDataSetChanged();
                 whereClause = new String[] {String.valueOf(mCursor.getLong(mCursor.getColumnIndex(DatabaseHelper.COL_LOCALID)))};
                 Log.v("Where clause:",whereClause[0]);
 
@@ -134,7 +135,7 @@ public class EventListCursorAdapter extends CursorAdapter {
                 dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
-                        whereClause[0] = "";
+                        notifyDataSetChanged();
                         Log.v("Where clause changed:",whereClause[0]);
                     }
                 });
