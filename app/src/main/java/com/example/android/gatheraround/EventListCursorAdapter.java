@@ -19,16 +19,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.android.gatheraround.data.ContactsDatabaseHelper;
 import com.example.android.gatheraround.data.DatabaseHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
-
-import org.w3c.dom.Text;
-
-import static com.example.android.gatheraround.R.id.d;
 
 /**
  * Created by tamimazmain on 2017/08/29.
@@ -117,7 +112,7 @@ public class EventListCursorAdapter extends CursorAdapter {
         card.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                whereClause = new String[] {String.valueOf(mCursor.getLong(mCursor.getColumnIndex(DatabaseHelper.COL_ID)))};
+                whereClause = new String[] {String.valueOf(mCursor.getLong(mCursor.getColumnIndex(DatabaseHelper.COL_LOCALID)))};
                 Log.v("Where clause:",whereClause[0]);
 
                 LayoutInflater mLayoutInflator;
@@ -160,13 +155,17 @@ public class EventListCursorAdapter extends CursorAdapter {
                     @Override
                     public void onClick(View view) {
 
-                        int tru = db.delete(dbHelper.TABLE_NAME, dbHelper.COL_ID+"=?", whereClause);
+                        int tru = db.delete(DatabaseHelper.TABLE_NAME, DatabaseHelper.COL_LOCALID + " = " + mCursor.getInt(mCursor.getColumnIndex(DatabaseHelper.COL_LOCALID)), null);
 
                         if(tru == 1){
-                            Log.v("Delete: ", "SuccessFull!"+mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)-1));
+                            Log.v("Delete: ", "SuccessFull!" + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
                         }else{
-                            Log.v("Delete: ", "Failed!"+mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
+                            Log.v("Delete: ", "Failed!" + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
                         }
+
+                        DataSenderToServer dataSenderToServer = new DataSenderToServer();
+                        dataSenderToServer.eraseEntry(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID)));
+
                         dialog.dismiss();
 
                         mainActivityIntent = new Intent(mContext,MainActivity.class);

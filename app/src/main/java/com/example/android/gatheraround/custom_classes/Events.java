@@ -32,14 +32,15 @@ public class Events {
         mEventSummary = eventsummary;
         mCategory = category;
     }
-    public Events(long unixTimeStanp, String name,int participants,LatLng Latilong,String locationname, String eventsummary){
-        mUnixTimeStanp = unixTimeStanp;
-        mName = name;
-        mParticipants = participants;
-        mLocation = Latilong;
-        mLocationName = locationname;
-        mEventSummary = eventsummary;
-    }
+
+//    public Events(long unixTimeStanp, String name,int participants,LatLng Latilong,String locationname, String eventsummary){
+//        mUnixTimeStanp = unixTimeStanp;
+//        mName = name;
+//        mParticipants = participants;
+//        mLocation = Latilong;
+//        mLocationName = locationname;
+//        mEventSummary = eventsummary;
+//    }
 
     public long getUnixTimeStamp(){
         return mUnixTimeStanp;

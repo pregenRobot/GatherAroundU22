@@ -17,16 +17,24 @@ public class DataSenderToServer{
 //        this.mContext = context;
 //    }
 
-    public void pushToServer(Events newEvent){
+    public String pushToServer(Events newEvent){
 
         Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/eventPostDetails");
-        firebase.push().setValue(newEvent);
+        Firebase push = firebase.push();
+        push.setValue(newEvent);
         Log.i("Firebase pushed", "pushed=" + newEvent.getName());
 
-        String key = firebase.getKey();
+        String key = push.getKey();
         Log.i("Firebase event key", "key=" + key);
 
         firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/eventPostTitles");
         firebase.push().setValue(key);
+
+        return key;
+    }
+
+    public void eraseEntry(String globalId){
+        Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/eventPostDetails/" + globalId);
+        firebase.removeValue();
     }
 }

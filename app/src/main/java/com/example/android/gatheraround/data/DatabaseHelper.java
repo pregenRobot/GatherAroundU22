@@ -3,19 +3,14 @@ package com.example.android.gatheraround.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.EventLog;
 import android.util.Log;
 
 import com.example.android.gatheraround.DataSenderToServer;
-import com.example.android.gatheraround.custom_classes.Participants;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
-import static com.example.android.gatheraround.R.id.d;
-import static com.example.android.gatheraround.data.myInfoDatabase.COL1;
 import com.example.android.gatheraround.custom_classes.Events;
 
 
@@ -24,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private Context context;
     private static final String DATABASE_NAME = "eventList.db";
     public static final String TABLE_NAME = "event_table";
-    public static final String COL_ID = "_id";
+    public static final String COL_LOCALID = "_id";
     public static final String COL_NAME = "EVENTNAME";
     public static final String COL_UNIXTIME = "UNIXTIMESTAMP";
     public static final String COL_PARTICIPANTS = "PARTICIPANTS";
@@ -32,12 +27,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_LOCATIONNAME = "LOCATIONNAME";
     public static final String COL_SUMMARY = "SUMMARY";
     public static final String COL_CATEGORY = "CATEGORY";
+    public static final String COL_GLOBALID = "GLOBALID";
     DataSenderToServer dataSenderToServer = new DataSenderToServer();
     public static final int DB_VERSION = 1;
 
 
     private static final String[] ALL_COLUMNS = new String[]{
-            COL_ID,COL_NAME,COL_UNIXTIME,COL_PARTICIPANTS,COL_LOCATION,COL_LOCATIONNAME,COL_SUMMARY,COL_CATEGORY
+            COL_LOCALID,COL_NAME,COL_UNIXTIME,COL_PARTICIPANTS,COL_LOCATION,COL_LOCATIONNAME,COL_SUMMARY,COL_CATEGORY,COL_GLOBALID
     };
 
     public DatabaseHelper(Context context) {
@@ -48,14 +44,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String createTable = "CREATE TABLE " + TABLE_NAME + "( " +
-                COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL_LOCALID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COL_NAME + " TEXT," +
                 COL_UNIXTIME + " INTEGER," +
                 COL_PARTICIPANTS + " INTEGER," +
                 COL_LOCATION + " TEXT," +
                 COL_LOCATIONNAME + " TEXT," +
                 COL_SUMMARY + " TEXT," +
-                COL_CATEGORY + " TEXT)";
+                COL_CATEGORY + " TEXT," +
+                COL_GLOBALID + ")";
         sqLiteDatabase.execSQL(createTable);
 
         Log.v("DatabaseHelper","Database Created!");
@@ -75,7 +72,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //                Cursor cursor = null;
 //
 //                try{
-//                    cursor = database.query(DATABASE_NAME, ALL_COLUMNS, COL_ID + " = ?", new String[]{String.valueOf(a)}, null, null, null);
+//                    cursor = database.query(DATABASE_NAME, ALL_COLUMNS, COL_LOCALID + " = ?", new String[]{String.valueOf(a)}, null, null, null);
 //
 //                    int indexName = cursor.getColumnIndex(COL_NAME);
 //                    int indexTime = cursor.getColumnIndex(COL_UNIXTIME);
@@ -127,7 +124,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_CATEGORY, category);
 
         Events newEvents = new Events(unixtime,event_name,participants,location,locationName,summary, category);
-        dataSenderToServer.pushToServer(newEvents);
+        String key = dataSenderToServer.pushToServer(newEvents);
+
+        contentValues.put(COL_GLOBALID, key);
+
         long result  = db.insert(TABLE_NAME, null, contentValues);
 
         if(result == -1){

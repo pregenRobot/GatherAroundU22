@@ -1,7 +1,5 @@
 package com.example.android.gatheraround;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,7 +14,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
@@ -33,7 +30,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -42,9 +38,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.gatheraround.custom_classes.Events;
-import com.example.android.gatheraround.custom_classes.Participants;
-import com.example.android.gatheraround.custom_classes.People;
-import com.example.android.gatheraround.data.ContactsDatabaseHelper;
 import com.example.android.gatheraround.data.DatabaseHelper;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -54,7 +47,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -68,8 +60,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.R.attr.x;
-import static android.os.Build.VERSION_CODES.M;
 import static com.example.android.gatheraround.R.id.map;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback,GoogleMap.OnMarkerClickListener{
@@ -282,7 +272,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     public void onClick(View view) {
                                         cYear++;
                                         y.setText(cYear+"");
-                                        Log.v("Year: ",cYear+"");
+                                        Log.v("Year(onClick): ",cYear+"");
                                     }
                                 });
                                 yplus.setOnTouchListener(new View.OnTouchListener() {
@@ -290,7 +280,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     public boolean onTouch(View view, MotionEvent motionEvent) {
                                         cYear++;
                                         y.setText(cYear+"");
-                                        Log.v("Year: ",cYear+"");
+                                        Log.v("Year(onTouch): ",cYear+"");
                                         return true;
                                     }
                                 });
@@ -783,7 +773,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         while (c.isAfterLast() == false)
         {
             Log.v("added Marker: ",c.getString(c.getColumnIndex(DatabaseHelper.COL_LOCATION)));
-            Log.v("Cursor column-index",c.getColumnIndex(DatabaseHelper.COL_ID)+ "");
+            Log.v("Cursor column-index",c.getColumnIndex(DatabaseHelper.COL_LOCALID)+ "");
 
             final LatLng location = gson.fromJson(c.getString(c.getColumnIndex(DatabaseHelper.COL_LOCATION)),LatLng.class);
             mMap.addCircle(new CircleOptions().center(location)
