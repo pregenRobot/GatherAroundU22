@@ -1,10 +1,7 @@
 package com.example.android.gatheraround.custom_classes;
 
 import com.example.android.gatheraround.Calculations;
-import com.example.android.gatheraround.custom_classes.Participants;
 import com.google.android.gms.maps.model.LatLng;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 /**
  * Created by tamimazmain on 2017/08/14.
@@ -34,15 +31,6 @@ public class Events {
         mCategory = category;
         mGlobalId = globalId;
     }
-
-//    public Events(long unixTimeStanp, String name,int participants,LatLng Latilong,String locationname, String eventsummary){
-//        mUnixTimeStanp = unixTimeStanp;
-//        mName = name;
-//        mParticipants = participants;
-//        mLocation = Latilong;
-//        mLocationName = locationname;
-//        mEventSummary = eventsummary;
-//    }
 
     public long getUnixTimeStamp(){
         return mUnixTimeStanp;

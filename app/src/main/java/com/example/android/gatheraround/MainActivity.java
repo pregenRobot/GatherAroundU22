@@ -8,10 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
@@ -20,17 +16,11 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.widget.ExploreByTouchHelper;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -42,11 +32,9 @@ import android.widget.Toast;
 
 import com.example.android.gatheraround.custom_classes.Events;
 import com.example.android.gatheraround.data.DatabaseHelper;
-import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -62,10 +50,6 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static com.example.android.gatheraround.R.id.map;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback,GoogleMap.OnMarkerClickListener{
@@ -73,7 +57,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public static BottomSheetBehavior mBottomsheetbehvior;
     public static GoogleMap mMap;
     Button eventListButton;
-    RecyclerView rv;
     LinearLayoutManager llm;
     Context context;
     FloatingActionButton zoomIn;
@@ -83,10 +66,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     EventListCursorAdapter eventListCursorAdapter;
     Cursor eventCursor;
     Gson gson;
-    DatabaseHelper eventManager;
     ListView eventListView;
-    private Map<MarkerOptions,Events> eventMarkerMap;
-    ArrayList<Events> returner = new ArrayList<>();
     BottomNavigationView bottomNavigationView;
     Calculations calculations = new Calculations();
 
@@ -96,7 +76,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     int cHour = 23;
     int cMinute = 20;
     long unixTimestamp;
-    Intent mainActivityIntent;
     SupportMapFragment mapFragment;
     Intent selfIntent;
     @Override
@@ -159,7 +138,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
         llm = new LinearLayoutManager(context);
-        final ListView eventListView = (ListView) findViewById(R.id.eventlistview);
+        final ListView eventListView = findViewById(R.id.eventlistview);
         final DatabaseHelper eventManager = new DatabaseHelper(context);
 
         runOnUiThread(new Runnable(){
@@ -174,8 +153,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 eventListView.setAdapter(eventListCursorAdapter);
             }
         });
-        zoomIn = (FloatingActionButton) findViewById(R.id.zoomIn);
-        zoomOut = (FloatingActionButton) findViewById(R.id.zoomOut);
+        zoomIn = findViewById(R.id.zoomIn);
+        zoomOut = findViewById(R.id.zoomOut);
 
         zoomIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -214,23 +193,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMyLocationEnabled(true);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(school));
-        eventListView =  (ListView) findViewById(R.id.eventlistview);
-        eventMarkerMap = new HashMap<>();
-
+        eventListView = findViewById(R.id.eventlistview);
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(final LatLng latLng) {
-                Log.v("MapLongClicked:",latLng.toString());
 
                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
                 View mView = getLayoutInflater().inflate(R.layout.edit_event_popup,null);
 
-                final EditText eventNameEdit = (EditText) mView.findViewById(R.id.event_name_edit);
-                TextView doneButton = (TextView) mView.findViewById(R.id.donebuttoneventadd);
-                TextView cancelButton = (TextView) mView.findViewById(R.id.canclebuttoneventadd);
-                final EditText locationNameEdit = (EditText) mView.findViewById(R.id.event_location__name_edit);
-                final EditText summaryEdit = (EditText) mView.findViewById(R.id.event_summary_edit);
-                final TextView eventTimeEdit = (TextView) mView.findViewById(R.id.event_time_edit);
+                final EditText eventNameEdit = mView.findViewById(R.id.event_name_edit);
+                TextView doneButton = mView.findViewById(R.id.donebuttoneventadd);
+                TextView cancelButton = mView.findViewById(R.id.canclebuttoneventadd);
+                final EditText locationNameEdit = mView.findViewById(R.id.event_location__name_edit);
+                final EditText summaryEdit = mView.findViewById(R.id.event_summary_edit);
+                final TextView eventTimeEdit = mView.findViewById(R.id.event_time_edit);
 
                 mBuilder.setView(mView);
                 final AlertDialog dialog = mBuilder.create();
@@ -250,23 +226,23 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         Thread thread = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                final TextView yplus = (TextView) timeView.findViewById(R.id.yplus);
-                                final TextView y = (TextView) timeView.findViewById(R.id.y);
-                                final TextView yminus = (TextView) timeView.findViewById(R.id.yminus);
-                                final TextView mplus = (TextView) timeView.findViewById(R.id.mplus);
-                                final TextView m = (TextView) timeView.findViewById(R.id.m);
-                                final TextView mminus = (TextView) timeView.findViewById(R.id.mminus);
-                                final TextView dplus = (TextView) timeView.findViewById(R.id.dplus);
-                                final TextView d = (TextView) timeView.findViewById(R.id.d);
-                                final TextView dminus = (TextView) timeView.findViewById(R.id.dminus);
-                                final TextView hplus = (TextView) timeView.findViewById(R.id.hplus);
-                                final TextView h = (TextView) timeView.findViewById(R.id.h);
-                                final TextView hminus = (TextView) timeView.findViewById(R.id.hminus);
-                                final TextView minplus = (TextView) timeView.findViewById(R.id.minplus);
-                                final TextView min = (TextView) timeView.findViewById(R.id.min);
-                                final TextView minminus = (TextView) timeView.findViewById(R.id.minminus);
-                                final TextView cancel = (TextView) timeView.findViewById(R.id.timeCancel);
-                                final TextView done = (TextView) timeView.findViewById(R.id.timeDone);
+                                final TextView yplus = timeView.findViewById(R.id.yplus);
+                                final TextView y = timeView.findViewById(R.id.y);
+                                final TextView yminus = timeView.findViewById(R.id.yminus);
+                                final TextView mplus = timeView.findViewById(R.id.mplus);
+                                final TextView m = timeView.findViewById(R.id.m);
+                                final TextView mminus = timeView.findViewById(R.id.mminus);
+                                final TextView dplus = timeView.findViewById(R.id.dplus);
+                                final TextView d = timeView.findViewById(R.id.d);
+                                final TextView dminus = timeView.findViewById(R.id.dminus);
+                                final TextView hplus = timeView.findViewById(R.id.hplus);
+                                final TextView h = timeView.findViewById(R.id.h);
+                                final TextView hminus = timeView.findViewById(R.id.hminus);
+                                final TextView minplus = timeView.findViewById(R.id.minplus);
+                                final TextView min = timeView.findViewById(R.id.min);
+                                final TextView minminus = timeView.findViewById(R.id.minminus);
+                                final TextView cancel = timeView.findViewById(R.id.timeCancel);
+                                final TextView done = timeView.findViewById(R.id.timeDone);
 
                                 y.setText(cYear+"");
                                 m.setText(cMonth+"");
@@ -279,7 +255,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     public void onClick(View view) {
                                         cYear++;
                                         y.setText(cYear+"");
-                                        Log.v("Year(onClick): ",cYear+"");
                                     }
                                 });
 //
@@ -288,7 +263,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     public void onClick(View view) {
                                         cYear--;
                                         y.setText(cYear+"");
-                                        Log.v("Year: ",cYear+"");
                                     }
                                 });
                                 mplus.setOnClickListener(new View.OnClickListener() {
@@ -301,7 +275,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                             cMonth = 1;
                                             m.setText(cMonth+"");
                                         }
-                                        Log.v("Month: ",cMonth+"");
                                     }
                                 });
                                 mminus.setOnClickListener(new View.OnClickListener() {
@@ -314,7 +287,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                             cMonth = 12;
                                             m.setText(cMonth+"");
                                         }
-                                        Log.v("Month: ",cMonth+"");
                                     }
                                 });
                                 dplus.setOnClickListener(new View.OnClickListener() {
@@ -360,7 +332,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                                 d.setText(cDate+"");
                                             }
                                         }
-                                        Log.v("Day: ",cDate+"");
                                     }
                                 });
                                 dminus.setOnClickListener(new View.OnClickListener() {
@@ -392,7 +363,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                                 d.setText(cDate+"");
                                             }
                                         }
-                                        Log.v("Day: ",cDate+"");
+
                                     }
                                 });
                                 hplus.setOnClickListener(new View.OnClickListener() {
@@ -406,7 +377,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                             cHour=0;
                                             h.setText(cHour+"");
                                         }
-                                        Log.v("Hour: ",cHour+"");
                                     }
                                 });
                                 hminus.setOnClickListener(new View.OnClickListener() {
@@ -419,7 +389,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                             cHour = 23;
                                             h.setText(cHour+"");
                                         }
-                                        Log.v("Hour: ",cHour+"");
+
                                     }
                                 });
                                 minplus.setOnClickListener(new View.OnClickListener() {
@@ -432,7 +402,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                             cMinute = 0;
                                             min.setText(cMinute+"");
                                         }
-                                        Log.v("Minute: ",cMinute+"");
                                     }
                                 });
                                 minminus.setOnClickListener(new View.OnClickListener() {
@@ -445,19 +414,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                             cMinute = 59;
                                             min.setText(cMinute+"");
                                         }
-                                        Log.v("Minute: ",cMinute+"");
+
                                     }
                                 });
                                 done.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         unixTimestamp =  concatenateUnixtime(cYear,cMonth-1,cDate,cHour,cMinute);
-                                        Log.v("Whole thing",
-                                                cYear+ " / "
-                                                        + cMonth+ " / " +
-                                                        cDate+ " / " +
-                                                        cHour+ " / " +
-                                                        cMinute+ " / ");
+
                                         dialog.dismiss();
                                     }
                                 });
@@ -492,15 +456,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                             if (insertData) {
                                 Toast.makeText(MainActivity.this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
-                                Log.v("Database","Data Successfully Inserted!");
-
                                 upDateListView();
                                 dialog.dismiss();
                                 selfIntent = new Intent(MainActivity.this,MainActivity.class);
                                 MainActivity.this.startActivity(selfIntent);
                             } else {
                                 Toast.makeText(MainActivity.this, "Something went wrong :(.", Toast.LENGTH_LONG).show();
-                                Log.v("Database","Data Insert Failed!");
 
                             }
                         }else{
@@ -517,38 +478,22 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 });
             }
         });
-//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//            @Override
-//            public boolean onMarkerClick(final Marker marker) {
-//
-//                if (marker.equals(newMarkerOptions))
-//                {
-//                    MarkerOptions currentMarker = newMarkerOptions;
-//                    Events currentEvent = eventMarkerMap.get(newMarkerOptions);
-//                    Log.v("Marker Clicked!:",currentEvent.getName());
-//                }
-//                return  true;
-//            }
-//        });
         Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/");
 
         final ArrayList<Events> eventsArrayList = new ArrayList<Events>();
         firebase.child("eventPostDetails").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-//                Log.i("Firebase", dataSnapshot.getValue().toString()); <-コメントアウトしないと、データが何も入ってなかったらエラーが出る
 
                 final ArrayList<Marker> markArray = new ArrayList<>();
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Log.i("Firebase", "name="+snapshot.child("name").getValue());
 
                     long unixtime = (long)snapshot.child("unixTimeStamp").getValue();
                     String event_name = snapshot.child("name").getValue().toString();
                     int participants = Integer.parseInt(snapshot.child("participants").getValue().toString());
                     double longitude = (double)snapshot.child("location/longitude").getValue();
                     double latitude = (double)snapshot.child("location/latitude").getValue();
-                    Log.v("LatLngCheck",event_name + " : " + String.valueOf(longitude) + ":" + String.valueOf(latitude));
                     String locationName = snapshot.child("locationName").getValue().toString();
                     String summary = snapshot.child("eventSummary").getValue().toString();
                     String category = snapshot.child("category").getValue().toString();
@@ -558,12 +503,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                     Events newEvents = new Events(unixtime, event_name, participants, location, locationName, summary, category, globalId);
 
-                    Log.v("FromServer:",newEvents.toString());
-
                     eventsArrayList.add(newEvents);
                     if(newEvents.getCategory().equals(Events.CATEGORY_INDIVIDUAL)) {
                         newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
-                                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("web_hi_res_512", 100, 100)));
+                                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("individual", 100, 100)));
                     }else if(newEvents.getCategory().equals(Events.CATEGORY_CORPORATE)){
                         newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
                                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("corporate", 100, 100)));
@@ -575,25 +518,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     mMarker.setTag(newEvents);
                     markArray.add(mMarker);
                 }
-                Log.v("MarkerTobeAdded",eventsArrayList.size()+"");
-//                for(Marker x:markArray){
-//                    Events nowEventsa = (Events) x.getTag();
-//                    MarkerOptions tempMa = new MarkerOptions().
-//                            position(nowEventsa.getLocation()).
-//                            title(nowEventsa.getName())
-//                            .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("web_hi_res_512",100,100)));
-//                    mMap.addMarker(newMarkerOptions);
-//                }
                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
-
-                        for(Marker x:markArray){
-
-                            Log.v("TEST",x.toString());
-                        }
-
-                        Log.v("TEST2",marker.toString());
 
                         for(Marker x:markArray){
                             if(marker.toString().equals(x.toString())){
@@ -629,14 +556,31 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                         dataSenderToServer.addOneParticipants(nowEvents.getGlobalId());
 
                                         Toast.makeText(MainActivity.this, "You have followed this Event.", Toast.LENGTH_LONG).show();
+                                        boolean insertData = eventsDBHelper.addData(
+                                                nowEvents.getName(),
+                                                nowEvents.getUnixTimeStamp(),
+                                                nowEvents.getParticipants(),
+                                                nowEvents.getLocation(),
+                                                nowEvents.getLocationName(),
+                                                nowEvents.getEventSummary(),
+                                                nowEvents.getCategory()
+                                        );
 
-                                        dialog.dismiss();
+                                        if (insertData) {
+                                            Toast.makeText(MainActivity.this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
+                                            upDateListView();
+                                            dialog.dismiss();
+                                            selfIntent = new Intent(MainActivity.this,MainActivity.class);
+                                            MainActivity.this.startActivity(selfIntent);
+                                        } else {
+                                            Toast.makeText(MainActivity.this, "Something went wrong :(.", Toast.LENGTH_LONG).show();
+                                        }
+                                        Toast.makeText(MainActivity.this, "You have followed this Event.", Toast.LENGTH_LONG).show();
                                     }
                                 });
                                 dialog.show();
 
                             }else{
-                                Log.v("No","No");
                             }
                         }
                         return true;
@@ -677,9 +621,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     case R.id.action_npo:
                                         for(Marker x:markArray){
                                             Events tempEvent = (Events) x.getTag();
-                                            Log.v("CheckingBottom",x.toString() + "Has object" + tempEvent.toString()+
-                                                    "and it's category is: " + String.valueOf(tempEvent.getCategory())
-                                            );
                                             String currentCategory = tempEvent.getCategory();
                                             if(currentCategory.equals(Events.CATEGORY_INDIVIDUAL)){
                                                 x.setVisible(false);
@@ -694,6 +635,91 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 return true;
                             }
                         });
+                final Button searchButton = (Button)findViewById(R.id.SearchButton);
+                searchButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                        View mView = getLayoutInflater().inflate(R.layout.search_dialog_layout,null);
+
+                        mBuilder.setView(mView);
+                        final AlertDialog dialog = mBuilder.create();
+                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                        Button searchQuery = (Button) mView.findViewById(R.id.searchButton);
+                        final EditText enterText = (EditText) mView.findViewById(R.id.searchTextEdit);
+
+                        searchQuery.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                    for(Marker x:markArray){
+                                        Events queryingEvent =(Events) x.getTag();
+                                        if(enterText.getText().toString().equals(queryingEvent.getGlobalId())){
+                                            final Events nowEvents = (Events) queryingEvent;
+                                            final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                                            View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
+
+                                            mBuilder.setView(mView);
+                                            final AlertDialog dialog = mBuilder.create();
+                                            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                            TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
+                                            summaryText.setMovementMethod(new ScrollingMovementMethod());
+                                            summaryText.setText(nowEvents.getEventSummary());
+                                            TextView nameText = mView.findViewById(R.id.eventNameMark);
+                                            nameText.setText(nowEvents.getName());
+                                            String date = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[0];
+                                            String time = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[1];
+                                            TextView dateText = mView.findViewById(R.id.eventDateMark);
+                                            dateText.setText(date);
+                                            TextView timeText = mView.findViewById(R.id.eventTimeMark);
+                                            timeText.setText(time);
+                                            TextView locationText = mView.findViewById(R.id.eventLocationMark);
+                                            locationText.setText(nowEvents.getLocationName());
+                                            TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
+                                            participantText.setText(nowEvents.getParticipants()+"");
+                                            FloatingActionButton followButton =  (FloatingActionButton) mView.findViewById(R.id.follow);
+
+                                            followButton.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+
+                                                    DataSenderToServer dataSenderToServer = new DataSenderToServer();
+                                                    dataSenderToServer.addOneParticipants(nowEvents.getGlobalId());
+                                                    boolean insertData = eventsDBHelper.addData(
+                                                            nowEvents.getName(),
+                                                            nowEvents.getUnixTimeStamp(),
+                                                            nowEvents.getParticipants(),
+                                                            nowEvents.getLocation(),
+                                                            nowEvents.getLocationName(),
+                                                            nowEvents.getEventSummary(),
+                                                            nowEvents.getCategory()
+                                                    );
+
+                                                    if (insertData) {
+                                                        Toast.makeText(MainActivity.this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
+
+                                                        upDateListView();
+                                                        dialog.dismiss();
+                                                        selfIntent = new Intent(MainActivity.this,MainActivity.class);
+                                                        MainActivity.this.startActivity(selfIntent);
+                                                    } else {
+                                                        Toast.makeText(MainActivity.this, "Something went wrong :(.", Toast.LENGTH_LONG).show();
+
+                                                    }
+                                                    Toast.makeText(MainActivity.this, "You have followed this Event.", Toast.LENGTH_LONG).show();
+
+                                                }
+                                            });
+                                            dialog.show();
+                                        }
+                                    }
+                            }
+                        });
+                        dialog.show();
+
+                    }
+                });
 
             }
             @Override
@@ -703,6 +729,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         mMap.setOnMarkerClickListener(this);
+
+
+
     }
     public void addEventMarkers(Cursor c){
 
@@ -710,9 +739,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         c.moveToFirst();
         while (c.isAfterLast() == false)
         {
-            Log.v("added Marker: ",c.getString(c.getColumnIndex(DatabaseHelper.COL_LOCATION)));
-            Log.v("Cursor column-index",c.getColumnIndex(DatabaseHelper.COL_LOCALID)+ "");
-
             final LatLng location = gson.fromJson(c.getString(c.getColumnIndex(DatabaseHelper.COL_LOCATION)),LatLng.class);
             mMap.addCircle(new CircleOptions().center(location)
                     .radius(10)
@@ -735,8 +761,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
 
-        Log.v("Time Added:",(int) (c.getTimeInMillis() / 1000L)+"");
-
         return (int) (c.getTimeInMillis() / 1000L);
     }
 
@@ -752,26 +776,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             0);
                     eventListView.setAdapter(eventListCursorAdapter);
                 }else{
-                    Log.v("Event Cursor","Null");
                 }
             }
         });
     }
 
     private MarkerOptions newMarkerOptions;
-    public void addMarkers(ArrayList<Events> eventList){
-
-        for(Events x:eventList){
-            newMarkerOptions = new MarkerOptions().position(x.getLocation()).title(x.getName())
-                    .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("web_hi_res_512",100,100)));
-            String testMarker = newMarkerOptions.toString();
-            eventMarkerMap.put(newMarkerOptions,x);
-            mMap.addMarker(newMarkerOptions);
-
-        }
-        for(MarkerOptions x:eventMarkerMap.keySet()){
-        }
-    }
     public Bitmap resizeMapIcons(String iconName, int width, int height){
         Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),getResources().getIdentifier(iconName, "drawable", getPackageName()));
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
@@ -781,19 +791,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public void onResume(){
         super.onResume();
 
-        if(mMap != null){ //prevent crashing if the map doesn't exist yet (eg. on starting activity)
+        if(mMap != null){
             mMap.clear();
-
         }
     }
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
-        Log.v("Marker","Marker Clicked!");
-//        if (marker.equals(myMarker))
-//        {
-//
-//        }
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
         View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
         mBuilder.setView(mView);
@@ -806,114 +810,5 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         return true;
     }
 
-    public void search(View view){
-
-        LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
-        final View adbLayout = inflater.inflate(R.layout.search_dialog_layout, null);
-
-        final EditText searchEditText = (EditText)adbLayout.findViewById(R.id.searchTextEdit);
-
-        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-
-        View.OnClickListener listener = new View.OnClickListener(){
-            public void onClick(View view){
-
-                final String text;
-
-                SpannableStringBuilder spannableStringBuilder = (SpannableStringBuilder)searchEditText.getText();
-                if(spannableStringBuilder == null){
-                    text = null;
-                }else{
-                    text = spannableStringBuilder.toString();
-                }
-
-                Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/");
-                Query query = firebase.orderByChild("key").equalTo(text);
-
-                query.addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                        long unixtime = (long)dataSnapshot.child("unixTimeStamp").getValue();
-                        String event_name = dataSnapshot.child("name").getValue().toString();
-                        int participants = Integer.parseInt(dataSnapshot.child("participants").getValue().toString());
-                        double longitude = (double)dataSnapshot.child("location/longitude").getValue();
-                        double latitude = (double)dataSnapshot.child("location/latitude").getValue();
-                        String locationName = dataSnapshot.child("locationName").getValue().toString();
-                        String summary = dataSnapshot.child("eventSummary").getValue().toString();
-                        String category = dataSnapshot.child("category").getValue().toString();
-                        String globalId = dataSnapshot.child("key").getValue().toString();
-
-                        LatLng location = new LatLng(longitude, latitude);
-
-                        Events nowEvents = new Events(unixtime, event_name, participants, location, locationName, summary, category, globalId);
-
-                        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-                        View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
-
-                        mBuilder.setView(mView);
-                        final AlertDialog dialog = mBuilder.create();
-                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
-                        summaryText.setMovementMethod(new ScrollingMovementMethod());
-                        summaryText.setText(nowEvents.getEventSummary());
-                        TextView nameText = mView.findViewById(R.id.eventNameMark);
-                        nameText.setText(nowEvents.getName());
-                        String date = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[0];
-                        String time = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[1];
-                        TextView dateText = mView.findViewById(R.id.eventDateMark);
-                        dateText.setText(date);
-                        TextView timeText = mView.findViewById(R.id.eventTimeMark);
-                        timeText.setText(time);
-                        TextView locationText = mView.findViewById(R.id.eventLocationMark);
-                        locationText.setText(nowEvents.getLocationName());
-                        TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
-                        participantText.setText(nowEvents.getParticipants()+"");
-                        FloatingActionButton followButton =  (FloatingActionButton) mView.findViewById(R.id.follow);
-
-                        followButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-
-                                DataSenderToServer dataSenderToServer = new DataSenderToServer();
-                                dataSenderToServer.addOneParticipants(text);
-
-                                Toast.makeText(MainActivity.this, "You have followed this Event.", Toast.LENGTH_LONG).show();
-
-                                dialog.dismiss();
-                            }
-                        });
-                        dialog.show();
-
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-
-                    }
-                });
-            }
-        };
-
-        adbLayout.findViewById(R.id.searchButton).setOnClickListener(listener);
-
-        alertDialog.setView(adbLayout);
-        alertDialog.show();
-    }
 }
 
