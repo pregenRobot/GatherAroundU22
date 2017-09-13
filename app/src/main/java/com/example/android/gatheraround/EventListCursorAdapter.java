@@ -1,5 +1,6 @@
 package com.example.android.gatheraround;
 
+import android.app.LauncherActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,6 +25,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
+
+import static com.example.android.gatheraround.MainActivity.mMap;
+import static com.example.android.gatheraround.R.id.m;
 
 /**
  * Created by tamimazmain on 2017/08/29.
@@ -55,7 +59,6 @@ public class EventListCursorAdapter extends CursorAdapter {
         TextView nameText = (TextView) view.findViewById(R.id.event_name);
         TextView dateText = (TextView) view.findViewById(R.id.event_date);
         TextView summaryText = (TextView) view.findViewById(R.id.event_summary);
-        TextView participantsText = (TextView) view.findViewById(R.id.event_participantNum);
         TextView locationText = (TextView) view.findViewById(R.id.event_location);
         TextView categoryText = (TextView) view.findViewById(R.id.event_category);
         CardView card = (CardView) view.findViewById(R.id.CardViewItem);
@@ -64,11 +67,10 @@ public class EventListCursorAdapter extends CursorAdapter {
 
         String date = calculations.UnixTimeConverter(
                 mCursor.getLong(mCursor.getColumnIndex(DatabaseHelper.COL_UNIXTIME)
-        ))[0];
+                ))[0];
         String time = calculations.UnixTimeConverter(
                 mCursor.getLong(mCursor.getColumnIndex(DatabaseHelper.COL_UNIXTIME))
         )[1];
-        final LatLng location = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_LOCATION)),LatLng.class);
 
         nameText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
 
@@ -76,14 +78,21 @@ public class EventListCursorAdapter extends CursorAdapter {
 
         dateText.setText(date);
         timeText.setText(time);
-        participantsText.setText(mCursor.getInt(mCursor.getColumnIndex(DatabaseHelper.COL_PARTICIPANTS))+"");
         summaryText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_SUMMARY)));
         locationText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_LOCATIONNAME)));
         categoryText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_CATEGORY)));
 
+        /**
+         * POSITION!
+         * **/
+
+        final int position = mCursor.getPosition();
+
         locationText.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                mCursor.moveToPosition(position);
+                LatLng location = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_LOCATION)),LatLng.class);
                 final CameraPosition camLocation  = CameraPosition.builder().target(location).zoom(18).build();
                 MainActivity.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camLocation));
             }
@@ -98,6 +107,7 @@ public class EventListCursorAdapter extends CursorAdapter {
                 View mView = mLayoutInflator.inflate(R.layout.summarydialog,null);
 
                 TextView textView = mView.findViewById(R.id.mainText);
+                mCursor.moveToPosition(position);
                 textView.setText(
                         mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_SUMMARY))
                 );
@@ -114,7 +124,7 @@ public class EventListCursorAdapter extends CursorAdapter {
         card.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                notifyDataSetChanged();
+                mCursor.moveToPosition(position);
                 whereClause = new String[] {String.valueOf(mCursor.getLong(mCursor.getColumnIndex(DatabaseHelper.COL_LOCALID)))};
                 Log.v("Where clause:",whereClause[0]);
 
@@ -172,6 +182,7 @@ public class EventListCursorAdapter extends CursorAdapter {
                 return true;
             }
         });
+
 
     }
 }

@@ -20,7 +20,7 @@ public class Calculations {
 
         String[] returnDate = new String[3];
 
-        Date date = new Date(unixTimeStamp*1000);
+        Date date = new Date(unixTimeStamp*1000+6*60*60*1000);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z"); // the format of your date
         sdf.setTimeZone(TimeZone.getTimeZone("GMT-9")); // give a timezone reference for formating (see comment at the bottom
         String formattedDate = sdf.format(date);

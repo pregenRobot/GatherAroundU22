@@ -1,13 +1,15 @@
 package com.example.android.gatheraround;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
@@ -20,6 +22,7 @@ import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,13 +49,17 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import static com.example.android.gatheraround.R.id.eventlistview;
 import static com.example.android.gatheraround.R.id.map;
 
-public class MainActivity extends FragmentActivity implements OnMapReadyCallback,GoogleMap.OnMarkerClickListener{
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback{
 
     public static BottomSheetBehavior mBottomsheetbehvior;
     public static GoogleMap mMap;
@@ -65,7 +72,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     DatabaseHelper eventsDBHelper;
     EventListCursorAdapter eventListCursorAdapter;
     Cursor eventCursor;
-    Gson gson;
     ListView eventListView;
     BottomNavigationView bottomNavigationView;
     Calculations calculations = new Calculations();
@@ -77,7 +83,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     int cMinute = 20;
     long unixTimestamp;
     SupportMapFragment mapFragment;
-    Intent selfIntent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -85,11 +90,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_main);
         context = this;
 
-        ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        if(networkInfo == null || !networkInfo.isConnected()){
-            Toast.makeText(MainActivity.this, "You are not connected to the Internet.", Toast.LENGTH_LONG).show();
-        }
+        internetStatus();
 
         eventsDBHelper = new DatabaseHelper(context);
 
@@ -98,6 +99,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         LinearLayout bottomsheet =
                 findViewById(R.id.bottomsheet);
+        //Bottom sheets and searhc buttons
         mBottomsheetbehvior = BottomSheetBehavior.from(bottomsheet);
         mBottomsheetbehvior.setHideable(true);
         mBottomsheetbehvior.setPeekHeight(ViewGroup.LayoutParams.MATCH_PARENT);
@@ -138,7 +140,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
         llm = new LinearLayoutManager(context);
-        final ListView eventListView = findViewById(R.id.eventlistview);
+        eventListView = findViewById(R.id.eventlistview);
         final DatabaseHelper eventManager = new DatabaseHelper(context);
 
         runOnUiThread(new Runnable(){
@@ -160,7 +162,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 float zoomlevel = mMap.getCameraPosition().zoom;
-                zoomlevel = zoomlevel + 2;
+                zoomlevel = zoomlevel + 4;
                 final CameraPosition zoomLocation = CameraPosition.builder().target(mMap.getCameraPosition().target).zoom(zoomlevel).build();
                 MainActivity.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(zoomLocation));
             }
@@ -169,7 +171,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 float zoomlevel = mMap.getCameraPosition().zoom;
-                zoomlevel = zoomlevel - 2;
+                zoomlevel = zoomlevel - 4;
                 final CameraPosition zoomLocation = CameraPosition.builder().target(mMap.getCameraPosition().target).zoom(zoomlevel).build();
                 MainActivity.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(zoomLocation));
             }
@@ -185,15 +187,22 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         Cursor c = eventsDBHelper.getAllEvents();
 
-        this.addEventMarkers(c);
-
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         mMap.setMyLocationEnabled(true);
 
+//        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        Criteria criteria = new Criteria();
+//        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+//        double lat = location.getLatitude();
+//        double lng = location.getLongitude();
+//
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat,lng)));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(school));
         eventListView = findViewById(R.id.eventlistview);
+
+        //OnMapLongClickListener
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(final LatLng latLng) {
@@ -442,8 +451,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void onClick(View view) {
                         Long newUnixTime = unixTimestamp;
-                        if(eventNameEdit.getText().toString() != "" && newUnixTime != 0 && latLng != null && locationNameEdit.getText().toString() != "" && summaryEdit.getText().toString() != "") {
-
+                        if(!eventNameEdit.getText().toString().equals("")&& newUnixTime != 0 && latLng != null && locationNameEdit.getText().toString() != "" && summaryEdit.getText().toString() != "") {
                             boolean insertData = eventsDBHelper.addData(
                                     eventNameEdit.getText().toString(),
                                     unixTimestamp,
@@ -455,17 +463,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             );
 
                             if (insertData) {
-                                Toast.makeText(MainActivity.this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
-                                upDateListView();
                                 dialog.dismiss();
-                                selfIntent = new Intent(MainActivity.this,MainActivity.class);
-                                MainActivity.this.startActivity(selfIntent);
+                                mapFragment.getMapAsync(MainActivity.this);
+                                Toast.makeText(MainActivity.this,"Added your event!",Toast.LENGTH_SHORT);
+                                upDateListView();
                             } else {
-                                Toast.makeText(MainActivity.this, "Something went wrong :(.", Toast.LENGTH_LONG).show();
 
                             }
                         }else{
-                            Toast.makeText(MainActivity.this, "Please fill in all the fields",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this,"Please fill in All Fields",Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -478,274 +484,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 });
             }
         });
-        Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/");
 
-        final ArrayList<Events> eventsArrayList = new ArrayList<Events>();
-        firebase.child("eventPostDetails").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                final ArrayList<Marker> markArray = new ArrayList<>();
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-
-                    long unixtime = (long)snapshot.child("unixTimeStamp").getValue();
-                    String event_name = snapshot.child("name").getValue().toString();
-                    int participants = Integer.parseInt(snapshot.child("participants").getValue().toString());
-                    double longitude = (double)snapshot.child("location/longitude").getValue();
-                    double latitude = (double)snapshot.child("location/latitude").getValue();
-                    String locationName = snapshot.child("locationName").getValue().toString();
-                    String summary = snapshot.child("eventSummary").getValue().toString();
-                    String category = snapshot.child("category").getValue().toString();
-                    String globalId = snapshot.child("key").getValue().toString();
-
-                    LatLng location = new LatLng(latitude,longitude);
-
-                    Events newEvents = new Events(unixtime, event_name, participants, location, locationName, summary, category, globalId);
-
-                    eventsArrayList.add(newEvents);
-                    if(newEvents.getCategory().equals(Events.CATEGORY_INDIVIDUAL)) {
-                        newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
-                                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("individual", 100, 100)));
-                    }else if(newEvents.getCategory().equals(Events.CATEGORY_CORPORATE)){
-                        newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
-                                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("corporate", 100, 100)));
-                    }else if(newEvents.getCategory().equals(Events.CATEGORY_NPO)){
-                        newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
-                                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("npo", 100, 100)));
-                    }
-                    Marker mMarker = mMap.addMarker(newMarkerOptions);
-                    mMarker.setTag(newEvents);
-                    markArray.add(mMarker);
-                }
-                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker) {
-
-                        for(Marker x:markArray){
-                            if(marker.toString().equals(x.toString())){
-                                final Events nowEvents = (Events) marker.getTag();
-                                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-                                View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
-
-                                mBuilder.setView(mView);
-                                final AlertDialog dialog = mBuilder.create();
-                                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
-                                summaryText.setMovementMethod(new ScrollingMovementMethod());
-                                summaryText.setText(nowEvents.getEventSummary());
-                                TextView nameText = mView.findViewById(R.id.eventNameMark);
-                                nameText.setText(nowEvents.getName());
-                                String date = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[0];
-                                String time = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[1];
-                                TextView dateText = mView.findViewById(R.id.eventDateMark);
-                                dateText.setText(date);
-                                TextView timeText = mView.findViewById(R.id.eventTimeMark);
-                                timeText.setText(time);
-                                TextView locationText = mView.findViewById(R.id.eventLocationMark);
-                                locationText.setText(nowEvents.getLocationName());
-                                TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
-                                participantText.setText(nowEvents.getParticipants()+"");
-                                FloatingActionButton followButton =  (FloatingActionButton) mView.findViewById(R.id.follow);
-
-                                followButton.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-                                        DataSenderToServer dataSenderToServer = new DataSenderToServer();
-                                        dataSenderToServer.addOneParticipants(nowEvents.getGlobalId());
-
-                                        Toast.makeText(MainActivity.this, "You have followed this Event.", Toast.LENGTH_LONG).show();
-                                        boolean insertData = eventsDBHelper.addData(
-                                                nowEvents.getName(),
-                                                nowEvents.getUnixTimeStamp(),
-                                                nowEvents.getParticipants(),
-                                                nowEvents.getLocation(),
-                                                nowEvents.getLocationName(),
-                                                nowEvents.getEventSummary(),
-                                                nowEvents.getCategory()
-                                        );
-
-                                        if (insertData) {
-                                            Toast.makeText(MainActivity.this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
-                                            upDateListView();
-                                            dialog.dismiss();
-                                            selfIntent = new Intent(MainActivity.this,MainActivity.class);
-                                            MainActivity.this.startActivity(selfIntent);
-                                        } else {
-                                            Toast.makeText(MainActivity.this, "Something went wrong :(.", Toast.LENGTH_LONG).show();
-                                        }
-                                        Toast.makeText(MainActivity.this, "You have followed this Event.", Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                                dialog.show();
-
-                            }else{
-                            }
-                        }
-                        return true;
-                    }
-                });
-                bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
-                bottomNavigationView.setOnNavigationItemSelectedListener(
-                        new BottomNavigationView.OnNavigationItemSelectedListener() {
-                            @Override
-                            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                                switch (item.getItemId()) {
-                                    case R.id.action_individual:
-                                        for(Marker x:markArray){
-                                            Events tempEvent = (Events) x.getTag();
-                                            String currentCategory = tempEvent.getCategory();
-                                            if(currentCategory.equals(Events.CATEGORY_INDIVIDUAL)){
-                                                x.setVisible(true);
-                                            }else if(currentCategory.equals(Events.CATEGORY_CORPORATE)){
-                                                x.setVisible(false);
-                                            }else if(currentCategory.equals(Events.CATEGORY_NPO)){
-                                                x.setVisible(false);
-                                            }
-                                        }
-                                        break;
-                                    case R.id.action_corporate:
-                                        for(Marker x:markArray){
-                                            Events tempEvent = (Events) x.getTag();
-                                            String currentCategory = tempEvent.getCategory();
-                                            if(currentCategory.equals(Events.CATEGORY_INDIVIDUAL)){
-                                                x.setVisible(false);
-                                            }else if(currentCategory.equals(Events.CATEGORY_CORPORATE)){
-                                                x.setVisible(true);
-                                            }else if(currentCategory.equals(Events.CATEGORY_NPO)){
-                                                x.setVisible(false);
-                                            }
-                                        }
-                                        break;
-                                    case R.id.action_npo:
-                                        for(Marker x:markArray){
-                                            Events tempEvent = (Events) x.getTag();
-                                            String currentCategory = tempEvent.getCategory();
-                                            if(currentCategory.equals(Events.CATEGORY_INDIVIDUAL)){
-                                                x.setVisible(false);
-                                            }else if(currentCategory.equals(Events.CATEGORY_CORPORATE)){
-                                                x.setVisible(false);
-                                            }else if(currentCategory.equals(Events.CATEGORY_NPO)){
-                                                x.setVisible(true);
-                                            }
-                                        }
-                                        break;
-                                }
-                                return true;
-                            }
-                        });
-                final Button searchButton = (Button)findViewById(R.id.SearchButton);
-                searchButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-                        View mView = getLayoutInflater().inflate(R.layout.search_dialog_layout,null);
-
-                        mBuilder.setView(mView);
-                        final AlertDialog dialog = mBuilder.create();
-                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-                        Button searchQuery = (Button) mView.findViewById(R.id.searchButton);
-                        final EditText enterText = (EditText) mView.findViewById(R.id.searchTextEdit);
-
-                        searchQuery.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-
-                                    for(Marker x:markArray){
-                                        Events queryingEvent =(Events) x.getTag();
-                                        if(enterText.getText().toString().equals(queryingEvent.getGlobalId())){
-                                            final Events nowEvents = (Events) queryingEvent;
-                                            final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-                                            View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
-
-                                            mBuilder.setView(mView);
-                                            final AlertDialog dialog = mBuilder.create();
-                                            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                            TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
-                                            summaryText.setMovementMethod(new ScrollingMovementMethod());
-                                            summaryText.setText(nowEvents.getEventSummary());
-                                            TextView nameText = mView.findViewById(R.id.eventNameMark);
-                                            nameText.setText(nowEvents.getName());
-                                            String date = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[0];
-                                            String time = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[1];
-                                            TextView dateText = mView.findViewById(R.id.eventDateMark);
-                                            dateText.setText(date);
-                                            TextView timeText = mView.findViewById(R.id.eventTimeMark);
-                                            timeText.setText(time);
-                                            TextView locationText = mView.findViewById(R.id.eventLocationMark);
-                                            locationText.setText(nowEvents.getLocationName());
-                                            TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
-                                            participantText.setText(nowEvents.getParticipants()+"");
-                                            FloatingActionButton followButton =  (FloatingActionButton) mView.findViewById(R.id.follow);
-
-                                            followButton.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-
-                                                    DataSenderToServer dataSenderToServer = new DataSenderToServer();
-                                                    dataSenderToServer.addOneParticipants(nowEvents.getGlobalId());
-                                                    boolean insertData = eventsDBHelper.addData(
-                                                            nowEvents.getName(),
-                                                            nowEvents.getUnixTimeStamp(),
-                                                            nowEvents.getParticipants(),
-                                                            nowEvents.getLocation(),
-                                                            nowEvents.getLocationName(),
-                                                            nowEvents.getEventSummary(),
-                                                            nowEvents.getCategory()
-                                                    );
-
-                                                    if (insertData) {
-                                                        Toast.makeText(MainActivity.this, "Data Successfully Inserted!", Toast.LENGTH_LONG).show();
-
-                                                        upDateListView();
-                                                        dialog.dismiss();
-                                                        selfIntent = new Intent(MainActivity.this,MainActivity.class);
-                                                        MainActivity.this.startActivity(selfIntent);
-                                                    } else {
-                                                        Toast.makeText(MainActivity.this, "Something went wrong :(.", Toast.LENGTH_LONG).show();
-
-                                                    }
-                                                    Toast.makeText(MainActivity.this, "You have followed this Event.", Toast.LENGTH_LONG).show();
-
-                                                }
-                                            });
-                                            dialog.show();
-                                        }
-                                    }
-                            }
-                        });
-                        dialog.show();
-
-                    }
-                });
-
-            }
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
-
-        mMap.setOnMarkerClickListener(this);
-
-
-
-    }
-    public void addEventMarkers(Cursor c){
-
-        gson = new Gson();
-        c.moveToFirst();
-        while (c.isAfterLast() == false)
-        {
-            final LatLng location = gson.fromJson(c.getString(c.getColumnIndex(DatabaseHelper.COL_LOCATION)),LatLng.class);
-            mMap.addCircle(new CircleOptions().center(location)
-                    .radius(10)
-                    .fillColor(R.color.cardbackground2)
-                    .strokeColor(R.color.cardbackground));
-            c.moveToNext();
-        }
     }
 
 
@@ -794,20 +533,263 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         if(mMap != null){
             mMap.clear();
         }
+
+        final Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/");
+
+
+        final ArrayList<Events> eventsArrayList = new ArrayList<Events>();
+
+        firebase.child("eventPostDetails").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                final ArrayList<Marker> markArray = new ArrayList<>();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+
+                    long unixtime = (long)snapshot.child("unixTimeStamp").getValue();
+                    String event_name = snapshot.child("name").getValue().toString();
+                    int participants = Integer.parseInt(snapshot.child("participants").getValue().toString());
+                    double longitude = (double)snapshot.child("location/longitude").getValue();
+                    double latitude = (double)snapshot.child("location/latitude").getValue();
+                    String locationName = snapshot.child("locationName").getValue().toString();
+                    String summary = snapshot.child("eventSummary").getValue().toString();
+                    String category = snapshot.child("category").getValue().toString();
+                    String globalId = snapshot.child("key").getValue().toString();
+
+                    LatLng location = new LatLng(latitude,longitude);
+
+                    Events newEvents = new Events(unixtime, event_name, participants, location, locationName, summary, category, globalId);
+
+                    eventsArrayList.add(newEvents);
+                    if(newEvents.getCategory().equals(Events.CATEGORY_INDIVIDUAL)) {
+                        newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
+                                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("individual", 75, 75)));
+                    }else if(newEvents.getCategory().equals(Events.CATEGORY_CORPORATE)){
+                        newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
+                                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("corporate", 75, 75)));
+                    }else if(newEvents.getCategory().equals(Events.CATEGORY_NPO)){
+                        newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
+                                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("npo", 75, 75)));
+                    }
+                    Marker mMarker = mMap.addMarker(newMarkerOptions);
+                    Log.v("newEventsFirebase:",newEvents.toString());
+                    mMarker.setTag(newEvents);
+                    markArray.add(mMarker);
+                }
+                setMapMarkerListener(markArray);
+                setmBottomsheetbehvior(markArray);
+                searchFunctionality(markArray);
+                firebase.push().setValue("Oh really? Here is what I think of that!");
+            }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                internetStatus();
+            }
+        });
     }
-    @Override
-    public boolean onMarkerClick(final Marker marker) {
+    public void setMapMarkerListener(ArrayList<Marker> markArray){
+        final ArrayList<Marker> markerArrayList = markArray;
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
 
-        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-        View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
-        mBuilder.setView(mView);
-        final AlertDialog dialog = mBuilder.create();
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
-        summaryText.setMovementMethod(new ScrollingMovementMethod());
-        dialog.show();
+                for(Marker x:markerArrayList){
+                    if(marker.toString().equals(x.toString())){
+                        final Events nowEvents = (Events) marker.getTag();
+                        Log.v("newEventsFirebase:",nowEvents.toString());
+                        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                        View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
 
-        return true;
+                        mBuilder.setView(mView);
+                        final AlertDialog dialog = mBuilder.create();
+                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
+                        summaryText.setMovementMethod(new ScrollingMovementMethod());
+                        summaryText.setText(nowEvents.getEventSummary());
+                        TextView nameText = mView.findViewById(R.id.eventNameMark);
+                        nameText.setText(nowEvents.getName());
+                        String date = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[0];
+                        String time = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[1];
+                        TextView dateText = mView.findViewById(R.id.eventDateMark);
+                        dateText.setText(date);
+                        TextView timeText = mView.findViewById(R.id.eventTimeMark);
+                        timeText.setText(time);
+                        TextView locationText = mView.findViewById(R.id.eventLocationMark);
+                        locationText.setText(nowEvents.getLocationName());
+                        TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
+                        participantText.setText(nowEvents.getParticipants()+"");
+                        FloatingActionButton followButton =  (FloatingActionButton) mView.findViewById(R.id.follow);
+
+                        followButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                boolean insertData = eventsDBHelper.addParticipant(nowEvents);
+                                if (insertData) {
+
+                                    mapFragment.getMapAsync(MainActivity.this);
+                                    dialog.dismiss();
+                                    Toast.makeText(MainActivity.this,"Added Participant",Toast.LENGTH_SHORT).show();
+                                    upDateListView();
+                                } else {
+                                    Toast.makeText(MainActivity.this,"Event Exists",Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                        dialog.show();
+
+                    }else{
+                    }
+                }
+                return true;
+            }
+        });
+
+    }
+    public void setmBottomsheetbehvior(ArrayList<Marker> markerArrayList){
+        bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
+        final ArrayList<Marker> markerarray = markerArrayList;
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_individual:
+                                for(Marker x:markerarray){
+                                    Events tempEvent = (Events) x.getTag();
+                                    if(tempEvent != null) {
+                                        String currentCategory = tempEvent.getCategory();
+                                        if (currentCategory.equals(Events.CATEGORY_INDIVIDUAL)) {
+                                            x.setVisible(true);
+                                        } else if (currentCategory.equals(Events.CATEGORY_CORPORATE)) {
+                                            x.setVisible(false);
+                                        } else if (currentCategory.equals(Events.CATEGORY_NPO)) {
+                                            x.setVisible(false);
+                                        }
+                                    }else{
+                                        internetStatus();
+                                    }
+                                }
+                                break;
+                            case R.id.action_corporate:
+                                for(Marker x:markerarray){
+                                    Events tempEvent = (Events) x.getTag();
+                                    if(tempEvent != null) {
+                                        String currentCategory = tempEvent.getCategory();
+                                        if (currentCategory.equals(Events.CATEGORY_INDIVIDUAL)) {
+                                            x.setVisible(false);
+                                        } else if (currentCategory.equals(Events.CATEGORY_CORPORATE)) {
+                                            x.setVisible(true);
+                                        } else if (currentCategory.equals(Events.CATEGORY_NPO)) {
+                                            x.setVisible(false);
+                                        }
+                                    }else{
+                                        internetStatus();
+                                    }
+                                }
+                                break;
+                            case R.id.action_npo:
+                                for(Marker x:markerarray){
+                                    Events tempEvent = (Events) x.getTag();
+                                    if(tempEvent != null) {
+                                        String currentCategory = tempEvent.getCategory();
+                                        if (currentCategory.equals(Events.CATEGORY_INDIVIDUAL)) {
+                                            x.setVisible(false);
+                                        } else if (currentCategory.equals(Events.CATEGORY_CORPORATE)) {
+                                            x.setVisible(false);
+                                        } else if (currentCategory.equals(Events.CATEGORY_NPO)) {
+                                            x.setVisible(true);
+                                        }
+                                    }else{
+                                        internetStatus();
+                                    }
+                                }
+                                break;
+                        }
+                        return true;
+                    }
+                });
+    }
+    public void internetStatus(){
+        ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if(networkInfo == null || !networkInfo.isConnected()){
+            Toast.makeText(MainActivity.this, "You are not connected to the Internet.", Toast.LENGTH_LONG).show();
+        }
+
+    }
+    public void searchFunctionality(ArrayList<Marker> markArray){
+        final Button searchButton = (Button)findViewById(R.id.SearchButton);
+        final ArrayList<Marker> markArray2 = markArray;
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                View mView = getLayoutInflater().inflate(R.layout.search_dialog_layout,null);
+
+                mBuilder.setView(mView);
+                final AlertDialog dialog = mBuilder.create();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                Button searchQuery = (Button) mView.findViewById(R.id.searchButton);
+                final EditText enterText = (EditText) mView.findViewById(R.id.searchTextEdit);
+
+                searchQuery.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        for(Marker x:markArray2){
+                            Events queryingEvent =(Events) x.getTag();
+                            if(enterText.getText().toString().equals(queryingEvent.getGlobalId())){
+                                final Events nowEvents = (Events) queryingEvent;
+                                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                                View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
+
+                                mBuilder.setView(mView);
+                                final AlertDialog dialog = mBuilder.create();
+                                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
+                                summaryText.setMovementMethod(new ScrollingMovementMethod());
+                                summaryText.setText(nowEvents.getEventSummary());
+                                TextView nameText = mView.findViewById(R.id.eventNameMark);
+                                nameText.setText(nowEvents.getName());
+                                String date = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[0];
+                                String time = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[1];
+                                TextView dateText = mView.findViewById(R.id.eventDateMark);
+                                dateText.setText(date);
+                                TextView timeText = mView.findViewById(R.id.eventTimeMark);
+                                timeText.setText(time);
+                                TextView locationText = mView.findViewById(R.id.eventLocationMark);
+                                locationText.setText(nowEvents.getLocationName());
+                                TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
+                                participantText.setText(nowEvents.getParticipants()+"");
+                                FloatingActionButton followButton =  (FloatingActionButton) mView.findViewById(R.id.follow);
+
+                                followButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+                                        boolean insertData = eventsDBHelper.addParticipant(nowEvents);
+
+                                        if (insertData) {
+                                            dialog.dismiss();
+                                            mapFragment.getMapAsync(MainActivity.this);
+                                            Toast.makeText(MainActivity.this,"Added Participant",Toast.LENGTH_SHORT).show();
+                                            upDateListView();
+                                        } else {
+                                            Toast.makeText(MainActivity.this,"You already followed this Event",Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    }
+                                });
+                                dialog.show();
+                            }
+                        }
+                    }
+                });
+                dialog.show();
+            }
+        });
     }
 
 }

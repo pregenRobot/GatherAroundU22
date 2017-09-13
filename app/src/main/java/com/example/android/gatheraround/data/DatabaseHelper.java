@@ -13,6 +13,10 @@ import com.google.gson.Gson;
 
 import com.example.android.gatheraround.custom_classes.Events;
 
+import java.util.ArrayList;
+
+import static com.example.android.gatheraround.data.MyEventsDatabaseHelper.COL_GLOBAL_ID;
+
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -32,6 +36,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // id for identifying on the server
     DataSenderToServer dataSenderToServer = new DataSenderToServer();
     public static final int DB_VERSION = 1;
+    MyEventsDatabaseHelper myevents = new MyEventsDatabaseHelper(context);
 
 
     private static final String[] ALL_COLUMNS = new String[]{
@@ -56,55 +61,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COL_CATEGORY + " TEXT," +
                 COL_GLOBALID + ")";
         sqLiteDatabase.execSQL(createTable);
-
         Log.v("DatabaseHelper","Database Created!");
-
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-//        SQLiteDatabase database = this.getWritableDatabase();
-//
-//        if (oldVersion == 1){
-//
-//            int oldDbCounts = (int) DatabaseUtils.queryNumEntries(db, TABLE_NAME);
-//
-//            for (int a = 0; a < oldDbCounts; a++){
-//                Cursor cursor = null;
-//
-//                try{
-//                    cursor = database.query(DATABASE_NAME, ALL_COLUMNS, COL_LOCALID + " = ?", new String[]{String.valueOf(a)}, null, null, null);
-//
-//                    int indexName = cursor.getColumnIndex(COL_NAME);
-//                    int indexTime = cursor.getColumnIndex(COL_UNIXTIME);
-//                    int indexParticipants = cursor.getColumnIndex(COL_PARTICIPANTS);
-//                    int indexLocation = cursor.getColumnIndex(COL_LOCATION);
-//                    int indexLocationName = cursor.getColumnIndex(COL_LOCATIONNAME);
-//                    int indexSummary = cursor.getColumnIndex(COL_SUMMARY);
-//
-//                    ContentValues contentValues = new ContentValues();
-//
-//                    contentValues.put(COL_NAME, cursor.getString(indexName));
-//                    contentValues.put(COL_UNIXTIME, cursor.getLong(indexTime));
-//                    contentValues.put(COL_PARTICIPANTS, cursor.getLong(indexParticipants));
-//
-////                    Gson gson = new Gson();
-////                    final LatLng location = gson.fromJson(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL_LOCATION)),LatLng.class);
-//
-//                    contentValues.put(COL_LOCATION, cursor.getString(indexLocation));
-//                    contentValues.put(COL_LOCATIONNAME, cursor.getString(indexLocationName));
-//                    contentValues.put(COL_SUMMARY, cursor.getString(indexSummary));
-//                    contentValues.put(COL_CATEGORY, CATEGORY_DEFAULT);
-//
-//
-//                }finally {
-//                    if(cursor != null){
-//                        cursor.close();
-//                    }
-//                }
-//            }
-//        }
         db.execSQL("DROP IF TABLE EXISTS " + TABLE_NAME);
         onCreate(db);
     }
@@ -129,6 +91,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String key = dataSenderToServer.pushToServer(newEvents);
 
         contentValues.put(COL_GLOBALID, key);
+        Log.v("AddedData",contentValues.toString());
 
         dataSenderToServer.addOneParticipants(key);
 
@@ -140,6 +103,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
         }
     }
+    public boolean addParticipant(Events events){
+        long result=-1;
+        if(!this.checkforExistingEvent(events.getGlobalId())){
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues contentValues = new ContentValues();
+            Gson gson = new Gson();
+            String gsonLocation = gson.toJson(events.getLocation(),LatLng.class);
+            contentValues.put(COL_NAME,events.getName());
+            contentValues.put(COL_UNIXTIME, events.getUnixTimeStamp());
+            contentValues.put(COL_PARTICIPANTS, events.getParticipants());
+            contentValues.put(COL_LOCATION, gsonLocation);
+            contentValues.put(COL_LOCATIONNAME, events.getLocationName());
+            contentValues.put(COL_SUMMARY, events.getEventSummary());
+            contentValues.put(COL_CATEGORY, events.getCategory());
+            contentValues.put(COL_GLOBALID, events.getGlobalId());
+            dataSenderToServer.addOneParticipants(events.getGlobalId());
+            result = db.insert(TABLE_NAME, null, contentValues);
+        }
+        if(result == -1){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
     public Cursor getAllEvents(){
         SQLiteDatabase db = this.getReadableDatabase();
         if(db == null){
@@ -151,6 +139,43 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor c = db.query(true, TABLE_NAME, ALL_COLUMNS,where,null,null,null,/** COL_NAME + " ASC"**/null,null);
         return c;
 
+    }
+    public boolean checkforExistingEvent(String toCheck){
+        ArrayList<String> returner = new ArrayList<String>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor mCursor = db.query(true, TABLE_NAME, ALL_COLUMNS,null,null,null,null,/** COL_NAME + " ASC"**/null,null);
+        Log.v("EventCursor",mCursor.toString());
+
+        for(mCursor.moveToFirst(); !mCursor.isAfterLast(); mCursor.moveToNext()) {
+            // The Cursor is now set to the right position
+            returner.add(mCursor.getString(mCursor.getColumnIndex(COL_GLOBALID)));
+            Log.v("Database","Searching Through registered IDs" + mCursor.getString(mCursor.getColumnIndex(COL_GLOBALID)));
+        }
+        boolean checker = false;
+        for(String x:returner){
+            Log.v("Database","Now Checking: " + x);
+            if(x.equals(toCheck)){
+                checker = true;
+                Log.v("Checker","True!");
+            }else{
+                Log.v("Checker","False!");
+            }
+        }
+        return checker;
+    }
+
+
+    public ArrayList<String> getAllGlobalId(){
+        ArrayList<String> returner = new ArrayList<String>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String where = null;
+        Cursor mCursor = db.query(true, TABLE_NAME, new String[]{COL_GLOBALID},where,null,null,null,/** COL_NAME + " ASC"**/null,null);
+
+        for(mCursor.moveToFirst(); !mCursor.isAfterLast(); mCursor.moveToNext()) {
+            // The Cursor is now set to the right position
+            returner.add(mCursor.getString(mCursor.getColumnIndex(COL_GLOBALID)));
+        }
+        return returner;
     }
     public boolean deleteEvent(long rowId) {
         SQLiteDatabase db = this.getReadableDatabase();
