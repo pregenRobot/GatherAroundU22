@@ -15,8 +15,6 @@ import com.example.android.gatheraround.custom_classes.Events;
 
 import java.util.ArrayList;
 
-import static com.example.android.gatheraround.data.MyEventsDatabaseHelper.COL_GLOBAL_ID;
-
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -36,7 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // id for identifying on the server
     DataSenderToServer dataSenderToServer = new DataSenderToServer();
     public static final int DB_VERSION = 1;
-    MyEventsDatabaseHelper myevents = new MyEventsDatabaseHelper(context);
+
 
 
     private static final String[] ALL_COLUMNS = new String[]{
@@ -73,6 +71,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean addData(String event_name, long unixtime, int participants, LatLng location, String locationName,String summary, String category){
         SQLiteDatabase db = this.getWritableDatabase();
+
         ContentValues contentValues = new ContentValues();
 
         Gson gson = new Gson();
@@ -94,6 +93,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.v("AddedData",contentValues.toString());
 
         dataSenderToServer.addOneParticipants(key);
+        MyEventsDatabaseHelper myevents = new MyEventsDatabaseHelper(context);
+
+        boolean truf = myevents.addData(key);
+        if(truf){
+            Log.v("Local Events","Added Global ID");
+        }else{
+            Log.v("Local Events","Failed to Add Global ID");
+        }
 
         long result = db.insert(TABLE_NAME, null, contentValues);
 

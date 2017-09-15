@@ -1,5 +1,7 @@
 package com.example.android.gatheraround;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -27,10 +29,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.android.gatheraround.custom_classes.Events;
@@ -83,6 +87,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     int cMinute = 20;
     long unixTimestamp;
     SupportMapFragment mapFragment;
+
+    int dpYear,dpMonth,dpDay,dpHour,dpMinute;
+    int fdpYear,fdpMonth,fdpDay,fdpHour,fdpMinute;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -225,7 +234,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 eventTimeEdit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
 
                         final AlertDialog.Builder myBuilder = new AlertDialog.Builder(MainActivity.this);
                         final View timeView = getLayoutInflater().inflate(R.layout.datetimepicker,null);
@@ -445,6 +453,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         });
                         thread.start();
                         dialog.show();
+
+
                     }
                 });
                 doneButton.setOnClickListener(new View.OnClickListener() {
@@ -465,7 +475,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             if (insertData) {
                                 dialog.dismiss();
                                 mapFragment.getMapAsync(MainActivity.this);
-                                Toast.makeText(MainActivity.this,"Added your event!",Toast.LENGTH_SHORT);
+                                Toast.makeText(MainActivity.this,"Added your event!",Toast.LENGTH_SHORT).show();
                                 upDateListView();
                             } else {
 
@@ -580,7 +590,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 setMapMarkerListener(markArray);
                 setmBottomsheetbehvior(markArray);
                 searchFunctionality(markArray);
-                firebase.push().setValue("Oh really? Here is what I think of that!");
+                firebase.push().setValue("Retreived Event");
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {

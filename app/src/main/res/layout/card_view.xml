@@ -38,6 +38,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 tools:text="Dick Museum Tour"
+                android:maxLines="1"
                 />
             <TextView
                 android:id="@+id/event_date"
@@ -159,6 +160,7 @@
                     android:textAlignment="viewEnd"
                     android:textColor="@color/white"
                     android:textSize="18sp"
+                    android:maxLines="1"
                     />
             </LinearLayout>
             <LinearLayout

@@ -14,7 +14,7 @@
         android:textSize="24sp"
         android:padding="18dp"
         />
-    <TextView
+    <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -28,7 +28,21 @@
         android:textStyle="bold"
         android:padding="18dp"
         />
-    <TextView
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Generate QR"
+        android:textSize="18sp"
+        android:background="@color/cardbackground2"
+        android:clickable="true"
+        android:id="@+id/qrAction"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:padding="18dp"
+        />
+    <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -42,5 +56,6 @@
         android:textStyle="bold"
         android:padding="18dp"
         />
+
 
 </LinearLayout>
