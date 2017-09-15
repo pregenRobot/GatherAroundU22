@@ -590,7 +590,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 setMapMarkerListener(markArray);
                 setmBottomsheetbehvior(markArray);
                 searchFunctionality(markArray);
-                firebase.push().setValue("Retreived Event");
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {

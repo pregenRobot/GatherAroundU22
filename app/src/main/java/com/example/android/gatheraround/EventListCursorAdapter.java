@@ -9,9 +9,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
+import android.os.Environment;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
@@ -36,6 +39,15 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static android.R.attr.path;
 import static com.example.android.gatheraround.MainActivity.mMap;
 import static com.example.android.gatheraround.R.id.m;
 
@@ -214,7 +226,7 @@ public class EventListCursorAdapter extends CursorAdapter {
                         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
                         View mView = mLayoutInflator.inflate(R.layout.qrgenerated,null);
 
-                        ImageView qrImage = (ImageView) mView.findViewById(R.id.qrImage);
+                        final ImageView qrImage = (ImageView) mView.findViewById(R.id.qrImage);
                         Button savetoPhone = (Button) mView.findViewById(R.id.saveQrButton);
 
                         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
@@ -235,6 +247,17 @@ public class EventListCursorAdapter extends CursorAdapter {
                         mBuilder.setView(mView);
                         final AlertDialog dialog = mBuilder.create();
 
+                        savetoPhone.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                BitmapDrawable drawable = (BitmapDrawable) qrImage.getDrawable();
+                                Bitmap bitmap = drawable.getBitmap();
+                                storeImage(bitmap);
+                                Log.v("SaveToPhone","Method Called!");
+
+                            }
+                        });
+
                         dialog.show();
 
                     }
@@ -244,5 +267,46 @@ public class EventListCursorAdapter extends CursorAdapter {
         });
 
 
+    }
+    private void storeImage(Bitmap image) {
+        File pictureFile = getOutputMediaFile();
+        if (pictureFile == null) {
+            Log.v("Storing File",
+                    "Error creating media file, check storage permissions: ");// e.getMessage());
+            return;
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            image.compress(Bitmap.CompressFormat.PNG, 90, fos);
+            fos.close();
+        } catch (FileNotFoundException e) {
+            Log.v("Storing File", "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Log.v("Storing File", "Error accessing file: " + e.getMessage());
+        }
+    }
+    private  File getOutputMediaFile(){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                + "/Android/data/"
+                + mContext.getPackageName()
+                + "/Files");
+
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+        File mediaFile;
+        String mImageName="MI_"+ timeStamp +".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+        return mediaFile;
     }
 }
