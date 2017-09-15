@@ -34,41 +34,31 @@
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/zoomunpressed"
+            android:src="@drawable/searchbutton"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_marginTop="12dp"
             android:layout_marginLeft="12dp"
-            android:id="@+id/zoomOut"
+            android:id="@+id/searchMain"
             android:clickable="true"
             app:backgroundTint="@color/cardbackground2"
             app:fabSize="normal"
             app:borderWidth="-120000dp"
+
             />
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/zoom2unpressed"
-            android:id="@+id/zoomIn"
+            android:src="@drawable/scanner"
+            android:id="@+id/scanMain"
             android:clickable="true"
             app:backgroundTint="@color/cardbackground2"
             app:fabSize="normal"
             app:borderWidth="-120000dp"
-            app:layout_anchor="@id/zoomOut"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
-            android:layout_below="@+id/zoomOut"
-            />
-
-        <Button
-            android:id="@+id/SearchButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="search"
-            android:text="Search"
-            android:layout_alignBottom="@+id/zoomIn"
-            android:layout_alignParentEnd="true"
-            android:background="@color/cardbackground2"
+            android:layout_below="@+id/searchMain"
+            android:layout_marginTop="8dp"
             />
 
         <android.support.design.widget.BottomNavigationView

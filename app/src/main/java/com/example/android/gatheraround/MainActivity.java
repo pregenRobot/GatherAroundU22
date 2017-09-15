@@ -1,8 +1,10 @@
 package com.example.android.gatheraround;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -56,13 +58,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import static com.example.android.gatheraround.R.id.eventlistview;
 import static com.example.android.gatheraround.R.id.map;
-
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback{
 
     public static BottomSheetBehavior mBottomsheetbehvior;
@@ -70,8 +73,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     Button eventListButton;
     LinearLayoutManager llm;
     Context context;
-    FloatingActionButton zoomIn;
-    FloatingActionButton zoomOut;
 
     DatabaseHelper eventsDBHelper;
     EventListCursorAdapter eventListCursorAdapter;
@@ -87,6 +88,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     int cMinute = 20;
     long unixTimestamp;
     SupportMapFragment mapFragment;
+    FloatingActionButton searchButton;
+    FloatingActionButton scanButton;
+    ArrayList<Marker> receivedMarkers;
 
     int dpYear,dpMonth,dpDay,dpHour,dpMinute;
     int fdpYear,fdpMonth,fdpDay,fdpHour,fdpMinute;
@@ -164,27 +168,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 eventListView.setAdapter(eventListCursorAdapter);
             }
         });
-        zoomIn = findViewById(R.id.zoomIn);
-        zoomOut = findViewById(R.id.zoomOut);
 
-        zoomIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                float zoomlevel = mMap.getCameraPosition().zoom;
-                zoomlevel = zoomlevel + 4;
-                final CameraPosition zoomLocation = CameraPosition.builder().target(mMap.getCameraPosition().target).zoom(zoomlevel).build();
-                MainActivity.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(zoomLocation));
-            }
-        });
-        zoomOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                float zoomlevel = mMap.getCameraPosition().zoom;
-                zoomlevel = zoomlevel - 4;
-                final CameraPosition zoomLocation = CameraPosition.builder().target(mMap.getCameraPosition().target).zoom(zoomlevel).build();
-                MainActivity.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(zoomLocation));
-            }
-        });
 
     }
 
@@ -587,9 +571,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     mMarker.setTag(newEvents);
                     markArray.add(mMarker);
                 }
+                receivedMarkers = markArray;
                 setMapMarkerListener(markArray);
                 setmBottomsheetbehvior(markArray);
                 searchFunctionality(markArray);
+                scanFunctionality(markArray);
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -728,7 +714,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
     public void searchFunctionality(ArrayList<Marker> markArray){
-        final Button searchButton = (Button)findViewById(R.id.SearchButton);
+        searchButton = findViewById(R.id.searchMain);
         final ArrayList<Marker> markArray2 = markArray;
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -800,6 +786,57 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
+    public void scanFunctionality(ArrayList<Marker> markerArrayList){
+        final Activity activity = this;
+        scanButton = (FloatingActionButton) findViewById(R.id.scanMain);
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                IntentIntegrator integrator = new IntentIntegrator(activity);
+                integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+                integrator.setPrompt("Scan");
+                integrator.setCameraId(0);
+                integrator.setBeepEnabled(false);
+                integrator.setBarcodeImageEnabled(false);
+                integrator.initiateScan();
 
+            }
+
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+        if(receivedMarkers == null){
+            Log.v("receivedMarkers","isNull!");
+        }
+        if(result != null){
+            if(result.getContents()==null){
+                Toast.makeText(MainActivity.this,"You cancelled the Scan",Toast.LENGTH_SHORT).show();
+
+            }else{
+                for(Marker x: receivedMarkers){
+                    Events newEvent = (Events) x.getTag();
+                    if(newEvent==null){
+                        Log.v("newEvent","is Null!");
+                    }else{
+                        Log.v("newEvents","is not Null!");
+                    }
+
+                    assert newEvent != null;
+                    Log.v("tempReceivedMarkers",newEvent.getGlobalId());
+                    if(newEvent.getGlobalId().equals(result.getContents())){
+                        Toast.makeText(MainActivity.this,result.getContents()+"Yes Matches!",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,result.getContents()+"No DoesnotMatch!",Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }
+
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+    }
 }
 
