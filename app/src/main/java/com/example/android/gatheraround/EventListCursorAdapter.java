@@ -203,6 +203,7 @@ public class EventListCursorAdapter extends CursorAdapter {
 
                         mainActivityIntent = new Intent(mContext,MainActivity.class);
                         mContext.startActivity(mainActivityIntent);
+                        //LL
                     }
                 });
                 qrGenButton.setOnClickListener(new View.OnClickListener() {
