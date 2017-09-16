@@ -30,6 +30,7 @@ public class EventDate {
         mHour2 = hour2;
         mMinute2 = minute2;
     }
+
     public EventDate (int year, int month, int day, int year2, int month2, int day2){
         mYear = year;
         mMonth = month;
@@ -37,27 +38,39 @@ public class EventDate {
         mYear2 = year2;
         mMonth2 = month2;
         mDay2 = day2;
-
     }
 
+    public EventDate (int year, int month, int day, int hour, int minute){
+        mYear = year;
+        mMonth = month;
+        mDay = day;
+        mHour = hour;
+        mMinute = minute;
+    }
 
-    public int getmYear(){return mYear;}
+    public EventDate (int year, int month, int day){
+        mYear = year;
+        mMonth = month;
+        mDay = day;
+    }
 
-    public int getmMonth(){return mMonth;}
+    public int getYear(){return mYear;}
 
-    public int getmDay(){return mDay;}
+    public int getMonth(){return mMonth;}
 
-    public int getmHour(){return mHour;}
+    public int getDay(){return mDay;}
 
-    public int getmMinute(){return mMinute;}
+    public int getHour(){return mHour;}
 
-    public int getmYear2(){return mYear2;}
+    public int getMinute(){return mMinute;}
 
-    public int getmMonth2(){return mMonth2;}
+    public int getYear2(){return mYear2;}
 
-    public int getmDay2(){return mDay2;}
+    public int getMonth2(){return mMonth2;}
 
-    public int getmHour2(){return mHour2;}
+    public int getDay2(){return mDay2;}
 
-    public int getmMinute2(){return mMinute2;}
+    public int getHour2(){return mHour2;}
+
+    public int getMinute2(){return mMinute2;}
 }

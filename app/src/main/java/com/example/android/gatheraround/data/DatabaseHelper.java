@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.android.gatheraround.DataSenderToServer;
+import com.example.android.gatheraround.custom_classes.EventDate;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
@@ -24,7 +25,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_LOCALID = "_id";
     // id for identifying within database
     public static final String COL_NAME = "EVENTNAME";
+
     public static final String COL_UNIXTIME = "UNIXTIMESTAMP";
+
+    public static final String COL_DATE = "DATE";
+
     public static final String COL_PARTICIPANTS = "PARTICIPANTS";
     public static final String COL_LOCATION = "LOCATION";
     public static final String COL_LOCATIONNAME = "LOCATIONNAME";
@@ -69,7 +74,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean addData(String event_name, long unixtime, int participants, LatLng location, String locationName,String summary, String category){
+    public boolean addData(String event_name, EventDate date, int participants, LatLng location, String locationName, String summary, String category){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -78,15 +83,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String gsonLocation = gson.toJson(location,LatLng.class);
 
+        String dateGson = gson.toJson(date);
+
         contentValues.put(COL_NAME,event_name);
-        contentValues.put(COL_UNIXTIME, unixtime);
+        contentValues.put(COL_DATE, dateGson);
         contentValues.put(COL_PARTICIPANTS, participants);
         contentValues.put(COL_LOCATION, gsonLocation);
         contentValues.put(COL_LOCATIONNAME, locationName);
         contentValues.put(COL_SUMMARY, summary);
         contentValues.put(COL_CATEGORY, category);
 
-        Events newEvents = new Events(unixtime,event_name,participants,location,locationName,summary, category, "contemporary");
+        Events newEvents = new Events(date,event_name,participants,location,locationName,summary, category, "contemporary");
         String key = dataSenderToServer.pushToServer(newEvents);
 
         contentValues.put(COL_GLOBALID, key);
@@ -110,6 +117,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
         }
     }
+
     public boolean addParticipant(Events events){
         long result=-1;
         if(!this.checkforExistingEvent(events.getGlobalId())){

@@ -16,11 +16,6 @@ import com.firebase.client.core.Context;
 
 public class DataSenderToServer{
 
-//    Context mContext;
-//    DataSenderToServer(Context context){
-//        this.mContext = context;
-//    }
-
     public String pushToServer(Events newEvent){
 
         Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/eventPostDetails");
@@ -33,13 +28,11 @@ public class DataSenderToServer{
 
         firebase.child(key + "/key").setValue(key);
 
-        firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/eventPostTitles");
-        firebase.push().setValue(key);
-
         return key;
     }
 
     public void eraseEntry(String globalId){
+
         Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/eventPostDetails/" + globalId);
         firebase.removeValue();
     }

@@ -9,6 +9,9 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class Events {
     long mUnixTimeStanp;
+
+    EventDate mDate;
+
     private String mName;
     private int mParticipants;
     private LatLng mLocation;
@@ -21,8 +24,8 @@ public class Events {
     public static String CATEGORY_NPO = "NPO";
     public static String CATEGORY_CORPORATE = "CORPORATE";
 
-    public Events(long unixTimeStanp, String name,int participants,LatLng Latilong,String locationname, String eventsummary, String category, String globalId){
-        mUnixTimeStanp = unixTimeStanp;
+    public Events(EventDate date, String name,int participants,LatLng Latilong,String locationname, String eventsummary, String category, String globalId){
+        mDate = date;
         mName = name;
         mParticipants = participants;
         mLocation = Latilong;
@@ -32,8 +35,23 @@ public class Events {
         mGlobalId = globalId;
     }
 
+//    public Events(long unixTimeStamp, String name,int participants,LatLng Latilong,String locationname, String eventsummary, String category, String globalId){
+//        mUnixTimeStanp = unixTimeStamp;
+//        mName = name;
+//        mParticipants = participants;
+//        mLocation = Latilong;
+//        mLocationName = locationname;
+//        mEventSummary = eventsummary;
+//        mCategory = category;
+//        mGlobalId = globalId;
+//    }
+
     public long getUnixTimeStamp(){
         return mUnixTimeStanp;
+    }
+
+    public EventDate getDate(){
+        return mDate;
     }
 
     public String getName(){

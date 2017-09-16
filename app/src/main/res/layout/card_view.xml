@@ -40,18 +40,18 @@
                 tools:text="Dick Museum Tour"
                 android:maxLines="1"
                 />
+
             <TextView
                 android:id="@+id/event_date"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="1.25"
                 android:padding="@dimen/cardmargin"
                 android:textAlignment="viewEnd"
                 android:textColor="@color/white"
                 android:textSize="18dp"
                 android:textStyle="bold"
-                tools:text="8/24"
-                />
+                tools:text="8/24" />
 
         </LinearLayout>
         <LinearLayout
