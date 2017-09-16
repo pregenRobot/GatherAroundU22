@@ -16,17 +16,22 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.util.SparseIntArray;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,6 +98,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     int dpYear,dpMonth,dpDay,dpHour,dpMinute;
     int fdpYear,fdpMonth,fdpDay,fdpHour,fdpMinute;
+    Events newEvent;
+    private static final int REQEUST_PERMISSION = 10;
 
 
     @Override
@@ -116,6 +123,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mBottomsheetbehvior.setHideable(true);
         mBottomsheetbehvior.setPeekHeight(ViewGroup.LayoutParams.MATCH_PARENT);
         mBottomsheetbehvior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        mErrorString = new SparseIntArray();
+        requestAppPermissions(new String[]{
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                android.Manifest.permission.CAMERA
+        },R.string.msg,REQEUST_PERMISSION);
 
         eventListButton = findViewById(R.id.eventlistbutton);
         eventListButton.setOnClickListener(new View.OnClickListener() {
@@ -839,12 +854,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 IntentIntegrator integrator = new IntentIntegrator(activity);
                 integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-                integrator.setPrompt("Scan");
+                integrator.setPrompt("Scan QR Code");
                 integrator.setCameraId(0);
                 integrator.setBeepEnabled(false);
                 integrator.setBarcodeImageEnabled(false);
+                integrator.setOrientationLocked(false);
                 integrator.initiateScan();
 
             }
@@ -863,27 +880,140 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MainActivity.this,"You cancelled the Scan",Toast.LENGTH_SHORT).show();
 
             }else{
-                for(Marker x: receivedMarkers){
-                    Events newEvent = (Events) x.getTag();
-                    if(newEvent==null){
-                        Log.v("newEvent","is Null!");
-                    }else{
-                        Log.v("newEvents","is not Null!");
-                    }
+                Log.v("Scanned Code",result.getContents());
 
+                if(result.getContents().contains("gatheraround/")){
+                    Log.v("Has gatheraround/","True");
+                }else{
+                    Log.v("Has gatheraround/","False");
+
+                }
+                boolean gatherAroundCode = false;
+                for(Marker x: receivedMarkers){
+                    newEvent = (Events) x.getTag();
                     assert newEvent != null;
-                    Log.v("tempReceivedMarkers",newEvent.getGlobalId());
-                    if(newEvent.getGlobalId().equals(result.getContents())){
-                        Toast.makeText(MainActivity.this,result.getContents()+"Yes Matches!",Toast.LENGTH_SHORT).show();
-                        Toast.makeText(MainActivity.this,result.getContents()+"No DoesnotMatch!",Toast.LENGTH_SHORT).show();
+                    String testString = "gatheraround/"+newEvent.getGlobalId();
+                    if(testString.equals(result.getContents())){
+                        Log.v("tempReceivedMarkers",newEvent.getGlobalId());
+                        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                        View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
+                        mBuilder.setView(mView);
+                        final AlertDialog dialog = mBuilder.create();
+                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
+                        summaryText.setMovementMethod(new ScrollingMovementMethod());
+                        summaryText.setText(newEvent.getEventSummary());
+                        TextView nameText = mView.findViewById(R.id.eventNameMark);
+                        nameText.setText(newEvent.getName());
+                        String date = calculations.UnixTimeConverter(newEvent.getUnixTimeStamp())[0];
+                        String time = calculations.UnixTimeConverter(newEvent.getUnixTimeStamp())[1];
+                        TextView dateText = mView.findViewById(R.id.eventDateMark);
+                        dateText.setText(date);
+                        TextView timeText = mView.findViewById(R.id.eventTimeMark);
+                        timeText.setText(time);
+                        TextView locationText = mView.findViewById(R.id.eventLocationMark);
+                        locationText.setText(newEvent.getLocationName());
+                        TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
+                        participantText.setText(newEvent.getParticipants()+"");
+                        FloatingActionButton followButton =  (FloatingActionButton) mView.findViewById(R.id.follow);
+
+                        followButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                boolean insertData = eventsDBHelper.addParticipant(newEvent);
+
+                                if (insertData) {
+                                    dialog.dismiss();
+                                    mapFragment.getMapAsync(MainActivity.this);
+                                    Toast.makeText(MainActivity.this,"Added Participant",Toast.LENGTH_SHORT).show();
+                                    upDateListView();
+                                } else {
+                                    Toast.makeText(MainActivity.this,"EventExists",Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                        dialog.show();
+                        gatherAroundCode = true;
                     }
+                }
+                if(!gatherAroundCode){
+                    Toast.makeText(MainActivity.this,"Invalid QR Code",Toast.LENGTH_SHORT).show();
                 }
             }
         }
 
-
         super.onActivityResult(requestCode, resultCode, data);
 
     }
+    private SparseIntArray mErrorString;
+
+    public void onPermissionsGranted() {
+        //Do anything when permisson granted
+    }
+
+    public void requestAppPermissions(final String[]requestedPermissions, final int stringId, final int requestCode) {
+        mErrorString.put(requestCode, stringId);
+
+        int permissionCheck = PackageManager.PERMISSION_GRANTED;
+        boolean showRequestPermissions = false;
+        for(String permission: requestedPermissions) {
+            permissionCheck = permissionCheck + ContextCompat.checkSelfPermission(this, permission);
+            showRequestPermissions = showRequestPermissions || ActivityCompat.shouldShowRequestPermissionRationale(this, permission);
+        }
+
+        if (permissionCheck!=PackageManager.PERMISSION_GRANTED) {
+            if(showRequestPermissions) {
+                Snackbar.make(findViewById(android.R.id.content), stringId, Snackbar.LENGTH_INDEFINITE).setAction("GRANT", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ActivityCompat.requestPermissions(MainActivity.this, requestedPermissions, requestCode);
+                    }
+                }).show();
+            } else {
+                ActivityCompat.requestPermissions(this, requestedPermissions, requestCode);
+            }
+
+        } else {
+            onPermissionsGranted();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        int permissionCheck = PackageManager.PERMISSION_GRANTED;
+        for(int permisson : grantResults) {
+            permissionCheck = permissionCheck + permisson;
+        }
+
+        if( (grantResults.length > 0) && PackageManager.PERMISSION_GRANTED == permissionCheck) {
+            onPermissionsGranted();
+        } else {
+            //Display message when contain some Dangerous permisson not accept
+            Snackbar.make(findViewById(android.R.id.content), mErrorString.get(requestCode),
+                    Snackbar.LENGTH_INDEFINITE).setAction("ENABLE", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent();
+                    i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    i.setData(Uri.parse("package:" + getPackageName()));
+                    i.addCategory(Intent.CATEGORY_DEFAULT);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                    startActivity(i);
+                }
+            }).show();
+        }
+    }
+    @Override
+    public void onBackPressed() {
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
+    }
+
 }
 
