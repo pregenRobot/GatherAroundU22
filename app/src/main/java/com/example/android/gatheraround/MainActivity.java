@@ -558,7 +558,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 //                    long unixtime = (long)snapshot.child("unixTimeStamp").getValue();
 
-                    // 170917 0:18
+                    // 170917 0:31
 
                     int year = (int)snapshot.child("year").getValue();
                     int month = (int)snapshot.child("month").getValue();
