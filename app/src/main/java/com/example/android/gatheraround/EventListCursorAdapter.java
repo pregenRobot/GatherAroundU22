@@ -4,10 +4,12 @@ import android.app.LauncherActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -26,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.gatheraround.custom_classes.EventDate;
 import com.example.android.gatheraround.data.DatabaseHelper;
@@ -35,9 +38,12 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.io.File;
@@ -47,6 +53,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.R.attr.path;
 import static com.example.android.gatheraround.MainActivity.mMap;
@@ -233,13 +241,19 @@ public class EventListCursorAdapter extends CursorAdapter {
 
                         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
 
+                        /////
+
+
+                        /////
+
                         try{
-                            BitMatrix bitMatrix = multiFormatWriter.encode(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID)),
+                            BitMatrix bitMatrix = multiFormatWriter.encode("gatheraround/"+mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID)),
                                     BarcodeFormat.QR_CODE,500,500
                                     );
 
                             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
                             Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+
                             qrImage.setImageBitmap(bitmap);
 
                         }catch (WriterException e){
@@ -254,8 +268,11 @@ public class EventListCursorAdapter extends CursorAdapter {
                             public void onClick(View view) {
                                 BitmapDrawable drawable = (BitmapDrawable) qrImage.getDrawable();
                                 Bitmap bitmap = drawable.getBitmap();
-                                storeImage(bitmap);
                                 Log.v("SaveToPhone","Method Called!");
+                                String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+                                String mImageName="MI_"+ timeStamp +".jpg";
+                                createDirectoryAndSaveFile(bitmap,mImageName);
+                                Toast.makeText(mContext,"Saved Image to Phone",Toast.LENGTH_SHORT).show();
 
                             }
                         });
@@ -270,45 +287,27 @@ public class EventListCursorAdapter extends CursorAdapter {
 
 
     }
-    private void storeImage(Bitmap image) {
-        File pictureFile = getOutputMediaFile();
-        if (pictureFile == null) {
-            Log.v("Storing File",
-                    "Error creating media file, check storage permissions: ");// e.getMessage());
-            return;
+    private void createDirectoryAndSaveFile(Bitmap imageToSave, String fileName) {
+
+        File direct = new File(Environment.getExternalStorageDirectory() + "/GatherAround");
+
+        if (!direct.exists()) {
+            File wallpaperDirectory = new File("/storage/emulated/0/Pictures/GatherAround/");
+            wallpaperDirectory.mkdirs();
         }
+
+        File file = new File(new File("/storage/emulated/0/Pictures/GatherAround/"), fileName);
+        if (file.exists())
+            file.delete();
         try {
-            FileOutputStream fos = new FileOutputStream(pictureFile);
-            image.compress(Bitmap.CompressFormat.PNG, 90, fos);
-            fos.close();
-        } catch (FileNotFoundException e) {
-            Log.v("Storing File", "File not found: " + e.getMessage());
-        } catch (IOException e) {
-            Log.v("Storing File", "Error accessing file: " + e.getMessage());
+            FileOutputStream out = new FileOutputStream(file);
+            imageToSave.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-    private  File getOutputMediaFile(){
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-                + "/Android/data/"
-                + mContext.getPackageName()
-                + "/Files");
 
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
-
-        // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()){
-                return null;
-            }
-        }
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
-        File mediaFile;
-        String mImageName="MI_"+ timeStamp +".jpg";
-        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
-        return mediaFile;
-    }
 }
