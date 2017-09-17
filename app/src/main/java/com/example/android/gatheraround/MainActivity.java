@@ -84,6 +84,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     ListView eventListView;
     BottomNavigationView bottomNavigationView;
     Calculations calculations = new Calculations();
+    EventDate eventDate = new EventDate();
 
     int cYear = 2017;
     int cMonth = 7;
@@ -185,7 +186,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         EventDate eventDate = new EventDate("2017", "10", "1", "11", "30", "2017", "10", "2", "20", "00");
         LatLng latLng = new LatLng(0, 0);
-        boolean insertData = eventsDBHelper.addData("test1", eventDate, 0, latLng, "test1", "this is a test created by chiharu", Events.CATEGORY_INDIVIDUAL);
+//        boolean insertData = eventsDBHelper.addData("test1", eventDate, 0, latLng, "test1", "this is a test created by chiharu", Events.CATEGORY_INDIVIDUAL);
     }
 
     @Override
@@ -481,6 +482,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 mapFragment.getMapAsync(MainActivity.this);
                                 Toast.makeText(MainActivity.this,"Added your event!",Toast.LENGTH_SHORT).show();
                                 upDateListView();
+                                Intent Main = new Intent(MainActivity.this,MainActivity.class);
+                                startActivity(Main);
                             } else {
 
                             }
@@ -563,17 +566,17 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                     Log.i("snapShot", String.valueOf(snapshot));
 
-                    String year = snapshot.child("date/year").getValue().toString();
-                    String month = snapshot.child("date/month").getValue().toString();
-                    String day = snapshot.child("date/day").getValue().toString();
-                    String hour = snapshot.child("date/hour").getValue().toString();
-                    String minute = snapshot.child("date/minute").getValue().toString();
+                    String year = snapshot.child("date/mYear").getValue().toString();
+                    String month = snapshot.child("date/mMonth").getValue().toString();
+                    String day = snapshot.child("date/mDay").getValue().toString();
+                    String hour = snapshot.child("date/mHour").getValue().toString();
+                    String minute = snapshot.child("date/mMinute").getValue().toString();
 
-                    String year2 = snapshot.child("date/year2").getValue().toString();
-                    String month2 = snapshot.child("date/month2").getValue().toString();
-                    String day2 = snapshot.child("date/day2").getValue().toString();
-                    String hour2 = snapshot.child("date/hour2").getValue().toString();
-                    String minute2 = snapshot.child("date/minute2").getValue().toString();
+                    String year2 = snapshot.child("date/mYear2").getValue().toString();
+                    String month2 = snapshot.child("date/mMonth2").getValue().toString();
+                    String day2 = snapshot.child("date/mDay2").getValue().toString();
+                    String hour2 = snapshot.child("date/mHour2").getValue().toString();
+                    String minute2 = snapshot.child("date/mMinute2").getValue().toString();
 
                     EventDate date = new EventDate(year, month, day, hour, minute, year2, month2, day2, hour2, minute2);
 
@@ -642,19 +645,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         summaryText.setText(nowEvents.getEventSummary());
                         TextView nameText = mView.findViewById(R.id.eventNameMark);
                         nameText.setText(nowEvents.getName());
-
-//                        String month = String.valueOf(nowEvents.getDate().getMonth());
-//                        String day = String.valueOf(nowEvents.getDate().getDay());
-//
-//                        String date = month + " / " + day;
-
-                        String date = nowEvents.getDate().makeDateText(true);
-                        String time = nowEvents.getDate().makeTimeText(true);
-
                         TextView dateText = mView.findViewById(R.id.eventDateMark);
-                        dateText.setText(date);
+                        try{
+                            Log.v("THisistotaly","Ok!");
+                        }catch (NullPointerException n){
+                            Log.v("THISistotaly","Not Ok!");
+                        }
+                        String[] dateandTime = calculations.concatenate(nowEvents.getDate(),false,false);
+                        dateText.setText(dateandTime[0]);
                         TextView timeText = mView.findViewById(R.id.eventTimeMark);
-                        timeText.setText(time);
+                        timeText.setText(dateandTime[1]);
                         TextView locationText = mView.findViewById(R.id.eventLocationMark);
                         locationText.setText(nowEvents.getLocationName());
                         TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
@@ -684,7 +684,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 return true;
             }
         });
-
     }
     public void setmBottomsheetbehvior(ArrayList<Marker> markerArrayList){
         bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
@@ -793,12 +792,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 summaryText.setText(nowEvents.getEventSummary());
                                 TextView nameText = mView.findViewById(R.id.eventNameMark);
                                 nameText.setText(nowEvents.getName());
-                                String date = nowEvents.getDate().makeDateText(true);
-                                String time = nowEvents.getDate().makeTimeText(true);
                                 TextView dateText = mView.findViewById(R.id.eventDateMark);
-                                dateText.setText(date);
+                                String[] dateandTime = calculations.concatenate(nowEvents.getDate(),false,false);
+                                dateText.setText(dateandTime[0]);
                                 TextView timeText = mView.findViewById(R.id.eventTimeMark);
-                                timeText.setText(time);
+                                timeText.setText(dateandTime[1]);
                                 TextView locationText = mView.findViewById(R.id.eventLocationMark);
                                 locationText.setText(nowEvents.getLocationName());
                                 TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
@@ -888,12 +886,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         summaryText.setText(newEvent.getEventSummary());
                         TextView nameText = mView.findViewById(R.id.eventNameMark);
                         nameText.setText(newEvent.getName());
-                        String date = newEvent.getDate().makeDateText(true);
-                        String time = newEvent.getDate().makeTimeText(true);
                         TextView dateText = mView.findViewById(R.id.eventDateMark);
-                        dateText.setText(date);
+                        String[] dateandTime = calculations.concatenate(newEvent.getDate(),false,false);
+                        dateText.setText(dateandTime[0]);
                         TextView timeText = mView.findViewById(R.id.eventTimeMark);
-                        timeText.setText(time);
+                        timeText.setText(dateandTime[1]);
                         TextView locationText = mView.findViewById(R.id.eventLocationMark);
                         locationText.setText(newEvent.getLocationName());
                         TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
@@ -999,4 +996,3 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 }
-

@@ -1,5 +1,7 @@
 package com.example.android.gatheraround.custom_classes;
 
+import static com.example.android.gatheraround.R.id.m;
+
 /**
  * Created by chiharu_miyoshi on 2017/09/15.
  */
@@ -32,26 +34,29 @@ public class EventDate {
         mHour2 = hour2;
         mMinute2 = minute2;
     }
+    public EventDate (){
 
-    public String getYear(){return mYear;}
+    }
 
-    public String getMonth(){return mMonth;}
+    public String getmYear(){return mYear;}
 
-    public String getDay(){return mDay;}
+    public String getmMonth(){return mMonth;}
 
-    public String getHour(){return mHour;}
+    public String getmDay(){return mDay;}
 
-    public String getMinute(){return mMinute;}
+    public String getmHour(){return mHour;}
 
-    public String getYear2(){return mYear2;}
+    public String getmMinute(){return mMinute;}
 
-    public String getMonth2(){return mMonth2;}
+    public String getmYear2(){return mYear2;}
 
-    public String getDay2(){return mDay2;}
+    public String getmMonth2(){return mMonth2;}
 
-    public String getHour2(){return mHour2;}
+    public String getmDay2(){return mDay2;}
 
-    public String getMinute2(){return mMinute2;}
+    public String getmHour2(){return mHour2;}
+
+    public String getmMinute2(){return mMinute2;}
 
     public String makeDateText(Boolean withNewLine){
 
@@ -72,6 +77,7 @@ public class EventDate {
 
         return result;
     }
+
 
     public String makeTimeText(boolean withNewLine){
 

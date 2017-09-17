@@ -87,8 +87,8 @@ public class EventListCursorAdapter extends CursorAdapter {
     }
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView timeText = view.findViewById(R.id.event_time);
         TextView nameText = view.findViewById(R.id.event_name);
+        TextView timeText = view.findViewById(R.id.event_time);
         TextView dateText = view.findViewById(R.id.event_date);
         TextView summaryText = view.findViewById(R.id.event_summary);
         TextView locationText = view.findViewById(R.id.event_location);
@@ -101,8 +101,8 @@ public class EventListCursorAdapter extends CursorAdapter {
 
         EventDate eventDate = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_DATE)), EventDate.class);
 
-        String date = eventDate.makeDateText(false);
-        String time = eventDate.makeOneLineText();
+        String date = calculations.concatenate(eventDate,false,true)[0];
+        String time = calculations.concatenate(eventDate,false,true)[1];
 
         Log.i("CardViewTimeText", "text = " + date);
         Log.i("CardViewTimeText", "text = " + time);

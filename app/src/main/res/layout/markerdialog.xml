@@ -65,6 +65,7 @@
                 android:padding="18dp"
                 android:id="@+id/eventDateMark"
                 />
+            <!--android:id="@+id/eventDateMark"-->
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -76,6 +77,7 @@
                 android:padding="18dp"
                 android:id="@+id/eventTimeMark"
                 />
+            <!--android:id="@+id/eventTimeMark"-->
         </LinearLayout>
         <TextView
             android:layout_width="match_parent"
