@@ -888,8 +888,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         summaryText.setText(newEvent.getEventSummary());
                         TextView nameText = mView.findViewById(R.id.eventNameMark);
                         nameText.setText(newEvent.getName());
-                        String date = calculations.UnixTimeConverter(newEvent.getUnixTimeStamp())[0];
-                        String time = calculations.UnixTimeConverter(newEvent.getUnixTimeStamp())[1];
+                        String date = newEvent.getDate().makeDateText(true);
+                        String time = newEvent.getDate().makeTimeText(true);
                         TextView dateText = mView.findViewById(R.id.eventDateMark);
                         dateText.setText(date);
                         TextView timeText = mView.findViewById(R.id.eventTimeMark);
