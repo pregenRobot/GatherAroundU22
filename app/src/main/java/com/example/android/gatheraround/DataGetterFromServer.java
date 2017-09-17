@@ -20,10 +20,10 @@ public class DataGetterFromServer {
 
     public ArrayList<Events> getDataFromServer(){
 
-        Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/");
+        Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_TITLE_URL);
 
         final ArrayList<Events> eventsArrayList = new ArrayList<Events>();
-        firebase.child("eventPostDetails").addListenerForSingleValueEvent(new ValueEventListener() {
+        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.i("Firebase", dataSnapshot.getValue().toString());
@@ -33,17 +33,17 @@ public class DataGetterFromServer {
 
 //                    long unixtime = (long)snapshot.child("unixTimeStamp").getValue();
 
-                    int year = (int)snapshot.child("year").getValue();
-                    int month = (int)snapshot.child("month").getValue();
-                    int day = (int)snapshot.child("day").getValue();
-                    int hour = (int)snapshot.child("hour").getValue();
-                    int minute = (int)snapshot.child("minute").getValue();
+                    String year = snapshot.child("year").getValue().toString();
+                    String month = snapshot.child("month").getValue().toString();
+                    String day = snapshot.child("day").getValue().toString();
+                    String hour = snapshot.child("hour").getValue().toString();
+                    String minute = snapshot.child("minute").getValue().toString();
 
-                    int year2 = (int)snapshot.child("year2").getValue();
-                    int month2 = (int)snapshot.child("month2").getValue();
-                    int day2 = (int)snapshot.child("day2").getValue();
-                    int hour2 = (int)snapshot.child("hour2").getValue();
-                    int minute2 = (int)snapshot.child("minute2").getValue();
+                    String year2 = snapshot.child("year2").getValue().toString();
+                    String month2 = snapshot.child("month2").getValue().toString();
+                    String day2 = snapshot.child("day2").getValue().toString();
+                    String hour2 = snapshot.child("hour2").getValue().toString();
+                    String minute2 = snapshot.child("minute2").getValue().toString();
 
                     EventDate date = new EventDate(year, month, day, hour, minute, year2, month2, day2, hour2, minute2);
 

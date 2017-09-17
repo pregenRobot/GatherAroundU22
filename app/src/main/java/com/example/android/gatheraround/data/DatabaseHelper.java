@@ -6,14 +6,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
 import com.example.android.gatheraround.DataSenderToServer;
 import com.example.android.gatheraround.custom_classes.EventDate;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
-
 import com.example.android.gatheraround.custom_classes.Events;
-
 import java.util.ArrayList;
 
 
@@ -25,8 +22,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_LOCALID = "_id";
     // id for identifying within database
     public static final String COL_NAME = "EVENTNAME";
-
-    public static final String COL_UNIXTIME = "UNIXTIMESTAMP";
 
     public static final String COL_DATE = "DATE";
 
@@ -43,7 +38,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     private static final String[] ALL_COLUMNS = new String[]{
-            COL_LOCALID,COL_NAME,COL_UNIXTIME,COL_PARTICIPANTS,COL_LOCATION,COL_LOCATIONNAME,COL_SUMMARY,COL_CATEGORY,COL_GLOBALID
+            COL_LOCALID,COL_NAME,COL_DATE,COL_PARTICIPANTS,COL_LOCATION,COL_LOCATIONNAME,COL_SUMMARY,COL_CATEGORY,COL_GLOBALID
     };
 
     public DatabaseHelper(Context context) {
@@ -56,7 +51,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String createTable = "CREATE TABLE " + TABLE_NAME + "( " +
                 COL_LOCALID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COL_NAME + " TEXT," +
-                COL_UNIXTIME + " INTEGER," +
+                COL_DATE + " TEXT," +
                 COL_PARTICIPANTS + " INTEGER," +
                 COL_LOCATION + " TEXT," +
                 COL_LOCATIONNAME + " TEXT," +
@@ -83,7 +78,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String gsonLocation = gson.toJson(location,LatLng.class);
 
-        String dateGson = gson.toJson(date);
+        String dateGson = gson.toJson(date, EventDate.class);
 
         contentValues.put(COL_NAME,event_name);
         contentValues.put(COL_DATE, dateGson);
@@ -119,21 +114,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean addParticipant(Events events){
-        long result=-1;
+        long result = -1;
         if(!this.checkforExistingEvent(events.getGlobalId())){
+
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
+
             Gson gson = new Gson();
             String gsonLocation = gson.toJson(events.getLocation(),LatLng.class);
+            String dateGson = gson.toJson(events.getDate(), EventDate.class);
+
             contentValues.put(COL_NAME,events.getName());
-            contentValues.put(COL_UNIXTIME, events.getUnixTimeStamp());
+            contentValues.put(COL_DATE, dateGson);
             contentValues.put(COL_PARTICIPANTS, events.getParticipants());
             contentValues.put(COL_LOCATION, gsonLocation);
             contentValues.put(COL_LOCATIONNAME, events.getLocationName());
             contentValues.put(COL_SUMMARY, events.getEventSummary());
             contentValues.put(COL_CATEGORY, events.getCategory());
             contentValues.put(COL_GLOBALID, events.getGlobalId());
+
             dataSenderToServer.addOneParticipants(events.getGlobalId());
+
             result = db.insert(TABLE_NAME, null, contentValues);
         }
         if(result == -1){

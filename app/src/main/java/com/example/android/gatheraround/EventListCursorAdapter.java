@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.gatheraround.custom_classes.EventDate;
 import com.example.android.gatheraround.data.DatabaseHelper;
 import com.example.android.gatheraround.data.MyEventsDatabaseHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -78,24 +79,25 @@ public class EventListCursorAdapter extends CursorAdapter {
     }
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView timeText = (TextView) view.findViewById(R.id.event_time);
-        TextView nameText = (TextView) view.findViewById(R.id.event_name);
-        TextView dateText = (TextView) view.findViewById(R.id.event_date);
-        TextView summaryText = (TextView) view.findViewById(R.id.event_summary);
-        TextView locationText = (TextView) view.findViewById(R.id.event_location);
-        TextView categoryText = (TextView) view.findViewById(R.id.event_category);
-        CardView card = (CardView) view.findViewById(R.id.CardViewItem);
+        TextView timeText = view.findViewById(R.id.event_time);
+        TextView nameText = view.findViewById(R.id.event_name);
+        TextView dateText = view.findViewById(R.id.event_date);
+        TextView summaryText = view.findViewById(R.id.event_summary);
+        TextView locationText = view.findViewById(R.id.event_location);
+        TextView categoryText = view.findViewById(R.id.event_category);
+        CardView card = view.findViewById(R.id.CardViewItem);
 
         myEvents  = new MyEventsDatabaseHelper(mContext);
 
         final Cursor mCursor = cursor;
 
-        String date = calculations.UnixTimeConverter(
-                mCursor.getLong(mCursor.getColumnIndex(DatabaseHelper.COL_UNIXTIME)
-                ))[0];
-        String time = calculations.UnixTimeConverter(
-                mCursor.getLong(mCursor.getColumnIndex(DatabaseHelper.COL_UNIXTIME))
-        )[1];
+        EventDate eventDate = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_DATE)), EventDate.class);
+
+        String date = eventDate.makeDateText(false);
+        String time = eventDate.makeOneLineText();
+
+        Log.i("CardViewTimeText", "text = " + date);
+        Log.i("CardViewTimeText", "text = " + time);
 
         nameText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
 
@@ -126,10 +128,10 @@ public class EventListCursorAdapter extends CursorAdapter {
         summaryText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LayoutInflater mLayoutInflator;
-                mLayoutInflator = LayoutInflater.from(AppContext);
+                LayoutInflater mLayoutInflater;
+                mLayoutInflater = LayoutInflater.from(AppContext);
                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
-                View mView = mLayoutInflator.inflate(R.layout.summarydialog,null);
+                View mView = mLayoutInflater.inflate(R.layout.summarydialog,null);
 
                 TextView textView = mView.findViewById(R.id.mainText);
                 mCursor.moveToPosition(position);
@@ -155,10 +157,10 @@ public class EventListCursorAdapter extends CursorAdapter {
 
                 Log.i("Event onLongClick", "name=" + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
 
-                LayoutInflater mLayoutInflator;
-                mLayoutInflator = LayoutInflater.from(AppContext);
+                LayoutInflater mLayoutInflater;
+                mLayoutInflater = LayoutInflater.from(AppContext);
                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
-                View mView = mLayoutInflator.inflate(R.layout.canceldelete_editor,null);
+                View mView = mLayoutInflater.inflate(R.layout.canceldelete_editor,null);
 
                 final Button cancelButton = (Button) mView.findViewById(R.id.cancelAction);
                 final Button deleteButton = (Button) mView.findViewById(R.id.deleteEntryAction);

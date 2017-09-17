@@ -16,9 +16,11 @@ import com.firebase.client.core.Context;
 
 public class DataSenderToServer{
 
+    public static final String FIREBASE_TITLE_URL = "https://u22-project-gather-around.firebaseio.com/eventPostDetailsTest";
+
     public String pushToServer(Events newEvent){
 
-        Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/eventPostDetails");
+        Firebase firebase = new Firebase(FIREBASE_TITLE_URL);
         Firebase push = firebase.push();
         push.setValue(newEvent);
         Log.i("Firebase pushed", "pushed=" + newEvent.getName());
@@ -31,14 +33,14 @@ public class DataSenderToServer{
         return key;
     }
 
-    public void eraseEntry(String globalId){
+    public void eraseEntry(String key){
 
-        Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/eventPostDetails/" + globalId);
+        Firebase firebase = new Firebase(FIREBASE_TITLE_URL + "/" + key);
         firebase.removeValue();
     }
 
-    public void addOneParticipants(String globalId){
-        Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/eventPostDetails/" + globalId + "/participants");
+    public void addOneParticipants(String key){
+        Firebase firebase = new Firebase(FIREBASE_TITLE_URL + "/" + key + "/participants");
         firebase.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {

@@ -6,19 +6,21 @@ package com.example.android.gatheraround.custom_classes;
 
 public class EventDate {
 
-    private int mYear;
-    private int mMonth;
-    private int mDay;
-    private int mHour;
-    private int mMinute;
+    private String mYear;
+    private String mMonth;
+    private String mDay;
+    private String mHour;
+    private String mMinute;
 
-    private int mYear2;
-    private int mMonth2;
-    private int mDay2;
-    private int mHour2;
-    private int mMinute2;
+    private String mYear2;
+    private String mMonth2;
+    private String mDay2;
+    private String mHour2;
+    private String mMinute2;
 
-    public EventDate (int year, int month, int day, int hour, int minute, int year2, int month2, int day2, int hour2, int minute2){
+    public static String DEFAULT_TIME = "-1";
+
+    public EventDate (String year, String month, String day, String hour, String minute, String year2, String month2, String day2, String hour2, String minute2){
         mYear = year;
         mMonth = month;
         mDay = day;
@@ -31,46 +33,75 @@ public class EventDate {
         mMinute2 = minute2;
     }
 
-    public EventDate (int year, int month, int day, int year2, int month2, int day2){
-        mYear = year;
-        mMonth = month;
-        mDay = day;
-        mYear2 = year2;
-        mMonth2 = month2;
-        mDay2 = day2;
+    public String getYear(){return mYear;}
+
+    public String getMonth(){return mMonth;}
+
+    public String getDay(){return mDay;}
+
+    public String getHour(){return mHour;}
+
+    public String getMinute(){return mMinute;}
+
+    public String getYear2(){return mYear2;}
+
+    public String getMonth2(){return mMonth2;}
+
+    public String getDay2(){return mDay2;}
+
+    public String getHour2(){return mHour2;}
+
+    public String getMinute2(){return mMinute2;}
+
+    public String makeDateText(Boolean withNewLine){
+
+        String result;
+
+        if (mMonth2.equals("-1")){
+            result = String.valueOf(mYear) + " / " + String.valueOf(mMonth) + " / " + String.valueOf(mDay);
+        } else {
+
+            if (withNewLine) {
+                result = String.valueOf(mYear) + " / " + String.valueOf(mMonth) + " / " + String.valueOf(mDay)
+                        + "\n" + String.valueOf(mYear2) + " / " + String.valueOf(mMonth2) + " / " + String.valueOf(mDay2);
+            } else {
+                result = String.valueOf(mYear) + " / " + String.valueOf(mMonth) + " / " + String.valueOf(mDay)
+                        + " ~ " + String.valueOf(mYear2) + " / " + String.valueOf(mMonth2) + " / " + String.valueOf(mDay2);
+            }
+        }
+
+        return result;
     }
 
-    public EventDate (int year, int month, int day, int hour, int minute){
-        mYear = year;
-        mMonth = month;
-        mDay = day;
-        mHour = hour;
-        mMinute = minute;
+    public String makeTimeText(boolean withNewLine){
+
+        String result;
+
+        if (mHour2.equals("-1")){
+            result = String.valueOf(mHour) + " : " + String.valueOf(mHour);
+        } else {
+
+            if (withNewLine){
+                result = String.valueOf(mHour) + " : " + String.valueOf(mMinute) + "\n" + String.valueOf(mHour2) + " : " + String.valueOf(mMinute2);
+            } else {
+                result = String.valueOf(mHour) + " : " + String.valueOf(mMinute) + " ~ " + String.valueOf(mHour2) + " : " + String.valueOf(mMinute2);
+            }
+        }
+
+        return result;
     }
 
-    public EventDate (int year, int month, int day){
-        mYear = year;
-        mMonth = month;
-        mDay = day;
+    public String makeOneLineText(){
+
+        String result;
+
+        if (mMonth2.equals("-1")){
+            result = String.valueOf(mYear) + " / " + String.valueOf(mMonth) + " / " + String.valueOf(mDay) + " / " + String.valueOf(mHour) + " : " + String.valueOf(mMinute);
+        } else {
+            result = String.valueOf(mYear) + " / " + String.valueOf(mMonth) + " / " + String.valueOf(mDay) + " / " + String.valueOf(mHour) + " : " + String.valueOf(mMinute)
+                    + " ~ " + String.valueOf(mYear) + " / " + String.valueOf(mMonth) + " / " + String.valueOf(mDay) + " / " + String.valueOf(mHour2) + " : " + String.valueOf(mMinute2);
+        }
+
+        return result;
     }
-
-    public int getYear(){return mYear;}
-
-    public int getMonth(){return mMonth;}
-
-    public int getDay(){return mDay;}
-
-    public int getHour(){return mHour;}
-
-    public int getMinute(){return mMinute;}
-
-    public int getYear2(){return mYear2;}
-
-    public int getMonth2(){return mMonth2;}
-
-    public int getDay2(){return mDay2;}
-
-    public int getHour2(){return mHour2;}
-
-    public int getMinute2(){return mMinute2;}
 }

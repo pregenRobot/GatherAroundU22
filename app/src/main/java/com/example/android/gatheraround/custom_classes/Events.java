@@ -1,6 +1,5 @@
 package com.example.android.gatheraround.custom_classes;
 
-import com.example.android.gatheraround.Calculations;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -8,23 +7,21 @@ import com.google.android.gms.maps.model.LatLng;
  */
 
 public class Events {
-    long mUnixTimeStanp;
 
-    EventDate mDate;
-
+    private EventDate mDate;
     private String mName;
     private int mParticipants;
     private LatLng mLocation;
     private String mLocationName;
-    private Calculations calcref = new Calculations();
     private String mEventSummary;
     private String mCategory;
     private String mGlobalId;
+
     public static String CATEGORY_INDIVIDUAL = "INDIVIDUAL";
     public static String CATEGORY_NPO = "NPO";
     public static String CATEGORY_CORPORATE = "CORPORATE";
 
-    public Events(EventDate date, String name,int participants,LatLng Latilong,String locationname, String eventsummary, String category, String globalId){
+    public Events(EventDate date, String name,int participants,LatLng Latilong,String locationname, String eventsummary, String category, String key){
         mDate = date;
         mName = name;
         mParticipants = participants;
@@ -32,7 +29,7 @@ public class Events {
         mLocationName = locationname;
         mEventSummary = eventsummary;
         mCategory = category;
-        mGlobalId = globalId;
+        mGlobalId = key;
     }
 
 //    public Events(long unixTimeStamp, String name,int participants,LatLng Latilong,String locationname, String eventsummary, String category, String globalId){
@@ -45,10 +42,6 @@ public class Events {
 //        mCategory = category;
 //        mGlobalId = globalId;
 //    }
-
-    public long getUnixTimeStamp(){
-        return mUnixTimeStanp;
-    }
 
     public EventDate getDate(){
         return mDate;
@@ -87,8 +80,7 @@ public class Events {
     }
 
     public String toString(){
-        String returner = String.valueOf(mUnixTimeStanp) + " / " + mName + " / " + mParticipants + " / " + mLocation.toString() + " / " + mLocationName + " / " + mEventSummary + " / " + mCategory;
-        return returner;
+        return  mDate.makeOneLineText() + " / " + mName + " / " + mParticipants + " / " + mLocation.toString() + " / " + mLocationName + " / " + mEventSummary + " / " + mCategory;
     }
 
 }

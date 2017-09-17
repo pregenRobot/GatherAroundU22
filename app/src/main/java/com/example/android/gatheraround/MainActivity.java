@@ -168,21 +168,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        DataSenderToServer senderToServer = new DataSenderToServer();
-
-        EventDate eventDate = new EventDate(2017, 10, 1, 11, 30, -1, -1, -1, -1, -1);
-
+        EventDate eventDate = new EventDate("2017", "10", "1", "11", "30", "2017", "10", "2", "20", "00");
         LatLng latLng = new LatLng(0, 0);
-
-        boolean insertData = eventsDBHelper.addData(
-                "test1",
-                eventDate,
-                0,
-                latLng,
-                "test1",
-                "this is a test created by chiharu",
-                Events.CATEGORY_INDIVIDUAL
-        );
+        boolean insertData = eventsDBHelper.addData("test1", eventDate, 0, latLng, "test1", "this is a test created by chiharu", Events.CATEGORY_INDIVIDUAL);
     }
 
     @Override
@@ -205,6 +193,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 //        double lng = location.getLongitude();
 //
 //        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat,lng)));
+
         mMap.moveCamera(CameraUpdateFactory.newLatLng(school));
         eventListView = findViewById(R.id.eventlistview);
 
@@ -459,7 +448,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onClick(View view) {
                         Long newUnixTime = unixTimestamp;
 
-                        EventDate eventDate = new EventDate(2017, 10, 1, 11, 30);
+                        EventDate eventDate = new EventDate("2017", "10", "1", "11", "30", EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME);
 
                         if(!eventNameEdit.getText().toString().equals("")&& newUnixTime != 0 && latLng != null && locationNameEdit.getText().toString() != "" && summaryEdit.getText().toString() != "") {
                             boolean insertData = eventsDBHelper.addData(
@@ -495,8 +484,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
     }
-
-
 
     public long concatenateUnixtime(int Year,int Month, int Day, int Hour, int Min){
 
@@ -543,12 +530,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.clear();
         }
 
-        final Firebase firebase = new Firebase("https://u22-project-gather-around.firebaseio.com/");
+        final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_TITLE_URL);
 
+        Log.i("url", "url:" + DataSenderToServer.FIREBASE_TITLE_URL);
 
         final ArrayList<Events> eventsArrayList = new ArrayList<Events>();
 
-        firebase.child("eventPostDetails").addListenerForSingleValueEvent(new ValueEventListener() {
+        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -558,19 +546,19 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 //                    long unixtime = (long)snapshot.child("unixTimeStamp").getValue();
 
-                    // 170917 0:31
+                    Log.i("snapShot", String.valueOf(snapshot));
 
-                    int year = (int)snapshot.child("year").getValue();
-                    int month = (int)snapshot.child("month").getValue();
-                    int day = (int)snapshot.child("day").getValue();
-                    int hour = (int)snapshot.child("hour").getValue();
-                    int minute = (int)snapshot.child("minute").getValue();
+                    String year = snapshot.child("date/year").getValue().toString();
+                    String month = snapshot.child("date/month").getValue().toString();
+                    String day = snapshot.child("date/day").getValue().toString();
+                    String hour = snapshot.child("date/hour").getValue().toString();
+                    String minute = snapshot.child("date/minute").getValue().toString();
 
-                    int year2 = (int)snapshot.child("year2").getValue();
-                    int month2 = (int)snapshot.child("month2").getValue();
-                    int day2 = (int)snapshot.child("day2").getValue();
-                    int hour2 = (int)snapshot.child("hour2").getValue();
-                    int minute2 = (int)snapshot.child("minute2").getValue();
+                    String year2 = snapshot.child("date/year2").getValue().toString();
+                    String month2 = snapshot.child("date/month2").getValue().toString();
+                    String day2 = snapshot.child("date/day2").getValue().toString();
+                    String hour2 = snapshot.child("date/hour2").getValue().toString();
+                    String minute2 = snapshot.child("date/minute2").getValue().toString();
 
                     EventDate date = new EventDate(year, month, day, hour, minute, year2, month2, day2, hour2, minute2);
 
@@ -639,19 +627,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         summaryText.setText(nowEvents.getEventSummary());
                         TextView nameText = mView.findViewById(R.id.eventNameMark);
                         nameText.setText(nowEvents.getName());
-                        String time = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[1];
 
-                        String month = String.valueOf(nowEvents.getDate().getMonth());
-                        String day = String.valueOf(nowEvents.getDate().getDay());
+//                        String month = String.valueOf(nowEvents.getDate().getMonth());
+//                        String day = String.valueOf(nowEvents.getDate().getDay());
+//
+//                        String date = month + " / " + day;
 
-                        String date = month + " / " + day;
-
-                        int month2Int = nowEvents.getDate().getMonth2();
-                        int day2Int = nowEvents.getDate().getDay2();
-
-                        if(month2Int > 0 && day2Int > 0){
-                            date += " ~ " + String.valueOf(month2Int) + " / " + String.valueOf(day2Int);
-                        }
+                        String date = nowEvents.getDate().makeDateText(true);
+                        String time = nowEvents.getDate().makeTimeText(true);
 
                         TextView dateText = mView.findViewById(R.id.eventDateMark);
                         dateText.setText(date);
@@ -795,8 +778,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 summaryText.setText(nowEvents.getEventSummary());
                                 TextView nameText = mView.findViewById(R.id.eventNameMark);
                                 nameText.setText(nowEvents.getName());
-                                String date = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[0];
-                                String time = calculations.UnixTimeConverter(nowEvents.getUnixTimeStamp())[1];
+                                String date = nowEvents.getDate().makeDateText(true);
+                                String time = nowEvents.getDate().makeTimeText(true);
                                 TextView dateText = mView.findViewById(R.id.eventDateMark);
                                 dateText.setText(date);
                                 TextView timeText = mView.findViewById(R.id.eventTimeMark);
