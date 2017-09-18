@@ -10,6 +10,6 @@
         android:right="10dp"
         android:bottom="10dp" />
     <stroke
-        android:width="15dp"
+        android:width="12dp"
         android:color="@color/cardbackground"/>
 </shape>

@@ -118,11 +118,11 @@ public class Calculations {
             else if(testEvent.getmMonth2().equals("-1")&&testEvent.getmYear2().equals("-1")&&testEvent.getmDay2().equals("-1")
                     &&testEvent.getmHour2().equals("-1")&&testEvent.getmMinute2().equals("-1")){
                 if(fullorNot){
-                    result[0] = String.valueOf(testEvent.getmYear())+"/"+String.valueOf(testEvent.getmMonth())+"/"+String.valueOf(testEvent.getmDay())+"\n"+
+                    result[0] = String.valueOf(testEvent.getmYear())+"/"+String.valueOf(testEvent.getmMonth())+"/"+String.valueOf(testEvent.getmDay())+"\n\n"+
                             String.valueOf(testEvent.getmHour())+":"+String.valueOf(testEvent.getmMinute());
                     result[1] = "";
                 }else{
-                    result[0] = String.valueOf(testEvent.getmMonth())+"/"+String.valueOf(testEvent.getmDay())+"\n"+
+                    result[0] = String.valueOf(testEvent.getmMonth())+"/"+String.valueOf(testEvent.getmDay())+"\n\n"+
                             String.valueOf(testEvent.getmHour())+":"+String.valueOf(testEvent.getmMinute());
                     result[1] = "";
                 }
@@ -142,14 +142,14 @@ public class Calculations {
             //Everything Selected -> Day1 to Day2 and Time1 to Time2
             else{
                 if(fullorNot){
-                    result[0] = String.valueOf(testEvent.getmYear())+"/"+String.valueOf(testEvent.getmMonth())+"/"+String.valueOf(testEvent.getmDay()) + "\n" +
+                    result[0] = String.valueOf(testEvent.getmYear())+"/"+String.valueOf(testEvent.getmMonth())+"/"+String.valueOf(testEvent.getmDay()) + "\n\n" +
                             String.valueOf(testEvent.getmHour())+":"+String.valueOf(testEvent.getmMinute());
-                    result[1] = String.valueOf(testEvent.getmYear2())+"/"+String.valueOf(testEvent.getmMonth2())+"/"+String.valueOf(testEvent.getmDay2()) + "\n" +
+                    result[1] = String.valueOf(testEvent.getmYear2())+"/"+String.valueOf(testEvent.getmMonth2())+"/"+String.valueOf(testEvent.getmDay2()) + "\n\n" +
                             String.valueOf(testEvent.getmHour2())+":"+String.valueOf(testEvent.getmMinute2());
                 }else{
-                    result[0] = String.valueOf(testEvent.getmMonth())+"/"+String.valueOf(testEvent.getmDay()) + "\n" +
+                    result[0] = String.valueOf(testEvent.getmMonth())+"/"+String.valueOf(testEvent.getmDay()) + "\n\n" +
                             String.valueOf(testEvent.getmHour())+":"+String.valueOf(testEvent.getmMinute());
-                    result[1] = String.valueOf(testEvent.getmMonth2())+"/"+String.valueOf(testEvent.getmDay2()) + "\n" +
+                    result[1] = String.valueOf(testEvent.getmMonth2())+"/"+String.valueOf(testEvent.getmDay2()) + "\n\n" +
                             String.valueOf(testEvent.getmHour2())+":"+String.valueOf(testEvent.getmMinute2());
                 }
             }
