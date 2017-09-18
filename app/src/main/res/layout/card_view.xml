@@ -13,191 +13,183 @@
     >
     <!--android:layout_marginTop="8dp"-->
     <FrameLayout
-        android:background="@drawable/event_edittext2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:background="@drawable/event_edittext2">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/cardbackground"
-            android:orientation="horizontal"
-            >
-            <TextView
-                android:id="@+id/event_name"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:padding="@dimen/cardmargin"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:text="Dick Museum Tour"
-                android:maxLines="1"
-                />
-
-            <TextView
-                android:id="@+id/event_date"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1.5"
-                android:padding="@dimen/cardmargin"
-                android:textAlignment="viewEnd"
-                android:textColor="@color/white"
-                android:textSize="18dp"
-                android:textStyle="bold"
-                tools:text="8/24" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
-            android:orientation="vertical"
-            >
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:padding="12dp"
-                >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/cardmargin"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    android:text="Time (Start)~(Finish)"
-                    android:textStyle="bold"
-                    />
-                <TextView
-                    android:id="@+id/event_time"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginRight="18dp"
-                    android:layout_weight="3"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/cardmargin"
-                    android:textAlignment="textEnd"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    tools:text="11:50"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:padding="12dp"
-                >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:clickable="true"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/cardmargin"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    android:text="Summary:"
-                    android:textStyle="bold"
-                    />
-                <TextView
-                    android:id="@+id/event_summary"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:clickable="true"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:maxLength="130"
-                    android:maxLines="1"
-                    android:paddingLeft="@dimen/cardmargin"
-                    android:layout_marginRight="18dp"
-                    android:text="Once upon a time  a few missadfsafasdfasfdf"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    />
-            </LinearLayout>
-
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:padding="12dp"
-                >
+                android:layout_height="wrap_content"
+                android:background="@color/cardbackground"
+                android:orientation="horizontal">
+
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:clickable="true"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/cardmargin"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    android:text="Location:"
-                    android:textStyle="bold"
-                    />
-                <TextView
-                    android:id="@+id/event_location"
+                    android:id="@+id/event_name"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="2"
-                    android:clickable="true"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/cardmargin"
-                    android:layout_marginRight="18dp"
-                    android:text="Rio de Janeiro"
-                    android:textAlignment="viewEnd"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
                     android:maxLines="1"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:padding="12dp"
-                >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:clickable="true"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/cardmargin"
+                    android:padding="@dimen/cardmargin"
                     android:textColor="@color/white"
                     android:textSize="18sp"
-                    android:text="Category:"
                     android:textStyle="bold"
-                    />
-                <TextView
-                    android:id="@+id/event_category"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:clickable="true"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/cardmargin"
-                    android:layout_marginRight="18dp"
-                    android:text="INDIVIDUAL"
-                    android:textAlignment="viewEnd"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    />
+                    tools:text="Dick Museum Tour" />
+
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:id="@+id/event_date"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:paddingBottom="4dp"
+                        android:paddingTop="4dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        tools:text="start" />
+
+                    <TextView
+                        android:id="@+id/event_time"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:paddingBottom="4dp"
+                        android:paddingTop="4dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        tools:text="finish" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/summaryLinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/middle_cardBackGround"
+                    android:orientation="horizontal"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:id="@+id/summaryTitleTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:clickable="true"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="@dimen/cardmargin"
+                        android:text="Summary:"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/event_summary"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="18dp"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical"
+                        android:maxLength="130"
+                        android:maxLines="1"
+                        android:paddingLeft="@dimen/cardmargin"
+                        android:text="Once upon a time  a few missadfsafasdfasfdf"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:clickable="true"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="@dimen/cardmargin"
+                        android:text="Location:"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/event_location"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="18dp"
+                        android:layout_weight="2"
+                        android:clickable="true"
+                        android:gravity="center_vertical"
+                        android:maxLines="1"
+                        android:paddingLeft="@dimen/cardmargin"
+                        android:text="Rio de Janeiro"
+                        android:textAlignment="viewEnd"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/middle_cardBackGround"
+                    android:orientation="horizontal"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:clickable="true"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="@dimen/cardmargin"
+                        android:text="Category:"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/event_category"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="18dp"
+                        android:layout_weight="2"
+                        android:clickable="true"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="@dimen/cardmargin"
+                        android:text="INDIVIDUAL"
+                        android:textAlignment="viewEnd"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
     </FrameLayout>
 </android.support.v7.widget.CardView>
