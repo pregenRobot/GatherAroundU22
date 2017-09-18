@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:text="EventList Button"
+            android:text="@string/eventlist_button"
             android:id="@+id/eventlistbutton"
             android:layout_above="@+id/bottom_navigation"
             android:background="@color/cardbackground"
@@ -36,9 +36,9 @@
             android:layout_height="wrap_content"
             android:src="@drawable/searchbutton"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_marginTop="12dp"
-            android:layout_marginLeft="12dp"
+            android:layout_marginStart="12dp"
             android:id="@+id/searchMain"
             android:clickable="true"
             app:backgroundTint="@color/cardbackground2"
@@ -87,10 +87,11 @@
         android:layout_weight="1"
         android:background="@color/cardbackground"
         android:gravity="center"
-        android:text="Event List"
+        android:text="@string/event_list"
         android:textColor="@color/white"
         android:textStyle="bold"
         android:textSize="18sp"
+
         />
     <LinearLayout
 

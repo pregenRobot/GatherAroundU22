@@ -98,7 +98,7 @@
                         android:clickable="true"
                         android:gravity="center_vertical"
                         android:paddingLeft="@dimen/cardmargin"
-                        android:text="Summary:"
+                        android:text="@string/summary"
                         android:textColor="@color/white"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -115,7 +115,7 @@
                         android:maxLength="130"
                         android:maxLines="1"
                         android:paddingLeft="@dimen/cardmargin"
-                        android:text="Once upon a time  a few missadfsafasdfasfdf"
+                        android:text="@string/once_upon_a_time_a_few_missadfsafasdfasfdf"
                         android:textColor="@color/white"
                         android:textSize="18sp" />
                 </LinearLayout>
@@ -134,7 +134,7 @@
                         android:clickable="true"
                         android:gravity="center_vertical"
                         android:paddingLeft="@dimen/cardmargin"
-                        android:text="Location:"
+                        android:text="@string/location"
                         android:textColor="@color/white"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -149,7 +149,7 @@
                         android:gravity="center_vertical"
                         android:maxLines="1"
                         android:paddingLeft="@dimen/cardmargin"
-                        android:text="Rio de Janeiro"
+                        android:text="@string/rio_de_janeiro"
                         android:textAlignment="viewEnd"
                         android:textColor="@color/white"
                         android:textSize="18sp" />
@@ -169,7 +169,7 @@
                         android:clickable="true"
                         android:gravity="center_vertical"
                         android:paddingLeft="@dimen/cardmargin"
-                        android:text="Category:"
+                        android:text="@string/category"
                         android:textColor="@color/white"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -183,7 +183,7 @@
                         android:clickable="true"
                         android:gravity="center_vertical"
                         android:paddingLeft="@dimen/cardmargin"
-                        android:text="INDIVIDUAL"
+                        android:text="@string/individual"
                         android:textAlignment="viewEnd"
                         android:textColor="@color/white"
                         android:textSize="18sp" />

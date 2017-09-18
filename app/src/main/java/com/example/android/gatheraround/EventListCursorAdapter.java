@@ -61,7 +61,6 @@ import java.util.Map;
 
 import static android.R.attr.path;
 import static com.example.android.gatheraround.MainActivity.mMap;
-import static com.example.android.gatheraround.R.id.m;
 
 /**
  * Created by tamimazmain on 2017/08/29.
@@ -107,22 +106,15 @@ public class EventListCursorAdapter extends CursorAdapter {
 
         final EventDate eventDate = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_DATE)), EventDate.class);
 
-        String startDate = calculations.concatenate(eventDate, false, false)[0];
-        String finishDate = calculations.concatenate(eventDate, false, false)[1];
+        String startDate = calculations.concatenate(eventDate, false, true)[0];
+        String finishDate = calculations.concatenate(eventDate, false, true)[1];
 
         nameText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
-
-        Log.i("bindView cursor check", "name=" + mCursor.getString((mCursor.getColumnIndex(DatabaseHelper.COL_NAME))));
-
         startDateText.setText(startDate);
         finishDateText.setText(finishDate);
         summaryText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_SUMMARY)));
         locationText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_LOCATIONNAME)));
         categoryText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_CATEGORY)));
-
-        /**
-         * POSITION!
-         * **/
 
         final int position = mCursor.getPosition();
 
@@ -162,9 +154,6 @@ public class EventListCursorAdapter extends CursorAdapter {
             public boolean onLongClick(View view) {
                 mCursor.moveToPosition(position);
                 whereClause = new String[] {String.valueOf(mCursor.getLong(mCursor.getColumnIndex(DatabaseHelper.COL_LOCALID)))};
-                Log.v("Where clause:",whereClause[0]);
-
-                Log.i("Event onLongClick", "name=" + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
 
                 LayoutInflater mLayoutInflater;
                 mLayoutInflater = LayoutInflater.from(AppContext);
@@ -186,7 +175,6 @@ public class EventListCursorAdapter extends CursorAdapter {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
                         notifyDataSetChanged();
-                        Log.v("Where clause changed:",whereClause[0]);
                     }
                 });
                 cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -202,31 +190,21 @@ public class EventListCursorAdapter extends CursorAdapter {
                         if((myEvents.checkforExistingEvent(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID))))){
                             DataSenderToServer dataSenderToServer = new DataSenderToServer();
                             dataSenderToServer.eraseEntry(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID)));
-                            int tru = db.delete
+                            db.delete
                                     (DatabaseHelper.TABLE_NAME, DatabaseHelper.COL_LOCALID + " = " + mCursor.getInt
                                             (mCursor.getColumnIndex(DatabaseHelper.COL_LOCALID)), null);
-                            if(tru == 1){
-                                Log.v("Delete:Server ", "SuccessFull!" + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
-                            }else{
-                                Log.v("Delete:Server ", "Failed!" + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
-                            }
-                        }else{
-                            int tru = db.delete
-                                    (DatabaseHelper.TABLE_NAME, DatabaseHelper.COL_LOCALID + " = " + mCursor.getInt
-                                            (mCursor.getColumnIndex(DatabaseHelper.COL_LOCALID)), null);
-                            if(tru == 1){
-                                Log.v("Delete:Local ", "SuccessFull!" + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
-                            }else{
-                                Log.v("Delete:Local ", "Failed!" + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
-                            }
 
+                        }else{
+                            db.delete
+                                    (DatabaseHelper.TABLE_NAME, DatabaseHelper.COL_LOCALID + " = " + mCursor.getInt
+                                            (mCursor.getColumnIndex(DatabaseHelper.COL_LOCALID)), null);
                         }
 
                         dialog.dismiss();
 
                         mainActivityIntent = new Intent(mContext,MainActivity.class);
                         mContext.startActivity(mainActivityIntent);
-                        //LL
+
                     }
                 });
                 qrGenButton.setOnClickListener(new View.OnClickListener() {
@@ -248,7 +226,7 @@ public class EventListCursorAdapter extends CursorAdapter {
                             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
                             Bitmap qrCodeBitmap = barcodeEncoder.createBitmap(bitMatrix);
 
-                            int textSize = 50;
+                            int textSize = 25;
                             int paddingBottom = 10;
                             int textPaddingLeft = 25;
                             int iconSize = 75;
@@ -257,10 +235,6 @@ public class EventListCursorAdapter extends CursorAdapter {
                             int width = qrCodeBitmap.getWidth();
 
                             Bitmap completeBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-//                            BitmapFactory.Options options = new BitmapFactory.Options();
-//                            options.inJustDecodeBounds = false;
-//                            int scale = Math.max(500, 500);
 
                             Bitmap iconBitmap = BitmapFactory.decodeResource(ApplicationContext.getContext().getResources(), R.mipmap.gatheraround_ic, null);
 
@@ -283,14 +257,19 @@ public class EventListCursorAdapter extends CursorAdapter {
 
                             canvas.drawText(eventNameText, textPaddingLeft + iconResize.getWidth() + textPaddingLeft, paddingBottom + qrCodeBitmap.getHeight() + (iconResize.getHeight() - textSize) / 2, paint);
 
-//                            canvas.drawBitmap(iconResize, canvas.getWidth() / 2 - iconSize / 2, canvas.getWidth() / 2 - iconSize / 2, (Paint)null);
+                            int [] allpixels = new int [completeBitmap.getHeight() * completeBitmap.getWidth()];
 
-//                            Gson gson = new Gson();
-//                            EventDate date = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_DATE)), EventDate.class);
-//                            Calculations calculations = new Calculations();
-//                            String dateText = "Date: " + calculations.makeOneLineText(date);
-//
-//                            canvas.drawText(dateText, textPaddingLeft, bitmap.getHeight() + textSize, paint);
+                            completeBitmap.getPixels(allpixels, 0, completeBitmap.getWidth(), 0, 0, completeBitmap.getWidth(), completeBitmap.getHeight());
+
+                            for(int i = 0; i < allpixels.length; i++)
+                            {
+                                if(allpixels[i] == Color.BLACK)
+                                {
+                                    allpixels[i] = Color.rgb(18,153,112);
+                                }
+                            }
+
+                            completeBitmap.setPixels(allpixels,0,completeBitmap.getWidth(),0, 0, completeBitmap.getWidth(),completeBitmap.getHeight());
 
                             qrImage.setImageBitmap(completeBitmap);
 
@@ -306,7 +285,6 @@ public class EventListCursorAdapter extends CursorAdapter {
                             public void onClick(View view) {
                                 BitmapDrawable drawable = (BitmapDrawable) qrImage.getDrawable();
                                 Bitmap bitmap = drawable.getBitmap();
-                                Log.v("SaveToPhone","Method Called!");
                                 String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
                                 String mImageName="MI_"+ timeStamp +".jpg";
                                 createDirectoryAndSaveFile(bitmap,mImageName);

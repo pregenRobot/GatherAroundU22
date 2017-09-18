@@ -1,16 +1,21 @@
 package com.example.android.gatheraround;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -64,7 +69,6 @@ import com.google.zxing.integration.android.IntentResult;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import static com.example.android.gatheraround.R.id.d;
 import static com.example.android.gatheraround.R.id.map;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback{
@@ -82,11 +86,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     BottomNavigationView bottomNavigationView;
     Calculations calculations = new Calculations();
 
-    int cYear = 2017;
-    int cMonth = 7;
-    int cDate = 20;
-    int cHour = 23;
-    int cMinute = 20;
     long unixTimestamp;
     SupportMapFragment mapFragment;
     FloatingActionButton searchButton;
@@ -98,7 +97,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     Calendar calendar = Calendar.getInstance();
     EventDate eventDate;
-
+    final String PREFS_NAME = "MyPrefsFile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,13 +170,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         runOnUiThread(new Runnable(){
             @Override
             public void run(){
-                eventCursor = eventManager.getAllEvents();
-                eventListCursorAdapter = new EventListCursorAdapter(
-                        MainActivity.this,
-                        eventCursor,
-                        0);
+                try {
+                    eventCursor = eventManager.getAllEvents();
+                    eventListCursorAdapter = new EventListCursorAdapter(
+                            MainActivity.this,
+                            eventCursor,
+                            0);
 
-                eventListView.setAdapter(eventListCursorAdapter);
+                    eventListView.setAdapter(eventListCursorAdapter);
+                }catch (RuntimeException e){
+                    Log.v("NullPointerException","Initialize Event");
+
+                    ((ActivityManager)context.getSystemService(ACTIVITY_SERVICE)).clearApplicationUserData();
+
+                }
             }
         });
     }
@@ -185,10 +191,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        LatLng school = new LatLng(37.422006, -122.084095);
-
-//        Cursor c = eventsDBHelper.getAllEvents();
 
         if (ActivityCompat.checkSelfPermission(
                 this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -199,15 +201,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.setMyLocationEnabled(true);
 
-//        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        Criteria criteria = new Criteria();
-//        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-//        double lat = location.getLatitude();
-//        double lng = location.getLongitude();
-//
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat,lng)));
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+        double lat = location.getLatitude();
+        double lng = location.getLongitude();
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(school));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat,lng)));
         eventListView = findViewById(R.id.eventlistview);
 
         //OnMapLongClickListener
@@ -430,11 +430,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 doneButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Long newUnixTime = unixTimestamp;
-                        Log.v("SetTime:",eventDate.toString());
-
                         if(!eventNameEdit.getText().toString().equals("")
-                                && !eventDate.getmDay().equals("")
+                                && !eventDate.getmDay().equals(EventDate.DEFAULT_TIME)
                                 && latLng != null
                                 && !locationNameEdit.getText().toString().equals("")
                                 && !summaryEdit.getText().toString().equals("")) {
@@ -506,9 +503,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_TITLE_URL);
-
-        Log.i("url", "url:" + DataSenderToServer.FIREBASE_TITLE_URL);
-
         final ArrayList<Events> eventsArrayList = new ArrayList<Events>();
 
         firebase.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -518,10 +512,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 final ArrayList<Marker> markArray = new ArrayList<>();
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-
-//                    long unixtime = (long)snapshot.child("unixTimeStamp").getValue();
-
-                    Log.i("snapShot", String.valueOf(snapshot));
 
                     String year = snapshot.child("date/mYear").getValue().toString();
                     String month = snapshot.child("date/mMonth").getValue().toString();
@@ -562,7 +552,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("npo", 75, 75)));
                     }
                     Marker mMarker = mMap.addMarker(newMarkerOptions);
-                    Log.v("newEventsFirebase:",newEvents.toString());
                     mMarker.setTag(newEvents);
                     markArray.add(mMarker);
                 }
@@ -590,7 +579,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 for(Marker x:markerArrayList){
                     if(marker.toString().equals(x.toString())){
                         final Events nowEvents = (Events) marker.getTag();
-                        Log.v("newEventsFirebase:",nowEvents.toString());
                         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
                         View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
 
@@ -810,29 +798,17 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
-        if(receivedMarkers == null){
-            Log.v("receivedMarkers","isNull!");
-        }
         if(result != null){
             if(result.getContents()==null){
                 Toast.makeText(MainActivity.this,"You cancelled the Scan",Toast.LENGTH_SHORT).show();
 
             }else{
-                Log.v("Scanned Code",result.getContents());
-
-                if(result.getContents().contains("gatheraround/")){
-                    Log.v("Has gatheraround/","True");
-                }else{
-                    Log.v("Has gatheraround/","False");
-
-                }
                 boolean gatherAroundCode = false;
                 for(Marker x: receivedMarkers){
                     newEvent = (Events) x.getTag();
                     assert newEvent != null;
                     String testString = "gatheraround/"+newEvent.getGlobalId();
                     if(testString.equals(result.getContents())){
-                        Log.v("tempReceivedMarkers",newEvent.getGlobalId());
                         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
                         View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
                         mBuilder.setView(mView);
@@ -886,7 +862,18 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private SparseIntArray mErrorString;
 
     public void onPermissionsGranted() {
-        //Do anything when permisson granted
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+
+        if (settings.getBoolean("my_first_time", true)) {
+            //the app is being launched for first time, do something
+            Log.d("Comments", "First time");
+
+            // first time task
+            Intent mainActivityIntent = new Intent(MainActivity.this,MainActivity.class);
+            startActivity(mainActivityIntent);
+            // record the fact that the app has been started at least once
+            settings.edit().putBoolean("my_first_time", false).apply();
+        }
     }
 
     public void requestAppPermissions(final String[]requestedPermissions, final int stringId, final int requestCode) {

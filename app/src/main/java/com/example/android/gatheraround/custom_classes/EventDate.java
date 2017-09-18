@@ -1,6 +1,5 @@
 package com.example.android.gatheraround.custom_classes;
 
-import static com.example.android.gatheraround.R.id.m;
 
 /**
  * Created by chiharu_miyoshi on 2017/09/15.
@@ -33,9 +32,6 @@ public class EventDate {
         mDay2 = day2;
         mHour2 = hour2;
         mMinute2 = minute2;
-    }
-    public EventDate (){
-
     }
     public void updateDate1(String year,String month,String day){
         mYear = year;

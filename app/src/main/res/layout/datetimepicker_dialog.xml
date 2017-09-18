@@ -7,14 +7,14 @@
     <Switch
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="WHOLE DAY"
+        android:text="@string/whole_day"
         android:padding="16dp"
         android:id="@+id/wholeDaySwitch"
         />
     <Switch
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ONE DAY"
+        android:text="@string/one_day"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:padding="16dp"
@@ -42,7 +42,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="SELECT START DATE"
+                    android:text="@string/select_start_date"
                     android:gravity="center"
                     android:padding="16dp"
                     android:clickable="true"
@@ -58,7 +58,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="SELECT END DATE"
+                    android:text="@string/select_end_date"
                     android:gravity="center"
                     android:padding="16dp"
                     android:clickable="true"
@@ -84,7 +84,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="SELECT START TIME"
+                    android:text="@string/select_start_time"
                     android:gravity="center"
                     android:padding="16dp"
                     android:clickable="true"
@@ -101,7 +101,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="SELECT END TIME"
+                    android:text="@string/select_end_time"
                     android:gravity="center"
                     android:padding="16dp"
                     android:clickable="true"
@@ -120,7 +120,7 @@
             android:layout_weight="1"
             android:background="@color/cardbackground"
             android:id="@+id/cancelTimeLOL"
-            android:text="Cancel"
+            android:text="@string/cancel"
             android:textColor="@color/white"
             android:clickable="true"
             />
@@ -129,7 +129,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/cardbackground"
-            android:text="Done"
+            android:text="@string/done"
             android:textColor="@color/white"
             android:id="@+id/doneTimeLOL"
             android:clickable="true"

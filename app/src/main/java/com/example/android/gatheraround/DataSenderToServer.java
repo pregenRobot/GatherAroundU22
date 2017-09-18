@@ -23,11 +23,7 @@ public class DataSenderToServer{
         Firebase firebase = new Firebase(FIREBASE_TITLE_URL);
         Firebase push = firebase.push();
         push.setValue(newEvent);
-        Log.i("Firebase pushed", "pushed=" + newEvent.getName());
-
         String key = push.getKey();
-        Log.i("Firebase event key", "key=" + key);
-
         firebase.child(key + "/key").setValue(key);
 
         return key;
@@ -58,7 +54,6 @@ public class DataSenderToServer{
             @Override
             public void onComplete(FirebaseError firebaseError, boolean b, DataSnapshot dataSnapshot) {
                 if (b){
-                    Log.i("Firebase add", dataSnapshot.getValue().toString());
                 }else{
                     Log.e("Failed to add", firebaseError.toString());
                 }
