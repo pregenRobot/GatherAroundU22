@@ -464,7 +464,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onClick(View view) {
                         Long newUnixTime = unixTimestamp;
 
-                        EventDate eventDate = new EventDate("2017", "10", "1", "11", "30", EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME);
+                        EventDate eventDate = new EventDate("2017", "10", "1", "11", "30", "2017", "11", "20", "15", "17");
 
                         if(!eventNameEdit.getText().toString().equals("")&& newUnixTime != 0 && latLng != null && locationNameEdit.getText().toString() != "" && summaryEdit.getText().toString() != "") {
                             boolean insertData = eventsDBHelper.addData(

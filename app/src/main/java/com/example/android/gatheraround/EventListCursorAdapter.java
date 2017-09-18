@@ -241,11 +241,6 @@ public class EventListCursorAdapter extends CursorAdapter {
 
                         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
 
-                        /////
-
-
-                        /////
-
                         try{
                             BitMatrix bitMatrix = multiFormatWriter.encode("gatheraround/"+mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID)),
                                     BarcodeFormat.QR_CODE,500,500

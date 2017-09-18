@@ -16,7 +16,7 @@ import com.firebase.client.core.Context;
 
 public class DataSenderToServer{
 
-    public static final String FIREBASE_TITLE_URL = "https://u22-project-gather-around.firebaseio.com/eventPostDetailsTest";
+    public static final String FIREBASE_TITLE_URL = "https://u22-project-gather-around.firebaseio.com/eventPostDetails";
 
     public String pushToServer(Events newEvent){
 
