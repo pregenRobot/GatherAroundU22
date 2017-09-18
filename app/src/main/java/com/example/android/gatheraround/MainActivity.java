@@ -242,6 +242,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 eventTimeEdit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        eventDate = new EventDate(EventDate.DEFAULT_TIME,
+                                EventDate.DEFAULT_TIME,
+                                EventDate.DEFAULT_TIME,
+                                EventDate.DEFAULT_TIME,
+                                EventDate.DEFAULT_TIME,
+                                EventDate.DEFAULT_TIME,
+                                EventDate.DEFAULT_TIME,
+                                EventDate.DEFAULT_TIME,
+                                EventDate.DEFAULT_TIME,
+                                EventDate.DEFAULT_TIME);
 
                         final AlertDialog.Builder myBuilder = new AlertDialog.Builder(MainActivity.this);
                         final View timeView = getLayoutInflater().inflate(R.layout.datetimepicker_dialog,null);
@@ -301,6 +311,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             oneDaySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                 @Override
                                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                                    assert wholeDaySwitch != null;
                                     if(isChecked&&wholeDaySwitch.isChecked()){
                                         time1.setVisibility(View.GONE);
                                         time2.setVisibility(View.GONE);
@@ -704,6 +715,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                         for(Marker x:markArray2){
                             Events queryingEvent =(Events) x.getTag();
+                            assert queryingEvent != null;
                             if(enterText.getText().toString().equals(queryingEvent.getGlobalId())){
                                 final Events nowEvents = queryingEvent;
                                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
@@ -929,7 +941,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override public void onPause(){
         super.onPause();
         eventsDBHelper.close();
-
     }
 
 }
