@@ -9,8 +9,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
@@ -103,7 +105,7 @@ public class EventListCursorAdapter extends CursorAdapter {
 
         final Cursor mCursor = cursor;
 
-        EventDate eventDate = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_DATE)), EventDate.class);
+        final EventDate eventDate = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_DATE)), EventDate.class);
 
         String startDate = calculations.concatenate(eventDate, false, false)[0];
         String finishDate = calculations.concatenate(eventDate, false, false)[1];
@@ -241,14 +243,56 @@ public class EventListCursorAdapter extends CursorAdapter {
                         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
 
                         try{
-                            BitMatrix bitMatrix = multiFormatWriter.encode("gatheraround/"+mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID)),
-                                    BarcodeFormat.QR_CODE,500,500
-                                    );
+                            BitMatrix bitMatrix = multiFormatWriter.encode("gatheraround/" + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID)),  BarcodeFormat.QR_CODE,500,500);
 
                             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-                            Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                            Bitmap qrCodeBitmap = barcodeEncoder.createBitmap(bitMatrix);
 
-                            qrImage.setImageBitmap(bitmap);
+                            int textSize = 50;
+                            int paddingBottom = 10;
+                            int textPaddingLeft = 25;
+                            int iconSize = 75;
+
+                            int height = qrCodeBitmap.getHeight() + Math.max(textSize, iconSize) + paddingBottom;
+                            int width = qrCodeBitmap.getWidth();
+
+                            Bitmap completeBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+//                            BitmapFactory.Options options = new BitmapFactory.Options();
+//                            options.inJustDecodeBounds = false;
+//                            int scale = Math.max(500, 500);
+
+                            Bitmap iconBitmap = BitmapFactory.decodeResource(ApplicationContext.getContext().getResources(), R.mipmap.gatheraround_ic, null);
+
+                            Bitmap iconResize = Bitmap.createScaledBitmap(iconBitmap, iconSize, iconSize, false);
+
+                            Canvas canvas = new Canvas(completeBitmap);
+
+                            canvas.drawARGB(255, 255, 255, 255);
+
+                            canvas.drawBitmap(qrCodeBitmap, 0, 0, (Paint)null);
+
+                            canvas.drawBitmap(iconResize, textPaddingLeft, paddingBottom + qrCodeBitmap.getHeight() - textSize, (Paint)null);
+
+                            Paint paint = new Paint();
+                            paint.setColor(Color.BLACK);
+                            paint.setTextSize((float)textSize);
+
+                            String eventNameText;
+                            eventNameText = mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME));
+
+                            canvas.drawText(eventNameText, textPaddingLeft + iconResize.getWidth() + textPaddingLeft, paddingBottom + qrCodeBitmap.getHeight() + (iconResize.getHeight() - textSize) / 2, paint);
+
+//                            canvas.drawBitmap(iconResize, canvas.getWidth() / 2 - iconSize / 2, canvas.getWidth() / 2 - iconSize / 2, (Paint)null);
+
+//                            Gson gson = new Gson();
+//                            EventDate date = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_DATE)), EventDate.class);
+//                            Calculations calculations = new Calculations();
+//                            String dateText = "Date: " + calculations.makeOneLineText(date);
+//
+//                            canvas.drawText(dateText, textPaddingLeft, bitmap.getHeight() + textSize, paint);
+
+                            qrImage.setImageBitmap(completeBitmap);
 
                         }catch (WriterException e){
                             e.printStackTrace();

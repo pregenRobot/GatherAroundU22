@@ -12,10 +12,12 @@ import java.util.TimeZone;
 
 public class Calculations {
 
-    public String[] concatenate(EventDate testEvent, boolean isFull, boolean isCard){
+    public static final String NO_INFO = "NO_INFO";
+
+    public String[] concatenate(EventDate testEvent, boolean isFull, boolean withTilde){
         String[] result= new String[2];
 
-        if(isCard){
+        if(withTilde){
             
             if (testEvent.getmHour().equals(EventDate.DEFAULT_TIME) && testEvent.getmHour2().equals(EventDate.DEFAULT_TIME)) {
 
@@ -119,6 +121,64 @@ public class Calculations {
         }
 
         //No Time selected -> Day1 and Day2
+
+        return result;
+    }
+
+    public String[] getTimeContents(EventDate eventDate){
+
+        String[] result = new String[4];
+        /*
+        1: date1 date
+        2: date1 time
+        3: date2 date
+        4: date2 time
+         */
+
+        result[0] = String.valueOf(eventDate.getmYear()) + "/" + String.valueOf(eventDate.getmMonth() + "/" + String.valueOf(eventDate.getmDay()));
+
+        if (!eventDate.getmHour().equals(EventDate.DEFAULT_TIME)){
+            result[1] = String.valueOf(eventDate.getmHour()) + ":" + String.valueOf(eventDate.getmMinute());
+        } else {
+            result[1] = NO_INFO;
+        }
+
+        if (!eventDate.getmYear2().equals(EventDate.DEFAULT_TIME)){
+            result[2] = String.valueOf(eventDate.getmYear2()) + "/" + String.valueOf(eventDate.getmMonth2() + "/" + String.valueOf(eventDate.getmDay2()));
+
+            if (!eventDate.getmHour2().equals(EventDate.DEFAULT_TIME)){
+                result[3] = String.valueOf(eventDate.getmHour2()) + ":" + String.valueOf(eventDate.getmMinute2());
+            } else {
+                result[3] = NO_INFO;
+            }
+        } else {
+            result[2] = NO_INFO;
+            result[3] = NO_INFO;
+        }
+
+        return result;
+    }
+
+    public String makeOneLineText(EventDate eventDate){
+
+        String result;
+
+        if (eventDate.getmMonth2().equals("-1")){
+            if (eventDate.getmHour().equals(EventDate.DEFAULT_TIME)){
+                result = String.valueOf(eventDate.getmYear()) + "/" + String.valueOf(eventDate.getmMonth()) + "/" + String.valueOf(eventDate.getmDay()) + "/";
+            } else {
+                result = String.valueOf(eventDate.getmYear()) + "/" + String.valueOf(eventDate.getmMonth()) + "/" + String.valueOf(eventDate.getmDay()) + "/" + String.valueOf(eventDate.getmHour()) + ":" + String.valueOf(eventDate.getmMinute());
+            }
+        } else {
+            if (eventDate.getmHour().equals(EventDate.DEFAULT_TIME)){
+                result = String.valueOf(eventDate.getmYear()) + "/" + String.valueOf(eventDate.getmMonth()) + "/" + String.valueOf(eventDate.getmDay()) + "/"
+                        + "~" + String.valueOf(eventDate.getmYear2()) + "/" + String.valueOf(eventDate.getmMonth2()) + "/" + String.valueOf(eventDate.getmDay2()) + "/";
+            }else{
+                result = String.valueOf(eventDate.getmYear()) + "/" + String.valueOf(eventDate.getmMonth()) + "/" + String.valueOf(eventDate.getmDay()) + "/" + String.valueOf(eventDate.getmHour()) + ":" + String.valueOf(eventDate.getmMonth())
+                        + "~" + String.valueOf(eventDate.getmYear2()) + "/" + String.valueOf(eventDate.getmMonth2()) + "/" + String.valueOf(eventDate.getmDay2()) + "/" + String.valueOf(eventDate.getmHour2()) + ":" + String.valueOf(eventDate.getmMinute2());
+
+            }
+        }
 
         return result;
     }
