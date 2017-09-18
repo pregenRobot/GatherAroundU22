@@ -20,6 +20,7 @@ public class EventDate {
     private String mMinute2;
 
     public static String DEFAULT_TIME = "-1";
+    //Test
 
     public EventDate (String year, String month, String day, String hour, String minute, String year2, String month2, String day2, String hour2, String minute2){
         mYear = year;
