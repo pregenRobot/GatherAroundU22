@@ -55,7 +55,6 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.firebase.client.core.view.Event;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -249,19 +248,19 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         myBuilder.setView(timeView);
                         final AlertDialog dialog2 = myBuilder.create();
 
-                        final Switch wholeDaySwitch = (Switch) timeView.findViewById(R.id.wholeDaySwitch);
-                        final Switch oneDaySwitch = (Switch) timeView.findViewById(R.id.oneDaySwitch);
+                        final Switch wholeDaySwitch = timeView.findViewById(R.id.wholeDaySwitch);
+                        final Switch oneDaySwitch = timeView.findViewById(R.id.oneDaySwitch);
 
-                        final TextView day1 = (TextView) timeView.findViewById(R.id.startDate);
-                        final TextView time1 = (TextView) timeView.findViewById(R.id.startTime);
-                        final TextView day2 = (TextView) timeView.findViewById(R.id.endDate);
-                        final TextView time2 = (TextView) timeView.findViewById(R.id.endTime);
+                        final TextView day1 = timeView.findViewById(R.id.startDate);
+                        final TextView time1 = timeView.findViewById(R.id.startTime);
+                        final TextView day2 = timeView.findViewById(R.id.endDate);
+                        final TextView time2 = timeView.findViewById(R.id.endTime);
 
-                        final LinearLayout right = (LinearLayout) timeView.findViewById(R.id.VerticalRight);
-                        final LinearLayout left = (LinearLayout) timeView.findViewById(R.id.VerticalLeft);
+                        final LinearLayout right = timeView.findViewById(R.id.VerticalRight);
+                        final LinearLayout left = timeView.findViewById(R.id.VerticalLeft);
 
-                        final Button timeDone = (Button) timeView.findViewById(R.id.doneTimeLOL);
-                        final Button timeCancel = (Button) timeView.findViewById(R.id.cancelTimeLOL);
+                        final Button timeDone = timeView.findViewById(R.id.doneTimeLOL);
+                        final Button timeCancel = timeView.findViewById(R.id.cancelTimeLOL);
 
                         if(wholeDaySwitch != null){
                             wholeDaySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -449,11 +448,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 dialog.dismiss();
                                 mapFragment.getMapAsync(MainActivity.this);
                                 Toast.makeText(MainActivity.this,"Added your event!",Toast.LENGTH_SHORT).show();
-                                upDateListView();
+                                Intent intent = new Intent(MainActivity.this,MainActivity.class);
+                                startActivity(intent);
                                 Intent Main = new Intent(MainActivity.this,MainActivity.class);
                                 startActivity(Main);
                             } else {
-
+                                Toast.makeText(MainActivity.this,"Failed to add Event",Toast.LENGTH_SHORT).show();
                             }
                         }else{
                             Toast.makeText(MainActivity.this,"Please fill in All Fields",Toast.LENGTH_SHORT).show();
@@ -471,28 +471,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void upDateListView(){
-        runOnUiThread(new Runnable(){
-            @Override
-            public void run(){
-                if(eventCursor != null) {
-                    eventCursor = eventsDBHelper.getAllEvents();
-                    eventListCursorAdapter = new EventListCursorAdapter(
-                            MainActivity.this,
-                            eventCursor,
-                            0);
-                    eventListView.setAdapter(eventListCursorAdapter);
-                }else{
-                }
-            }
-        });
-    }
-
     private MarkerOptions newMarkerOptions;
     public Bitmap resizeMapIcons(String iconName, int width, int height){
         Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),getResources().getIdentifier(iconName, "drawable", getPackageName()));
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
-        return resizedBitmap;
+        return Bitmap.createScaledBitmap(imageBitmap, width, height, false);
     }
     @Override
     public void onResume(){
@@ -503,8 +485,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_TITLE_URL);
-        final ArrayList<Events> eventsArrayList = new ArrayList<Events>();
-
         firebase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -540,7 +520,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                     Events newEvents = new Events(date, event_name, participants, location, locationName, summary, category, globalId);
 
-                    eventsArrayList.add(newEvents);
                     if(newEvents.getCategory().equals(Events.CATEGORY_INDIVIDUAL)) {
                         newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
                                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("individual", 75, 75)));
@@ -559,7 +538,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 setMapMarkerListener(markArray);
                 setmBottomsheetbehvior(markArray);
                 searchFunctionality(markArray);
-                scanFunctionality(markArray);
+                scanFunctionality();
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -587,6 +566,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
                         summaryText.setMovementMethod(new ScrollingMovementMethod());
+                        assert nowEvents != null;
                         summaryText.setText(nowEvents.getEventSummary());
                         TextView nameText = mView.findViewById(R.id.eventNameMark);
                         nameText.setText(nowEvents.getName());
@@ -604,7 +584,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         locationText.setText(nowEvents.getLocationName());
                         TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
                         participantText.setText(nowEvents.getParticipants()+"");
-                        FloatingActionButton followButton =  (FloatingActionButton) mView.findViewById(R.id.follow);
+                        FloatingActionButton followButton = mView.findViewById(R.id.follow);
 
                         followButton.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -615,7 +595,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     mapFragment.getMapAsync(MainActivity.this);
                                     dialog.dismiss();
                                     Toast.makeText(MainActivity.this,"Added Participant",Toast.LENGTH_SHORT).show();
-                                    upDateListView();
+                                    Intent intent = new Intent(MainActivity.this,MainActivity.class);
+                                    startActivity(intent);
                                 } else {
                                     Toast.makeText(MainActivity.this,"Event Exists",Toast.LENGTH_SHORT).show();
                                 }
@@ -623,7 +604,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         });
                         dialog.show();
 
-                    }else{
                     }
                 }
                 return true;
@@ -631,7 +611,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
     public void setmBottomsheetbehvior(ArrayList<Marker> markerArrayList){
-        bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
         final ArrayList<Marker> markerarray = markerArrayList;
         bottomNavigationView.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -715,8 +695,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 final AlertDialog dialog = mBuilder.create();
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-                Button searchQuery = (Button) mView.findViewById(R.id.searchButton);
-                final EditText enterText = (EditText) mView.findViewById(R.id.searchTextEdit);
+                Button searchQuery = mView.findViewById(R.id.searchButton);
+                final EditText enterText = mView.findViewById(R.id.searchTextEdit);
 
                 searchQuery.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -725,7 +705,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         for(Marker x:markArray2){
                             Events queryingEvent =(Events) x.getTag();
                             if(enterText.getText().toString().equals(queryingEvent.getGlobalId())){
-                                final Events nowEvents = (Events) queryingEvent;
+                                final Events nowEvents = queryingEvent;
                                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
                                 View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
 
@@ -746,7 +726,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 locationText.setText(nowEvents.getLocationName());
                                 TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
                                 participantText.setText(nowEvents.getParticipants()+"");
-                                FloatingActionButton followButton =  (FloatingActionButton) mView.findViewById(R.id.follow);
+                                FloatingActionButton followButton =  mView.findViewById(R.id.follow);
 
                                 followButton.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -758,7 +738,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                             dialog.dismiss();
                                             mapFragment.getMapAsync(MainActivity.this);
                                             Toast.makeText(MainActivity.this,"Added Participant",Toast.LENGTH_SHORT).show();
-                                            upDateListView();
+                                            Intent intent = new Intent(MainActivity.this,MainActivity.class);
+                                            startActivity(intent);
                                         } else {
                                             Toast.makeText(MainActivity.this,"You already followed this Event",Toast.LENGTH_SHORT).show();
                                         }
@@ -774,9 +755,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
-    public void scanFunctionality(ArrayList<Marker> markerArrayList){
+    public void scanFunctionality(){
         final Activity activity = this;
-        scanButton = (FloatingActionButton) findViewById(R.id.scanMain);
+        scanButton = findViewById(R.id.scanMain);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -840,7 +821,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     dialog.dismiss();
                                     mapFragment.getMapAsync(MainActivity.this);
                                     Toast.makeText(MainActivity.this,"Added Participant",Toast.LENGTH_SHORT).show();
-                                    upDateListView();
+                                    Intent intent = new Intent(MainActivity.this,MainActivity.class);
+                                    startActivity(intent);
                                 } else {
                                     Toast.makeText(MainActivity.this,"EventExists",Toast.LENGTH_SHORT).show();
                                 }
@@ -904,7 +886,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         int permissionCheck = PackageManager.PERMISSION_GRANTED;
         for(int permisson : grantResults) {
@@ -943,6 +925,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(startMain);
         }
+    }
+    @Override public void onPause(){
+        super.onPause();
+        eventsDBHelper.close();
+
     }
 
 }

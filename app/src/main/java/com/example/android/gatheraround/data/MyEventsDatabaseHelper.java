@@ -7,8 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.firebase.client.collection.LLRBBlackValueNode;
-
 import java.util.ArrayList;
 
 
@@ -19,12 +17,12 @@ import java.util.ArrayList;
 
 public class MyEventsDatabaseHelper extends SQLiteOpenHelper {
 
-    public static String COL_ID="_id";
-    public static String COL_GLOBAL_ID="GLOBAL_ID";
+    private static String COL_ID="_id";
+    private static String COL_GLOBAL_ID="GLOBAL_ID";
     private static final String DATABASE_NAME="MyeventList.db";
-    public static final String TABLE_NAME="myevent_table";
-    public static final int DB_VERSION = 1;
-    Context mContext;
+    private static final String TABLE_NAME="myevent_table";
+    private static final int DB_VERSION = 1;
+    private Context mContext;
 
     public MyEventsDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DB_VERSION);
@@ -46,7 +44,7 @@ public class MyEventsDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
 
     }
-    public boolean addData(String key){
+    boolean addData(String key){
         SQLiteDatabase db = this.getWritableDatabase();
         if(db==null){
             Log.v("Database","Failed to create");
@@ -61,23 +59,12 @@ public class MyEventsDatabaseHelper extends SQLiteOpenHelper {
             return true;
         }
     }
-    public ArrayList<String> retreiveGlobalId(){
-        ArrayList<String> returner = new ArrayList<String>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor mCursor = db.query(true, this.TABLE_NAME, new String[]{this.COL_GLOBAL_ID},null,null,null,null,/** COL_NAME + " ASC"**/null,null);
 
-        for(mCursor.moveToFirst(); !mCursor.isAfterLast(); mCursor.moveToNext()) {
-            // The Cursor is now set to the right position
-            returner.add(mCursor.getString(mCursor.getColumnIndex(COL_GLOBAL_ID)));
-        }
-        Log.v("RetreivingGlobalIds",mCursor.toString());
-        return  returner;
-    }
 
     public boolean checkforExistingEvent(String toCheck){
-        ArrayList<String> returner = new ArrayList<String>();
+        ArrayList<String> returner = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor mCursor = db.query(true, this.TABLE_NAME, new String[]{COL_ID,COL_GLOBAL_ID},null,null,null,null,/** COL_NAME + " ASC"**/null,null);
+        Cursor mCursor = db.query(true, TABLE_NAME, new String[]{COL_ID,COL_GLOBAL_ID},null,null,null,null,null,null);
         Log.v("MyEventsDatabaseCursor",mCursor.toString());
 
         for(mCursor.moveToFirst(); !mCursor.isAfterLast(); mCursor.moveToNext()) {

@@ -23,24 +23,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // id for identifying within database
     public static final String COL_NAME = "EVENTNAME";
     public static final String COL_DATE = "DATE";
-    public static final String COL_PARTICIPANTS = "PARTICIPANTS";
+    private static final String COL_PARTICIPANTS = "PARTICIPANTS";
     public static final String COL_LOCATION = "LOCATION";
     public static final String COL_LOCATIONNAME = "LOCATIONNAME";
     public static final String COL_SUMMARY = "SUMMARY";
     public static final String COL_CATEGORY = "CATEGORY";
     public static final String COL_GLOBALID = "GLOBALID";
     // id for identifying on the server
-    DataSenderToServer dataSenderToServer = new DataSenderToServer();
-    public static final int DB_VERSION = 1;
-
-
+    private DataSenderToServer dataSenderToServer = new DataSenderToServer();
+    private static final int DB_VERSION = 1;
 
     private static final String[] ALL_COLUMNS = new String[]{
             COL_LOCALID,COL_NAME,COL_DATE,COL_PARTICIPANTS,COL_LOCATION,COL_LOCATIONNAME,COL_SUMMARY,COL_CATEGORY,COL_GLOBALID
     };
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DB_VERSION/**version**/);
+        super(context, DATABASE_NAME, null, DB_VERSION);
         this.context = context;
     }
 
@@ -104,11 +102,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long result = db.insert(TABLE_NAME, null, contentValues);
 
-        if(result == -1){
-            return false;
-        }else{
-            return true;
-        }
+        return result != -1;
     }
 
     public boolean addParticipant(Events events){
@@ -135,11 +129,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             result = db.insert(TABLE_NAME, null, contentValues);
         }
-        if(result == -1){
-            return false;
-        }else{
-            return true;
-        }
+        return result != -1;
     }
 
     public Cursor getAllEvents(){
@@ -149,15 +139,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }else{
             Log.v("SQLITE DATABASE","NOT NULL!");
         }
-        String where = null;
-        Cursor c = db.query(true, TABLE_NAME, ALL_COLUMNS,where,null,null,null,/** COL_NAME + " ASC"**/null,null);
-        return c;
-
+        assert db != null;
+        return db.query(true, TABLE_NAME, ALL_COLUMNS,null,null,null,null,null,null);
     }
     public boolean checkforExistingEvent(String toCheck){
-        ArrayList<String> returner = new ArrayList<String>();
+        ArrayList<String> returner = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor mCursor = db.query(true, TABLE_NAME, ALL_COLUMNS,null,null,null,null,/** COL_NAME + " ASC"**/null,null);
+        Cursor mCursor = db.query(true, TABLE_NAME, ALL_COLUMNS,null,null,null,null,null,null);
         Log.v("EventCursor",mCursor.toString());
 
         for(mCursor.moveToFirst(); !mCursor.isAfterLast(); mCursor.moveToNext()) {
@@ -176,26 +164,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
         return checker;
-    }
-
-
-    public ArrayList<String> getAllGlobalId(){
-        ArrayList<String> returner = new ArrayList<String>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        String where = null;
-        Cursor mCursor = db.query(true, TABLE_NAME, new String[]{COL_GLOBALID},where,null,null,null,/** COL_NAME + " ASC"**/null,null);
-
-        for(mCursor.moveToFirst(); !mCursor.isAfterLast(); mCursor.moveToNext()) {
-            // The Cursor is now set to the right position
-            returner.add(mCursor.getString(mCursor.getColumnIndex(COL_GLOBALID)));
-        }
-        return returner;
-    }
-    public boolean deleteEvent(long rowId) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String[] row = new String[]{rowId+""};
-        Log.v("Deleting event",rowId+"");
-        boolean tru = db.delete(this.TABLE_NAME, this.COL_NAME+"=?", row) > 0;
-        return tru;
     }
 }

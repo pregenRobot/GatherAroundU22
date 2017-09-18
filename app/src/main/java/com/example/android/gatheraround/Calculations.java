@@ -3,19 +3,15 @@ package com.example.android.gatheraround;
 import android.util.Log;
 
 import com.example.android.gatheraround.custom_classes.EventDate;
-import com.firebase.client.core.view.Event;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * Created by tamimazmain on 2017/08/15.
  */
 
-public class Calculations {
+class Calculations {
 
-    public String[] concatenate(EventDate testEvent, boolean isFull, boolean withTilde){
+    String[] concatenate(EventDate testEvent, boolean isFull, boolean withTilde){
         String[] result= new String[2];
 
         if(withTilde){
@@ -31,7 +27,7 @@ public class Calculations {
                 if(isFull){
                     result[0] = String.valueOf(testEvent.getmYear())+"/"+String.valueOf(testEvent.getmMonth())+"/"+String.valueOf(testEvent.getmDay());
 
-                    result[1]= String.valueOf(testEvent.getmYear2())+"/"+String.valueOf(testEvent.getmMonth2())+"/"+String.valueOf(testEvent.getmDay2());;
+                    result[1]= String.valueOf(testEvent.getmYear2())+"/"+String.valueOf(testEvent.getmMonth2())+"/"+String.valueOf(testEvent.getmDay2());
                 }else{
                     result[0] = String.valueOf(testEvent.getmMonth())+"/"+String.valueOf(testEvent.getmDay());
                     result[1]=String.valueOf(testEvent.getmMonth2())+"/"+String.valueOf(testEvent.getmDay2());
@@ -98,7 +94,7 @@ public class Calculations {
                 if(isFull){
                     result[0] = String.valueOf(testEvent.getmYear())+"/"+String.valueOf(testEvent.getmMonth())+"/"+String.valueOf(testEvent.getmDay());
 
-                    result[1]= String.valueOf(testEvent.getmYear2())+"/"+String.valueOf(testEvent.getmMonth2())+"/"+String.valueOf(testEvent.getmDay2());;
+                    result[1]= String.valueOf(testEvent.getmYear2())+"/"+String.valueOf(testEvent.getmMonth2())+"/"+String.valueOf(testEvent.getmDay2());
                 }else{
                     result[0] = String.valueOf(testEvent.getmMonth())+"/"+String.valueOf(testEvent.getmDay());
                     result[1]=String.valueOf(testEvent.getmMonth2())+"/"+String.valueOf(testEvent.getmDay2());
