@@ -22,9 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_LOCALID = "_id";
     // id for identifying within database
     public static final String COL_NAME = "EVENTNAME";
-
     public static final String COL_DATE = "DATE";
-
     public static final String COL_PARTICIPANTS = "PARTICIPANTS";
     public static final String COL_LOCATION = "LOCATION";
     public static final String COL_LOCATIONNAME = "LOCATIONNAME";

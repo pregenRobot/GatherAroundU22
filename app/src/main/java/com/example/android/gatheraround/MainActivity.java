@@ -72,7 +72,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     ListView eventListView;
     BottomNavigationView bottomNavigationView;
     Calculations calculations = new Calculations();
-    EventDate eventDate = new EventDate();
 
     int cYear = 2017;
     int cMonth = 7;
@@ -85,8 +84,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     FloatingActionButton scanButton;
     ArrayList<Marker> receivedMarkers;
 
-    int dpYear,dpMonth,dpDay,dpHour,dpMinute;
-    int fdpYear,fdpMonth,fdpDay,fdpHour,fdpMinute;
     Events newEvent;
     private static final int REQEUST_PERMISSION = 10;
 
@@ -171,10 +168,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 eventListView.setAdapter(eventListCursorAdapter);
             }
         });
-
-        EventDate eventDate = new EventDate("2017", "10", "1", "11", "30", "2017", "10", "2", "20", "00");
-        LatLng latLng = new LatLng(0, 0);
-//        boolean insertData = eventsDBHelper.addData("test1", eventDate, 0, latLng, "test1", "this is a test created by chiharu", Events.CATEGORY_INDIVIDUAL);
     }
 
     @Override
@@ -183,7 +176,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         LatLng school = new LatLng(37.422006, -122.084095);
 
-        Cursor c = eventsDBHelper.getAllEvents();
+//        Cursor c = eventsDBHelper.getAllEvents();
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -207,7 +200,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             public void onMapLongClick(final LatLng latLng) {
 
                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-                View mView = getLayoutInflater().inflate(R.layout.edit_event_popup,null);
+                View mView = getLayoutInflater().inflate(R.layout.edit_event_popup, null);
 
                 final EditText eventNameEdit = mView.findViewById(R.id.event_name_edit);
                 TextView doneButton = mView.findViewById(R.id.donebuttoneventadd);
