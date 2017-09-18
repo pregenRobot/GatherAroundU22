@@ -1,8 +1,6 @@
 package com.example.android.gatheraround;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,9 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -36,12 +31,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 import com.example.android.gatheraround.custom_classes.EventDate;
 import com.example.android.gatheraround.custom_classes.Events;
@@ -55,24 +48,19 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import java.util.ArrayList;
 import java.util.Calendar;
-import static com.example.android.gatheraround.R.id.eventlistview;
+
 import static com.example.android.gatheraround.R.id.map;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback{
 
-    public static BottomSheetBehavior mBottomsheetbehvior;
+    public static BottomSheetBehavior mBottomSheetBehavior;
     public static GoogleMap mMap;
     Button eventListButton;
     LinearLayoutManager llm;
@@ -120,10 +108,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         LinearLayout bottomsheet =
                 findViewById(R.id.bottomsheet);
         //Bottom sheets and searhc buttons
-        mBottomsheetbehvior = BottomSheetBehavior.from(bottomsheet);
-        mBottomsheetbehvior.setHideable(true);
-        mBottomsheetbehvior.setPeekHeight(ViewGroup.LayoutParams.MATCH_PARENT);
-        mBottomsheetbehvior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        mBottomSheetBehavior = BottomSheetBehavior.from(bottomsheet);
+        mBottomSheetBehavior.setHideable(true);
+        mBottomSheetBehavior.setPeekHeight(ViewGroup.LayoutParams.MATCH_PARENT);
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         mErrorString = new SparseIntArray();
         requestAppPermissions(new String[]{
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -137,20 +125,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         eventListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mBottomsheetbehvior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-                    mBottomsheetbehvior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     eventListButton.setText("Hide");
-                } else if (mBottomsheetbehvior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
-                    mBottomsheetbehvior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                } else if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                     eventListButton.setText("Event List Button");
-                } else if (mBottomsheetbehvior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
-                    mBottomsheetbehvior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                } else if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                     eventListButton.setText("Peek");
                 }
             }
         });
 
-        mBottomsheetbehvior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_EXPANDED) {
@@ -895,7 +883,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         locationText.setText(newEvent.getLocationName());
                         TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
                         participantText.setText(newEvent.getParticipants()+"");
-                        FloatingActionButton followButton =  (FloatingActionButton) mView.findViewById(R.id.follow);
+                        FloatingActionButton followButton =  mView.findViewById(R.id.follow);
 
                         followButton.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -989,10 +977,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
     @Override
     public void onBackPressed() {
-        Intent startMain = new Intent(Intent.ACTION_MAIN);
-        startMain.addCategory(Intent.CATEGORY_HOME);
-        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(startMain);
+
+        if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            eventListButton.setText("Event List Button");
+        } else {
+            Intent startMain = new Intent(Intent.ACTION_MAIN);
+            startMain.addCategory(Intent.CATEGORY_HOME);
+            startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(startMain);
+        }
     }
 
 }

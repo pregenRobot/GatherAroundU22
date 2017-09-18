@@ -73,7 +73,6 @@
                 android:text="Time"
                 android:textSize="18sp"
                 android:textColor="@color/white"
-                android:padding="18dp"
                 android:id="@+id/eventTimeMark"
                 />
             <!--android:id="@+id/eventTimeMark"-->
