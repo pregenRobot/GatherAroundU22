@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -88,12 +89,15 @@ public class EventListCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         TextView nameText = view.findViewById(R.id.event_name);
-        TextView timeText = view.findViewById(R.id.event_time);
-        TextView dateText = view.findViewById(R.id.event_date);
+        TextView finishDateText = view.findViewById(R.id.event_time);
+        TextView startDateText = view.findViewById(R.id.event_date);
         TextView summaryText = view.findViewById(R.id.event_summary);
         TextView locationText = view.findViewById(R.id.event_location);
         TextView categoryText = view.findViewById(R.id.event_category);
         CardView card = view.findViewById(R.id.CardViewItem);
+
+        TextView summaryTitle = view.findViewById(R.id.summaryTitleTextView);
+        LinearLayout summaryLayout = view.findViewById(R.id.summaryLinearLayout);
 
         myEvents  = new MyEventsDatabaseHelper(mContext);
 
@@ -101,18 +105,15 @@ public class EventListCursorAdapter extends CursorAdapter {
 
         EventDate eventDate = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_DATE)), EventDate.class);
 
-        String date = calculations.concatenate(eventDate,false,true)[0];
-        String time = calculations.concatenate(eventDate,false,true)[1];
-
-        Log.i("CardViewTimeText", "text = " + date);
-        Log.i("CardViewTimeText", "text = " + time);
+        String startDate = calculations.concatenate(eventDate, false, false)[0];
+        String finishDate = calculations.concatenate(eventDate, false, false)[1];
 
         nameText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
 
         Log.i("bindView cursor check", "name=" + mCursor.getString((mCursor.getColumnIndex(DatabaseHelper.COL_NAME))));
 
-        dateText.setText(date);
-        timeText.setText(time);
+        startDateText.setText(startDate);
+        finishDateText.setText(finishDate);
         summaryText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_SUMMARY)));
         locationText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_LOCATIONNAME)));
         categoryText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_CATEGORY)));
@@ -133,26 +134,24 @@ public class EventListCursorAdapter extends CursorAdapter {
             }
         });
 
+        summaryLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                makeSummaryDialog(position);
+            }
+        });
+
         summaryText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LayoutInflater mLayoutInflater;
-                mLayoutInflater = LayoutInflater.from(AppContext);
-                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
-                View mView = mLayoutInflater.inflate(R.layout.summarydialog,null);
+                makeSummaryDialog(position);
+            }
+        });
 
-                TextView textView = mView.findViewById(R.id.mainText);
-                mCursor.moveToPosition(position);
-                textView.setText(
-                        mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_SUMMARY))
-                );
-
-                textView.setMovementMethod(new ScrollingMovementMethod());
-
-                mBuilder.setView(mView);
-                final AlertDialog dialog = mBuilder.create();
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialog.show();
+        summaryTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                makeSummaryDialog(position);
             }
         });
 
@@ -305,4 +304,23 @@ public class EventListCursorAdapter extends CursorAdapter {
         }
     }
 
+    public void makeSummaryDialog(int position){
+        LayoutInflater mLayoutInflater;
+        mLayoutInflater = LayoutInflater.from(AppContext);
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
+        View mView = mLayoutInflater.inflate(R.layout.summarydialog, null);
+
+        TextView textView = mView.findViewById(R.id.mainText);
+        mCursor.moveToPosition(position);
+        textView.setText(
+                mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_SUMMARY))
+        );
+
+        textView.setMovementMethod(new ScrollingMovementMethod());
+
+        mBuilder.setView(mView);
+        final AlertDialog dialog = mBuilder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+    }
 }
