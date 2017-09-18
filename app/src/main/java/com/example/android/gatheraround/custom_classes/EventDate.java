@@ -37,6 +37,37 @@ public class EventDate {
     public EventDate (){
 
     }
+    public void updateDate1(String year,String month,String day){
+        mYear = year;
+        mMonth = month;
+        mDay = day;
+    }
+    public void updateDate2(String year,String month, String day){
+        mYear2 = year;
+        mMonth2 = month;
+        mDay2 = day;
+    }
+    public void updateTime1(String hour,String minute){
+        mHour = hour;
+        mMinute = minute;
+    }
+    public void updateTime2(String hour,String minute){
+        mHour2 = hour;
+        mMinute2 = minute;
+    }
+    public void defaultDay2(){
+        mYear2 = DEFAULT_TIME;
+        mMonth2 = DEFAULT_TIME;
+        mDay2 = DEFAULT_TIME;
+    }
+    public void defaultTime1(){
+        mHour = DEFAULT_TIME;
+        mMinute = DEFAULT_TIME;
+    }
+    public void defaultTime2(){
+        mHour2 = DEFAULT_TIME;
+        mMinute2 = DEFAULT_TIME;
+    }
 
     public String getmYear(){return mYear;}
 
@@ -109,5 +140,10 @@ public class EventDate {
         }
 
         return result;
+    }
+    public String toString(){
+        return
+                mYear + " / " + mMonth + " / " + mDay + " / " + mHour + " : " + mMinute + " ~ "
+                + mYear2 + " / " + mMonth2 + " / " + mDay2 + " / " + mHour2 + " : " + mMinute2;
     }
 }

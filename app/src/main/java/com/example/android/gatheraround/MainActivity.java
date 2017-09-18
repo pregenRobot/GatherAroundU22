@@ -1,6 +1,8 @@
 package com.example.android.gatheraround;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,6 +16,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
@@ -31,10 +34,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import com.example.android.gatheraround.custom_classes.EventDate;
 import com.example.android.gatheraround.custom_classes.Events;
@@ -43,6 +50,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.firebase.client.core.view.Event;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -56,6 +64,7 @@ import com.google.zxing.integration.android.IntentResult;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static com.example.android.gatheraround.R.id.d;
 import static com.example.android.gatheraround.R.id.map;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback{
@@ -86,6 +95,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     Events newEvent;
     private static final int REQEUST_PERMISSION = 10;
+
+    Calendar calendar = Calendar.getInstance();
+    EventDate eventDate;
 
 
     @Override
@@ -178,9 +190,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 //        Cursor c = eventsDBHelper.getAllEvents();
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+
         mMap.setMyLocationEnabled(true);
 
 //        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -198,13 +214,23 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(final LatLng latLng) {
+                eventDate = new EventDate(EventDate.DEFAULT_TIME,
+                        EventDate.DEFAULT_TIME,
+                        EventDate.DEFAULT_TIME,
+                        EventDate.DEFAULT_TIME,
+                        EventDate.DEFAULT_TIME,
+                        EventDate.DEFAULT_TIME,
+                        EventDate.DEFAULT_TIME,
+                        EventDate.DEFAULT_TIME,
+                        EventDate.DEFAULT_TIME,
+                        EventDate.DEFAULT_TIME);
 
                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
                 View mView = getLayoutInflater().inflate(R.layout.edit_event_popup, null);
 
                 final EditText eventNameEdit = mView.findViewById(R.id.event_name_edit);
                 TextView doneButton = mView.findViewById(R.id.donebuttoneventadd);
-                TextView cancelButton = mView.findViewById(R.id.canclebuttoneventadd);
+                final TextView cancelButton = mView.findViewById(R.id.canclebuttoneventadd);
                 final EditText locationNameEdit = mView.findViewById(R.id.event_location__name_edit);
                 final EditText summaryEdit = mView.findViewById(R.id.event_summary_edit);
                 final TextView eventTimeEdit = mView.findViewById(R.id.event_time_edit);
@@ -219,235 +245,199 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onClick(View view) {
 
                         final AlertDialog.Builder myBuilder = new AlertDialog.Builder(MainActivity.this);
-                        final View timeView = getLayoutInflater().inflate(R.layout.datetimepicker,null);
+                        final View timeView = getLayoutInflater().inflate(R.layout.datetimepicker_dialog,null);
                         myBuilder.setView(timeView);
-                        final AlertDialog dialog = myBuilder.create();
+                        final AlertDialog dialog2 = myBuilder.create();
 
-                        Thread thread = new Thread(new Runnable() {
+                        final Switch wholeDaySwitch = (Switch) timeView.findViewById(R.id.wholeDaySwitch);
+                        final Switch oneDaySwitch = (Switch) timeView.findViewById(R.id.oneDaySwitch);
+
+                        final TextView day1 = (TextView) timeView.findViewById(R.id.startDate);
+                        final TextView time1 = (TextView) timeView.findViewById(R.id.startTime);
+                        final TextView day2 = (TextView) timeView.findViewById(R.id.endDate);
+                        final TextView time2 = (TextView) timeView.findViewById(R.id.endTime);
+
+                        final LinearLayout right = (LinearLayout) timeView.findViewById(R.id.VerticalRight);
+                        final LinearLayout left = (LinearLayout) timeView.findViewById(R.id.VerticalLeft);
+
+                        final Button timeDone = (Button) timeView.findViewById(R.id.doneTimeLOL);
+                        final Button timeCancel = (Button) timeView.findViewById(R.id.cancelTimeLOL);
+
+                        if(wholeDaySwitch != null){
+                            wholeDaySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                @Override
+                                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                                    if(isChecked&&oneDaySwitch.isChecked()){
+                                        time1.setVisibility(View.GONE);
+                                        time2.setVisibility(View.GONE);
+                                        day2.setVisibility(View.GONE);
+                                        right.setVisibility(View.GONE);
+                                        left.setLayoutParams(new AppBarLayout.LayoutParams
+                                                (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT,1f));
+                                        eventDate.defaultDay2();
+                                        eventDate.defaultTime1();
+                                        eventDate.defaultTime2();
+                                    }else if(isChecked){
+                                        time1.setVisibility(View.GONE);
+                                        time2.setVisibility(View.GONE);
+                                        left.setLayoutParams(new AppBarLayout.LayoutParams
+                                                (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT,1f));
+                                        eventDate.defaultTime1();
+                                        eventDate.defaultTime2();
+                                    }else{
+                                        time1.setVisibility(View.VISIBLE);
+                                        time2.setVisibility(View.VISIBLE);
+                                        day1.setVisibility(View.VISIBLE);
+                                        day2.setVisibility(View.VISIBLE);
+                                        right.setVisibility(View.VISIBLE);
+                                        left.setLayoutParams(new AppBarLayout.LayoutParams
+                                                (0, ViewGroup.LayoutParams.WRAP_CONTENT,1f));
+                                        time1.setText("SELECT START TIME");
+                                        time2.setText("SELECT END TIME");
+                                    }
+                                }
+                            });
+                        }
+                        if(oneDaySwitch != null){
+                            oneDaySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                @Override
+                                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                                    if(isChecked&&wholeDaySwitch.isChecked()){
+                                        time1.setVisibility(View.GONE);
+                                        time2.setVisibility(View.GONE);
+                                        day2.setVisibility(View.GONE);
+                                        right.setVisibility(View.GONE);
+                                        left.setLayoutParams(new AppBarLayout.LayoutParams
+                                                (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT,1f));
+                                        eventDate.defaultDay2();
+                                        eventDate.defaultTime2();
+                                        eventDate.defaultTime1();
+                                    } else if (isChecked) {
+                                        day2.setVisibility(View.GONE);
+                                        time2.setVisibility(View.GONE);
+                                        eventDate.defaultTime2();
+                                        eventDate.defaultDay2();
+                                    }else{
+                                        time1.setVisibility(View.VISIBLE);
+                                        time2.setVisibility(View.VISIBLE);
+                                        day1.setVisibility(View.VISIBLE);
+                                        day2.setVisibility(View.VISIBLE);
+                                        right.setVisibility(View.VISIBLE);
+                                        left.setLayoutParams(new AppBarLayout.LayoutParams
+                                                (0, ViewGroup.LayoutParams.WRAP_CONTENT,1f));
+                                        day2.setText("SELECT END DATE");
+                                        time2.setText("SELECT END TIME");
+                                    }
+                                }
+                            });
+                        }
+                        time1.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void run() {
-                                final TextView yplus = timeView.findViewById(R.id.yplus);
-                                final TextView y = timeView.findViewById(R.id.y);
-                                final TextView yminus = timeView.findViewById(R.id.yminus);
-                                final TextView mplus = timeView.findViewById(R.id.mplus);
-                                final TextView m = timeView.findViewById(R.id.m);
-                                final TextView mminus = timeView.findViewById(R.id.mminus);
-                                final TextView dplus = timeView.findViewById(R.id.dplus);
-                                final TextView d = timeView.findViewById(R.id.d);
-                                final TextView dminus = timeView.findViewById(R.id.dminus);
-                                final TextView hplus = timeView.findViewById(R.id.hplus);
-                                final TextView h = timeView.findViewById(R.id.h);
-                                final TextView hminus = timeView.findViewById(R.id.hminus);
-                                final TextView minplus = timeView.findViewById(R.id.minplus);
-                                final TextView min = timeView.findViewById(R.id.min);
-                                final TextView minminus = timeView.findViewById(R.id.minminus);
-                                final TextView cancel = timeView.findViewById(R.id.timeCancel);
-                                final TextView done = timeView.findViewById(R.id.timeDone);
-
-                                y.setText(cYear+"");
-                                m.setText(cMonth+"");
-                                d.setText(cDate+"");
-                                h.setText(cHour+"");
-                                min.setText(cMinute+"");
-
-                                yplus.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View view) {
+                                TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
                                     @Override
-                                    public void onClick(View view) {
-                                        cYear++;
-                                        y.setText(cYear+"");
+                                    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+                                        eventDate.updateTime1(String.valueOf(i),String.valueOf(i1));
+                                        time1.setText(i+" : " + i1);
                                     }
-                                });
-//
-                                yminus.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        cYear--;
-                                        y.setText(cYear+"");
-                                    }
-                                });
-                                mplus.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        if(cMonth < 12) {
-                                            cMonth++;
-                                            m.setText(cMonth + "");
-                                        }else{
-                                            cMonth = 1;
-                                            m.setText(cMonth+"");
-                                        }
-                                    }
-                                });
-                                mminus.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        if(cMonth > 0) {
-                                            cMonth--;
-                                            m.setText(cMonth + "");
-                                        }else{
-                                            cMonth = 12;
-                                            m.setText(cMonth+"");
-                                        }
-                                    }
-                                });
-                                dplus.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        if(cMonth == 1||
-                                                cMonth == 3 ||
-                                                cMonth == 5 ||
-                                                cMonth == 7 ||
-                                                cMonth == 8 ||
-                                                cMonth == 10 ||
-                                                cMonth == 12
-                                                ){
-                                            if(cDate <31){
-                                                cDate++;
-                                                d.setText(cDate+"");
-                                            }else{
-                                                cDate = 1;
-                                                d.setText(cDate+"");
-                                            }
-                                        }else if(cMonth == 2 && cYear%4==0){
-                                            if(cDate <29){
-                                                cDate++;
-                                                d.setText(cDate+"");
-                                            }else{
-                                                cDate = 1;
-                                                d.setText(cDate+"");
-                                            }
-                                        }else if(cMonth == 2 && cYear%4!=0){
-                                            if(cDate <28){
-                                                cDate++;
-                                                d.setText(cDate+"");
-                                            }else{
-                                                cDate = 1;
-                                                d.setText(cDate+"");
-                                            }
-                                        }else{
-                                            if(cDate <30){
-                                                cDate++;
-                                                d.setText(cDate+"");
-                                            }else{
-                                                cDate = 1;
-                                                d.setText(cDate+"");
-                                            }
-                                        }
-                                    }
-                                });
-                                dminus.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-                                        if(cDate > 1) {
-                                            cDate--;
-                                            d.setText(cDate + "");
-                                        }else{
-                                            if(cMonth == 1||
-                                                    cMonth == 3 ||
-                                                    cMonth == 5 ||
-                                                    cMonth == 7 ||
-                                                    cMonth == 8 ||
-                                                    cMonth == 10 ||
-                                                    cMonth == 12
-                                                    ){
-                                                cDate = 31;
-                                                d.setText(cDate+"");
-                                            }else if(cMonth == 2 && cYear%4==0){
-                                                cDate = 29;
-                                                d.setText(cDate+"");
-                                            }else if(cMonth == 2 && cYear%4!=0){
-                                                cDate = 28;
-                                                d.setText(cDate+"");
-                                            }else{
-                                                cDate = 30;
-                                                d.setText(cDate+"");
-                                            }
-                                        }
-
-                                    }
-                                });
-                                hplus.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-                                        if(cHour < 23) {
-                                            cHour++;
-                                            h.setText(cHour + "");
-                                        }else{
-                                            cHour=0;
-                                            h.setText(cHour+"");
-                                        }
-                                    }
-                                });
-                                hminus.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        if(cHour > 0) {
-                                            cHour--;
-                                            h.setText(cHour + "");
-                                        }else{
-                                            cHour = 23;
-                                            h.setText(cHour+"");
-                                        }
-
-                                    }
-                                });
-                                minplus.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        if(cMinute < 59) {
-                                            cMinute++;
-                                            min.setText(cMinute + "");
-                                        }else{
-                                            cMinute = 0;
-                                            min.setText(cMinute+"");
-                                        }
-                                    }
-                                });
-                                minminus.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        if(cMinute >= 1) {
-                                            cMinute--;
-                                            min.setText(cMinute + "");
-                                        }else{
-                                            cMinute = 59;
-                                            min.setText(cMinute+"");
-                                        }
-
-                                    }
-                                });
-                                done.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        unixTimestamp =  concatenateUnixtime(cYear,cMonth-1,cDate,cHour,cMinute);
-
-                                        dialog.dismiss();
-                                    }
-                                });
-                                cancel.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        dialog.dismiss();
-                                    }
-                                });
-
+                                };
+                                new TimePickerDialog(
+                                        MainActivity.this,
+                                        listener,
+                                        calendar.get(Calendar.HOUR_OF_DAY),
+                                        calendar.get(Calendar.MINUTE),
+                                        true).show();
                             }
                         });
-                        thread.start();
-                        dialog.show();
+                        time2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
+                                    @Override
+                                    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+                                        eventDate.updateTime2(String.valueOf(i),String.valueOf(i1));
+                                        time2.setText(i+" : " + i1);
+                                    }
+                                };
+                                new TimePickerDialog(
+                                        MainActivity.this,
+                                        listener,
+                                        calendar.get(Calendar.HOUR_OF_DAY),
+                                        calendar.get(Calendar.MINUTE),
+                                        true).show();
+                            }
+                        });
+                        day1.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
 
+                                DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
+                                    @Override
+                                    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                                        eventDate.updateDate1(String.valueOf(i),String.valueOf(i1+1),String.valueOf(i2));
+                                        day1.setText(i+" / " + i1 + " / "+ i2);
+                                    }
+                                };
+                                new DatePickerDialog(MainActivity.this,listener,
+                                        calendar.get(Calendar.YEAR),
+                                        calendar.get(Calendar.MONTH),
+                                        calendar.get(Calendar.DAY_OF_MONTH)).show();
+                            }
+                        });
+                        day2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
+                                    @Override
+                                    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                                        eventDate.updateDate2(String.valueOf(i),String.valueOf(i1+1),String.valueOf(i2));
+                                        day2.setText(i+" / " + i1 + " / "+ i2);
+                                    }
+                                };
+                                new DatePickerDialog(MainActivity.this,listener,
+                                        calendar.get(Calendar.YEAR),
+                                        calendar.get(Calendar.MONTH),
+                                        calendar.get(Calendar.DAY_OF_MONTH)).show();
+                            }
+                        });
+                        timeDone.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialog2.dismiss();
+                            }
+                        });
+                        timeCancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialog2.dismiss();
+                                eventDate = new EventDate(
+                                        EventDate.DEFAULT_TIME,
+                                        EventDate.DEFAULT_TIME,
+                                        EventDate.DEFAULT_TIME,
+                                        EventDate.DEFAULT_TIME,
+                                        EventDate.DEFAULT_TIME,
+                                        EventDate.DEFAULT_TIME,
+                                        EventDate.DEFAULT_TIME,
+                                        EventDate.DEFAULT_TIME,
+                                        EventDate.DEFAULT_TIME,
+                                        EventDate.DEFAULT_TIME);
+                            }
+                        });
 
+                        dialog2.show();
                     }
                 });
                 doneButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Long newUnixTime = unixTimestamp;
+                        Log.v("SetTime:",eventDate.toString());
 
-                        EventDate eventDate = new EventDate("2017", "10", "1", "11", "30", "2017", "11", "20", "15", "17");
-
-                        if(!eventNameEdit.getText().toString().equals("")&& newUnixTime != 0 && latLng != null && locationNameEdit.getText().toString() != "" && summaryEdit.getText().toString() != "") {
+                        if(!eventNameEdit.getText().toString().equals("")
+                                && !eventDate.getmDay().equals("")
+                                && latLng != null
+                                && !locationNameEdit.getText().toString().equals("")
+                                && !summaryEdit.getText().toString().equals("")) {
                             boolean insertData = eventsDBHelper.addData(
                                     eventNameEdit.getText().toString(),
                                     eventDate,
@@ -482,20 +472,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-    }
-
-    public long concatenateUnixtime(int Year,int Month, int Day, int Hour, int Min){
-
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.YEAR, Year);
-        c.set(Calendar.MONTH, Month);
-        c.set(Calendar.DAY_OF_MONTH, Day);
-        c.set(Calendar.HOUR, Hour);
-        c.set(Calendar.MINUTE, Min);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-
-        return (int) (c.getTimeInMillis() / 1000L);
     }
 
     public void upDateListView(){

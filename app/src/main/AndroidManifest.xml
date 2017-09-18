@@ -23,7 +23,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".AndroidContextSetter">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -40,7 +42,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDYeT85TEsG18YZpABHVVll6nBebRcbJZU" />
+            android:value="AIzaSyDphN4bVaQHzDfIcE5XL3ESwi5t7C_h-1k" />
         <!--"AIzaSyDphN4bVaQHzDfIcE5XL3ESwi5t7C_h-1k"-->
         <!--"AIzaSyDYeT85TEsG18YZpABHVVll6nBebRcbJZU"-->
 
