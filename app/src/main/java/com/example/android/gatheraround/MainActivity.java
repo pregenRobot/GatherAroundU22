@@ -370,8 +370,21 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
                                     @Override
                                     public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                                        eventDate.updateTime1(String.valueOf(i),String.valueOf(i1));
-                                        time1.setText(i+" : " + i1);
+
+                                        String iText;
+                                        String i1Text;
+                                        if (i == 0){
+                                            iText = "00";
+                                        }else{
+                                            iText = String.valueOf(i);
+                                        }
+                                        if(i1 == 0){
+                                            i1Text = "00";
+                                        }else{
+                                            i1Text = String.valueOf(i1);
+                                        }
+                                        eventDate.updateTime1(iText,i1Text);
+                                        time1.setText(iText + " : " + i1Text);
                                     }
                                 };
                                 new TimePickerDialog(
@@ -388,8 +401,21 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
                                     @Override
                                     public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                                        eventDate.updateTime2(String.valueOf(i),String.valueOf(i1));
-                                        time2.setText(i+" : " + i1);
+
+                                        String iText;
+                                        String i1Text;
+                                        if (i == 0){
+                                            iText = "00";
+                                        }else{
+                                            iText = String.valueOf(i);
+                                        }
+                                        if(i1 == 0){
+                                            i1Text = "00";
+                                        }else{
+                                            i1Text = String.valueOf(i1);
+                                        }
+                                        eventDate.updateTime2(iText,i1Text);
+                                        time2.setText(iText + " : " + i1Text);
                                     }
                                 };
                                 new TimePickerDialog(
@@ -407,8 +433,25 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
                                     @Override
                                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                                        eventDate.updateDate1(String.valueOf(i),String.valueOf(i1+1),String.valueOf(i2));
-                                        day1.setText(i+" / " + i1 + " / "+ i2);
+
+                                        String iText, i1Text, i2Text;
+
+                                        iText = String.valueOf(i);
+
+                                        if ((i1 - 10) < 0){
+                                            i1Text = "0" + i1;
+                                        }else{
+                                            i1Text = String.valueOf(i1);
+                                        }
+
+                                        if ((i2 - 10) < 0){
+                                            i2Text = "0" + i2;
+                                        }else{
+                                            i2Text = String.valueOf(i2);
+                                        }
+
+                                        eventDate.updateDate1(iText, i1Text, i2Text);
+                                        day1.setText(iText + " / " + i1Text + " / " + i2Text);
                                     }
                                 };
                                 new DatePickerDialog(MainActivity.this,listener,
@@ -423,8 +466,25 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
                                     @Override
                                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                                        eventDate.updateDate2(String.valueOf(i),String.valueOf(i1+1),String.valueOf(i2));
-                                        day2.setText(i+" / " + i1 + " / "+ i2);
+
+                                        String iText, i1Text, i2Text;
+
+                                        iText = String.valueOf(i);
+
+                                        if ((i1 - 10) < 0){
+                                            i1Text = "0" + i1;
+                                        }else{
+                                            i1Text = String.valueOf(i1);
+                                        }
+
+                                        if ((i2 - 10) < 0){
+                                            i2Text = "0" + i2;
+                                        }else{
+                                            i2Text = String.valueOf(i2);
+                                        }
+
+                                        eventDate.updateDate2(iText, i1Text, i2Text);
+                                        day2.setText(iText + " / " + i1Text + " / " + i2Text);
                                     }
                                 };
                                 new DatePickerDialog(MainActivity.this,listener,
