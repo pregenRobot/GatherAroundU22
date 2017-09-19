@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Gather Around</string>
+    <string name="cancel">キャンセル</string>
+    <string name="category">カテゴリー</string>
+    <string name="choose_an_action">選択</string>
+    <string name="date">日付</string>
+    <string name="delete_entry">登録を消す</string>
+    <string name="done">実行</string>
+    <string name="enter_event_name">イベント名を記入</string>
+    <string name="enter_location_name">場所の名前を記入</string>
+    <string name="enter_summary">イベント詳細を記入</string>
+    <string name="event_list">イベントリスト</string>
+    <string name="eventlist_button">イベントリストボタン</string>
+    <string name="eventname">イベント名</string>
+    <string name="followers">フォロワー数</string>
+    <string name="generate_qr">QRコード発行</string>
+    <string name="genrated_qr_code">発行されたQRコード</string>
+    <string name="individual">個人</string>
+    <string name="location">場所</string>
+    <string name="location_name">場所名</string>
+    <string name="lol">lol</string>
+    <string name="msg">権限を要請</string>
+    <string name="once_upon_a_time_a_few_missadfsafasdfasfdf">test</string>
+    <string name="one_day">終了日が同じ</string>
+
+    <string name="rio_de_janeiro">test</string>
+    <string name="save_to_phone">デバイスに保存</string>
+    <string name="search">検索</string>
+    <string name="select_end_date">終了日を選択</string>
+    <string name="select_end_time">終了時間を選択</string>
+    <string name="select_start_date">開始日を選択</string>
+    <string name="select_start_time">開始時間を選択</string>
+    <string name="select_time_and_date">日時を選択</string>
+    <string name="summary">詳細:</string>
+    <string name="time">時間</string>
+    <string name="whole_day">１日中</string>
+    <string name="addedParticipants">登録しました</string>
+    <string name="cancelledScan">スキャンがキャンセルされました</string>
+    <string name="createdEvent">イベント作成されました</string>
+    <string name="event_exists">すでに登録されています</string>
+    <string name="invalidQRCode">無効なQRコード</string>
+    <string name="no_internet">インターネットに繋がっていません</string>
+    <string name="failedToAddEvent">イベント作成できませんでした</string>
+    <string name="fillInAllFields">全欄記入してください</string>
+</resources>

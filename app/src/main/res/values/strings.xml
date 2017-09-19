@@ -1,9 +1,5 @@
 <resources>
-    <string name="app_name">Gather Around</string>
-    <string name="uniquecode_create_contact"><font size="18">Unique Code</font></string>
-    <string name="enter_name_addcontact"><font size="18">Enter name</font></string>
-    <string name="personNameFirst">Tamim</string>
-    <string name="personNameLast">Azmain</string>
+    <string name="app_name" translatable="false">Gather Around</string>
     <string name="msg">Request Permissions</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
@@ -11,7 +7,7 @@
     <string name="event_list">Event List</string>
     <string name="choose_an_action">Choose an Action</string>
     <string name="delete_entry">Delete Entry</string>
-    <string name="generate_qr">Generate QR</string>
+    <string name="generate_qr">Generate QR Code</string>
     <string name="cancel">Cancel</string>
     <string name="summary">Summary:</string>
     <string name="once_upon_a_time_a_few_missadfsafasdfasfdf">Once upon a time a few missadfsafasdfasfdf</string>
@@ -30,7 +26,6 @@
     <string name="location_name">Location Name</string>
     <string name="lol">lol</string>
     <string name="followers">Followers</string>
-    <string name="participants">Participants</string>
     <string name="enter_event_name">Enter Event Name</string>
     <string name="select_time_and_date">Select Time and Date</string>
     <string name="enter_location_name">Enter Location name</string>
@@ -38,4 +33,12 @@
     <string name="save_to_phone">Save to Phone</string>
     <string name="genrated_qr_code">Genrated QR Code</string>
     <string name="search">Search</string>
+    <string name="cancelledScan">The scan was cancelled</string>
+    <string name="addedParticipants">Followed event</string>
+    <string name="event_exists">Event Exists</string>
+    <string name="no_internet">No Internet connection</string>
+    <string name="invalidQRCode">Invalid QR Code</string>
+    <string name="createdEvent">Created Event</string>
+    <string name="fillInAllFields">Please fill in all fields</string>
+    <string name="failedToAddEvent">Failed to add Event</string>
 </resources>

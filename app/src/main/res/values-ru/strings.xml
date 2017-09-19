@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Gather Around</string>
+    <string name="addedParticipants">Последующее событие</string>
+    <string name="cancel">Отмена</string>
+    <string name="cancelledScan">Сканирование было отменено</string>
+    <string name="category">Категория:</string>
+    <string name="choose_an_action">Выберите действие:</string>
+    <string name="createdEvent">Созданное событие:</string>
+    <string name="date">Дата</string>
+    <string name="delete_entry">Удалить запись</string>
+    <string name="done">Готово</string>
+    <string name="enter_event_name">Введите имя события</string>
+    <string name="enter_location_name">Введите название местоположения</string>
+    <string name="enter_summary">Подробнее</string>
+    <string name="event_exists">Событие существует</string>
+    <string name="event_list">Список событий</string>
+    <string name="eventlist_button">Кнопка списка событий</string>
+    <string name="eventname">Название события</string>
+    <string name="failedToAddEvent">Не удалось добавить событие</string>
+    <string name="fillInAllFields">Пожалуйста, заполните все поля</string>
+    <string name="followers">Читают</string>
+    <string name="generate_qr">Создать QR-код</string>
+    <string name="genrated_qr_code">Сгенерированный QR-код</string>
+    <string name="individual">Индивидуальный</string>
+    <string name="invalidQRCode">Ungültiger QR-Code</string>
+    <string name="location">Место нахождения:</string>
+    <string name="location_name">Название местоположения:</string>
+    <string name="lol">lol</string>
+    <string name="msg">Просить разрешение</string>
+    <string name="no_internet">нет соединения с интернетом</string>
+    <string name="once_upon_a_time_a_few_missadfsafasdfasfdf">test</string>
+    <string name="one_day">Такая же дата окончания</string>
+    <string name="rio_de_janeiro">test</string>
+    <string name="save_to_phone">Сохранить в телефоне</string>
+    <string name="search">Поиск</string>
+    <string name="select_end_date">ВЫБРАТЬ КОНЕЦ ДАТА</string>
+    <string name="select_end_time">ВЫБОР КОНЕЦ ВРЕМЕНИ</string>
+    <string name="select_start_date">ВЫБЕРИТЕ НАЧАТЬ ДАТУ</string>
+    <string name="select_start_time">ВЫБРАТЬ ВРЕМЯ ЗАПУСКА</string>
+    <string name="select_time_and_date">Выберите Время начала и дату</string>
+    <string name="summary">Подробнее:</string>
+    <string name="time">Время</string>
+    <string name="whole_day">Весь день</string>
+</resources>

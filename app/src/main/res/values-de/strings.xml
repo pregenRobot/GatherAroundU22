@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Gather Around</string>
+    <string name="addedParticipants">Folgende Veranstaltung</string>
+    <string name="cancel">Stornieren</string>
+    <string name="cancelledScan">Der Scan wurde abgebrochen</string>
+    <string name="category">Kategorie:</string>
+    <string name="choose_an_action">Wählen Sie eine Aktion:</string>
+    <string name="createdEvent">Erstellt:</string>
+    <string name="date">Datum</string>
+    <string name="delete_entry">Eintrag löschen</string>
+    <string name="done">Erledigt</string>
+    <string name="enter_event_name">Geben Sie den Ereignisnamen ein</string>
+    <string name="enter_location_name">Geben Sie den Standortnamen ein</string>
+    <string name="enter_summary">Details</string>
+    <string name="event_exists">Ereignis existiert</string>
+    <string name="event_list">Veranstaltungsliste</string>
+    <string name="eventlist_button">Liste der Ereignislisten</string>
+    <string name="eventname">Veranstaltungsname</string>
+    <string name="failedToAddEvent">Fehler beim Hinzufügen von Ereignissen</string>
+    <string name="fillInAllFields">Bitte füllen Sie alle Felder aus</string>
+    <string name="followers">Verfolger</string>
+    <string name="generate_qr">QR-Code generieren</string>
+    <string name="genrated_qr_code">Generierter QR-Code</string>
+    <string name="individual">Person</string>
+    <string name="invalidQRCode">Ungültiger QR-Code</string>
+    <string name="location">Ort:</string>
+    <string name="location_name">Standortnamen:</string>
+    <string name="lol">lol</string>
+    <string name="msg">Um Erlaubnis bitten</string>
+    <string name="no_internet">keine Internetverbindung</string>
+    <string name="once_upon_a_time_a_few_missadfsafasdfasfdf">test</string>
+    <string name="one_day">Gleiches Enddatum</string>
+    <string name="rio_de_janeiro">test</string>
+    <string name="save_to_phone">Auf Telefon speichern</string>
+    <string name="search">Suche</string>
+    <string name="select_end_date">SELECT END DATE</string>
+    <string name="select_end_time">SELECT END TIME</string>
+    <string name="select_start_date">WÄHLEN SIE DATUM</string>
+    <string name="select_start_time">WÄHLEN SIE STARTZEIT</string>
+    <string name="select_time_and_date">Wählen Sie Startzeit und Datum</string>
+    <string name="summary">Details:</string>
+    <string name="time">Zeit</string>
+    <string name="whole_day">Den ganzen Tag</string>
+</resources>

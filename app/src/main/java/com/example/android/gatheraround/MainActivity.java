@@ -301,8 +301,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                         right.setVisibility(View.VISIBLE);
                                         left.setLayoutParams(new AppBarLayout.LayoutParams
                                                 (0, ViewGroup.LayoutParams.WRAP_CONTENT,1f));
-                                        time1.setText("SELECT START TIME");
-                                        time2.setText("SELECT END TIME");
+                                        time1.setText(R.string.select_start_time);
+                                        time2.setText(R.string.select_end_time);
                                     }
                                 }
                             });
@@ -335,8 +335,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                         right.setVisibility(View.VISIBLE);
                                         left.setLayoutParams(new AppBarLayout.LayoutParams
                                                 (0, ViewGroup.LayoutParams.WRAP_CONTENT,1f));
-                                        day2.setText("SELECT END DATE");
-                                        time2.setText("SELECT END TIME");
+                                        day2.setText(R.string.select_end_date);
+                                        time2.setText(R.string.select_end_time);
                                     }
                                 }
                             });
@@ -458,16 +458,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             if (insertData) {
                                 dialog.dismiss();
                                 mapFragment.getMapAsync(MainActivity.this);
-                                Toast.makeText(MainActivity.this,"Added your event!",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this,R.string.createdEvent,Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(MainActivity.this,MainActivity.class);
                                 startActivity(intent);
                                 Intent Main = new Intent(MainActivity.this,MainActivity.class);
                                 startActivity(Main);
                             } else {
-                                Toast.makeText(MainActivity.this,"Failed to add Event",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this,R.string.failedToAddEvent,Toast.LENGTH_SHORT).show();
                             }
                         }else{
-                            Toast.makeText(MainActivity.this,"Please fill in All Fields",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this,R.string.fillInAllFields,Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -605,11 +605,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                                     mapFragment.getMapAsync(MainActivity.this);
                                     dialog.dismiss();
-                                    Toast.makeText(MainActivity.this,"Added Participant",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this,R.string.addedParticipants,Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(MainActivity.this,MainActivity.class);
                                     startActivity(intent);
                                 } else {
-                                    Toast.makeText(MainActivity.this,"Event Exists",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this,R.string.event_exists,Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -689,7 +689,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         if(networkInfo == null || !networkInfo.isConnected()){
-            Toast.makeText(MainActivity.this, "You are not connected to the Internet.", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, R.string.no_internet, Toast.LENGTH_LONG).show();
         }
 
     }
@@ -749,11 +749,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                         if (insertData) {
                                             dialog.dismiss();
                                             mapFragment.getMapAsync(MainActivity.this);
-                                            Toast.makeText(MainActivity.this,"Added Participant",Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(MainActivity.this,R.string.addedParticipants,Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent(MainActivity.this,MainActivity.class);
                                             startActivity(intent);
                                         } else {
-                                            Toast.makeText(MainActivity.this,"You already followed this Event",Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(MainActivity.this,R.string.event_exists,Toast.LENGTH_SHORT).show();
                                         }
 
                                     }
@@ -793,7 +793,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
         if(result != null){
             if(result.getContents()==null){
-                Toast.makeText(MainActivity.this,"You cancelled the Scan",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,R.string.cancelledScan,Toast.LENGTH_SHORT).show();
 
             }else{
                 boolean gatherAroundCode = false;
@@ -832,11 +832,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 if (insertData) {
                                     dialog.dismiss();
                                     mapFragment.getMapAsync(MainActivity.this);
-                                    Toast.makeText(MainActivity.this,"Added Participant",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this,R.string.addedParticipants,Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(MainActivity.this,MainActivity.class);
                                     startActivity(intent);
                                 } else {
-                                    Toast.makeText(MainActivity.this,"EventExists",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this,R.string.event_exists,Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -845,7 +845,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 }
                 if(!gatherAroundCode){
-                    Toast.makeText(MainActivity.this,"Invalid QR Code",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this,R.string.invalidQRCode,Toast.LENGTH_SHORT).show();
                 }
             }
         }
