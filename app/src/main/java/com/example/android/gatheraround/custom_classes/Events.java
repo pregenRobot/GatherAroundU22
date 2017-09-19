@@ -22,17 +22,6 @@ public class Events {
     public static String CATEGORY_NPO = "NPO";
     public static String CATEGORY_CORPORATE = "CORPORATE";
 
-//    public Events(EventDate date, String name,int participants,LatLng Latilong,String locationname, String eventsummary, String category, String key){
-//        mDate = date;
-//        mName = name;
-//        mParticipants = participants;
-//        mLocation = Latilong;
-//        mLocationName = locationname;
-//        mEventSummary = eventsummary;
-//        mCategory = category;
-//        mGlobalId = key;
-//    }
-
     public Events(EventDate date, String name,int participants,LatLng Latilong,String locationname, String eventsummary, String category, String key, boolean doesExistsOnServer){
         mDate = date;
         mName = name;
@@ -44,17 +33,6 @@ public class Events {
         mGlobalId = key;
         mDoesExistsOnServer =doesExistsOnServer;
     }
-
-//    public Events(long unixTimeStamp, String name,int participants,LatLng Latilong,String locationname, String eventsummary, String category, String globalId){
-//        mUnixTimeStanp = unixTimeStamp;
-//        mName = name;
-//        mParticipants = participants;
-//        mLocation = Latilong;
-//        mLocationName = locationname;
-//        mEventSummary = eventsummary;
-//        mCategory = category;
-//        mGlobalId = globalId;
-//    }
 
     public EventDate getDate(){
         return mDate;

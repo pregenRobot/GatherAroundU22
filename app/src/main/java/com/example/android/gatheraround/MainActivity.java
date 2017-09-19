@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
@@ -36,15 +37,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.SparseIntArray;
+import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -68,7 +72,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import java.util.ArrayList;
 import java.util.Calendar;
-
 import static com.example.android.gatheraround.R.id.map;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback{
@@ -78,6 +81,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     Button eventListButton;
     LinearLayoutManager llm;
     Context context;
+    ProgressBar progressBar;
 
     DatabaseHelper eventsDBHelper;
     EventListCursorAdapter eventListCursorAdapter;
@@ -86,8 +90,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     BottomNavigationView bottomNavigationView;
     Calculations calculations = new Calculations();
 
-    SQLiteDatabase database;
-
     long unixTimestamp;
     SupportMapFragment mapFragment;
     FloatingActionButton searchButton;
@@ -95,8 +97,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     ArrayList<Marker> receivedMarkers;
     ArrayList<String> idsOnLocal;
     ArrayList<String> deletedIds;
-
-    public String test;
 
     Events newEvent;
     private static final int REQEUST_PERMISSION = 10;
@@ -112,7 +112,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_main);
         context = this;
 
-        test = "test";
+        progressBar = findViewById(R.id.progressBar);
 
         internetStatus();
 
@@ -527,10 +527,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                 final ArrayList<Marker> markArray = new ArrayList<>();
 
-                idsOnLocal = new ArrayList<String>();
+                idsOnLocal = new ArrayList<>();
                 idsOnLocal = eventsDBHelper.getAllIds();
 
-                ArrayList<String> idsOnServer = new ArrayList<String>();
+                ArrayList<String> idsOnServer = new ArrayList<>();
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
 
@@ -586,13 +586,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                 Log.i("idsOnServer", "count: " + idsOnServer.size());
 
-                deletedIds = new ArrayList<String>();
+                deletedIds = new ArrayList<>();
 
                 int checkNumber = idsOnLocal.size();
 
                 for (int a = 0; a < checkNumber; a++){
                     int index = idsOnServer.indexOf(idsOnLocal.get(a));
-                    Log.i("idsSearch", "searched local id: " + idsOnLocal.get(a) + ", found: " + index);
+                    Log.i("idsSearch", "searched local id: " + idsOnLocal.get(a) + ", result: " + index);
                     if (index == -1){
                         deletedIds.add(idsOnLocal.get(a));
                         eventsDBHelper.updateDoesExitsOnServer(idsOnLocal.get(a), false);
@@ -602,6 +602,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.i("Checked deleted ids", "Deleted ids count: " + deletedIds.size());
 
                 setList();
+
+                progressBar.setVisibility(View.INVISIBLE);
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -990,8 +992,29 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             startActivity(startMain);
         }
     }
+
     @Override public void onPause(){
         super.onPause();
         eventsDBHelper.close();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus){
+        super.onWindowFocusChanged(hasFocus);
+
+        WindowManager manager = getWindowManager();
+        Display display = manager.getDefaultDisplay();
+
+        Point point = new Point();
+        display.getSize(point);
+
+        int progressBarSize = point.x;
+
+        progressBar.setMinimumWidth(progressBarSize / 2);
+        progressBar.setMinimumHeight(progressBarSize / 2);
+        progressBar.setVisibility(View.VISIBLE);
+
+        int width = progressBar.getWidth();
+        Log.i("size", "size: " + width);
     }
 }

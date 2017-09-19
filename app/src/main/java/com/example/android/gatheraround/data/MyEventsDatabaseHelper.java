@@ -72,6 +72,7 @@ public class MyEventsDatabaseHelper extends SQLiteOpenHelper {
             returner.add(mCursor.getString(mCursor.getColumnIndex(COL_GLOBAL_ID)));
             Log.v("MyEventsDatabase","Searching Through myGlobal IDs" + mCursor.getString(mCursor.getColumnIndex(COL_GLOBAL_ID)));
         }
+        mCursor.close();
         boolean checker = false;
         for(String x:returner){
             Log.v("MyEventsDatabase","Now Checking: " + x);

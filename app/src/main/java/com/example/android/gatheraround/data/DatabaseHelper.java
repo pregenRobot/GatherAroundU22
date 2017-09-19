@@ -120,7 +120,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean addParticipant(Events events){
         long result = -1;
-        if(!this.checkforExistingEvent(events.getGlobalId())){
+        if(!this.checkForExistingEvent(events.getGlobalId())){
 
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
@@ -163,7 +163,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.query(true, TABLE_NAME, ALL_COLUMNS,null,null,null,null,null,null);
     }
 
-    public boolean checkforExistingEvent(String toCheck){
+    public boolean checkForExistingEvent(String toCheck){
         ArrayList<String> returner = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor mCursor = db.query(true, TABLE_NAME, ALL_COLUMNS, null, null, null, null, null, null);
@@ -174,6 +174,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             returner.add(mCursor.getString(mCursor.getColumnIndex(COL_GLOBALID)));
             Log.v("Database","Searching Through registered IDs" + mCursor.getString(mCursor.getColumnIndex(COL_GLOBALID)));
         }
+        mCursor.close();
         boolean checker = false;
         for(String x:returner){
             Log.v("Database","Now Checking: " + x);
@@ -217,7 +218,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         database.update(TABLE_NAME, contentValues, COL_GLOBALID + "=?", new String[]{key});
-
-//        database.execSQL("UPDATE " + TABLE_NAME + " SET " + COL_DOESEXISTSONSERVER + "=0" + " WHERE " + Col_);
     }
 }

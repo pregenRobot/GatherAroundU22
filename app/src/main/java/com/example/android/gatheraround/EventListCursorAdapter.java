@@ -1,6 +1,5 @@
 package com.example.android.gatheraround;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,14 +27,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.android.gatheraround.custom_classes.EventDate;
 import com.example.android.gatheraround.data.DatabaseHelper;
 import com.example.android.gatheraround.data.MyEventsDatabaseHelper;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -45,11 +39,9 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -67,7 +59,6 @@ class EventListCursorAdapter extends CursorAdapter {
 
     private Intent mainActivityIntent;
     private MyEventsDatabaseHelper myEvents;
-    private MainActivity mainActivity;
 
     public EventListCursorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
@@ -103,12 +94,9 @@ class EventListCursorAdapter extends CursorAdapter {
         String startDate = calculations.concatenate(eventDate, false, true)[0];
         String finishDate = calculations.concatenate(eventDate, false, true)[1];
 
-        Log.i("does", "" + mCursor.getInt(mCursor.getColumnIndex(DatabaseHelper.COL_DOESEXISTSONSERVER)));
-
         if (mCursor.getInt(mCursor.getColumnIndex(DatabaseHelper.COL_DOESEXISTSONSERVER)) == DatabaseHelper.BOOLEAN_FALSE){
-            Log.i("does", "does = " + mCursor.getInt(mCursor.getColumnIndex(DatabaseHelper.COL_DOESEXISTSONSERVER)));
             eventNameTopLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.caution_red));
-            Log.i("idNoExist", "found id = " + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID)));
+            Log.i("idNoExist", "id = " + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID)));
 
             nameText.setText("(" + context.getResources().getString(R.string.cancel) + ") " + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
         }else{

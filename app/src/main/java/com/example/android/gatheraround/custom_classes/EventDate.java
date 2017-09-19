@@ -86,44 +86,6 @@ public class EventDate {
 
     public String getmMinute2(){return mMinute2;}
 
-    public String makeDateText(Boolean withNewLine){
-
-        String result;
-
-        if (mMonth2.equals("-1")){
-            result = String.valueOf(mYear) + " / " + String.valueOf(mMonth) + " / " + String.valueOf(mDay);
-        } else {
-
-            if (withNewLine) {
-                result = String.valueOf(mYear) + " / " + String.valueOf(mMonth) + " / " + String.valueOf(mDay)
-                        + "\n" + String.valueOf(mYear2) + " / " + String.valueOf(mMonth2) + " / " + String.valueOf(mDay2);
-            } else {
-                result = String.valueOf(mYear) + " / " + String.valueOf(mMonth) + " / " + String.valueOf(mDay)
-                        + " ~ " + String.valueOf(mYear2) + " / " + String.valueOf(mMonth2) + " / " + String.valueOf(mDay2);
-            }
-        }
-
-        return result;
-    }
-
-    public String makeTimeText(boolean withNewLine){
-
-        String result;
-
-        if (mHour2.equals("-1")){
-            result = String.valueOf(mHour) + " : " + String.valueOf(mHour);
-        } else {
-
-            if (withNewLine){
-                result = String.valueOf(mHour) + " : " + String.valueOf(mMinute) + "\n" + String.valueOf(mHour2) + " : " + String.valueOf(mMinute2);
-            } else {
-                result = String.valueOf(mHour) + " : " + String.valueOf(mMinute) + " ~ " + String.valueOf(mHour2) + " : " + String.valueOf(mMinute2);
-            }
-        }
-
-        return result;
-    }
-
     public String makeOneLineText(){
 
         String result;

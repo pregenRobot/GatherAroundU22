@@ -61,6 +61,14 @@
             android:layout_marginTop="8dp"
             />
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
@@ -73,41 +81,40 @@
 
     </RelativeLayout>
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/bottom_sheet_behavior"
-    android:clipToPadding="true"
-    android:orientation="vertical"
-    android:id="@+id/bottomsheet"
-    >
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/cardbackground"
-        android:gravity="center"
-        android:text="@string/event_list"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:textSize="18sp"
-
-        />
     <LinearLayout
-
+        android:id="@+id/bottomsheet"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="9"
-        android:background="@color/recyclerview_background"
-        >
+        android:layout_height="match_parent"
+        android:clipToPadding="true"
+        android:orientation="vertical"
+        app:layout_behavior="@string/bottom_sheet_behavior">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/cardbackground"
+            android:gravity="center"
+            android:text="@string/event_list"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+
+            />
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="9"
+            android:background="@color/recyclerview_background">
+
             <ListView
-                android:layout_height="match_parent"
-                android:layout_width="match_parent"
                 android:id="@+id/eventlistview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:paddingLeft="@dimen/recyclerviewhorizontalpadding"
-                android:paddingRight="@dimen/recyclerviewhorizontalpadding"
-                >
-            </ListView>
+                android:paddingRight="@dimen/recyclerviewhorizontalpadding"></ListView>
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
