@@ -42,4 +42,5 @@
     <string name="summary">Detalles:</string>
     <string name="time">Hora</string>
     <string name="whole_day">Todo el dia</string>
+    <string name="canceled_alert_text">CANCELLED</string>
 </resources>

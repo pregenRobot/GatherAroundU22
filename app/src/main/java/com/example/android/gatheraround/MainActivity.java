@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -85,11 +86,17 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     BottomNavigationView bottomNavigationView;
     Calculations calculations = new Calculations();
 
+    SQLiteDatabase database;
+
     long unixTimestamp;
     SupportMapFragment mapFragment;
     FloatingActionButton searchButton;
     FloatingActionButton scanButton;
     ArrayList<Marker> receivedMarkers;
+    ArrayList<String> idsOnLocal;
+    ArrayList<String> deletedIds;
+
+    public String test;
 
     Events newEvent;
     private static final int REQEUST_PERMISSION = 10;
@@ -104,6 +111,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
+
+        test = "test";
 
         internetStatus();
 
@@ -164,27 +173,36 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
         llm = new LinearLayoutManager(context);
         eventListView = findViewById(R.id.eventlistview);
+
+
+//        runOnUiThread(new Runnable(){
+//            @Override
+//            public void run(){
+//
+//            }
+//        });
+
+
+    }
+
+    public void setList(){
         final DatabaseHelper eventManager = new DatabaseHelper(context);
 
-        runOnUiThread(new Runnable(){
-            @Override
-            public void run(){
-                try {
-                    eventCursor = eventManager.getAllEvents();
-                    eventListCursorAdapter = new EventListCursorAdapter(
-                            MainActivity.this,
-                            eventCursor,
-                            0);
+        try {
+            eventCursor = eventManager.getAllEvents();
+            eventListCursorAdapter = new EventListCursorAdapter(
+                    MainActivity.this,
+                    eventCursor,
+                    0);
+            eventListView.setAdapter(eventListCursorAdapter);
 
-                    eventListView.setAdapter(eventListCursorAdapter);
-                }catch (RuntimeException e){
-                    Log.v("NullPointerException","Initialize Event");
+            Log.i("list", String.valueOf(eventCursor));
+        }catch (RuntimeException e){
+            Log.v("NullPointerException", "Initialize Event");
 
-                    ((ActivityManager)context.getSystemService(ACTIVITY_SERVICE)).clearApplicationUserData();
+            ((ActivityManager)context.getSystemService(ACTIVITY_SERVICE)).clearApplicationUserData();
 
-                }
-            }
-        });
+        }
     }
 
     @Override
@@ -200,13 +218,18 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.setMyLocationEnabled(true);
 
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-        double lat = location.getLatitude();
-        double lng = location.getLongitude();
+        try{
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            double lat = location.getLatitude();
+            double lng = location.getLongitude();
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat,lng)));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat,lng)));
+        } catch(NullPointerException e) {
+            Log.w("Location Error", "Failed to get location.");
+        }
+
         eventListView = findViewById(R.id.eventlistview);
 
         //OnMapLongClickListener
@@ -452,7 +475,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     latLng,
                                     locationNameEdit.getText().toString(),
                                     summaryEdit.getText().toString(),
-                                    Events.CATEGORY_INDIVIDUAL
+                                    Events.CATEGORY_INDIVIDUAL,
+                                    true
                             );
 
                             if (insertData) {
@@ -487,6 +511,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),getResources().getIdentifier(iconName, "drawable", getPackageName()));
         return Bitmap.createScaledBitmap(imageBitmap, width, height, false);
     }
+
     @Override
     public void onResume(){
         super.onResume();
@@ -501,6 +526,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 final ArrayList<Marker> markArray = new ArrayList<>();
+
+                idsOnLocal = new ArrayList<String>();
+                idsOnLocal = eventsDBHelper.getAllIds();
+
+                ArrayList<String> idsOnServer = new ArrayList<String>();
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
 
@@ -527,9 +557,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     String category = snapshot.child("category").getValue().toString();
                     String globalId = snapshot.child("key").getValue().toString();
 
+                    idsOnServer.add(globalId);
+
                     LatLng location = new LatLng(latitude,longitude);
 
-                    Events newEvents = new Events(date, event_name, participants, location, locationName, summary, category, globalId);
+                    Events newEvents = new Events(date, event_name, participants, location, locationName, summary, category, globalId, true);
 
                     if(newEvents.getCategory().equals(Events.CATEGORY_INDIVIDUAL)) {
                         newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
@@ -545,11 +577,31 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     mMarker.setTag(newEvents);
                     markArray.add(mMarker);
                 }
+
                 receivedMarkers = markArray;
                 setMapMarkerListener(markArray);
                 setmBottomsheetbehvior(markArray);
                 searchFunctionality(markArray);
                 scanFunctionality();
+
+                Log.i("idsOnServer", "count: " + idsOnServer.size());
+
+                deletedIds = new ArrayList<String>();
+
+                int checkNumber = idsOnLocal.size();
+
+                for (int a = 0; a < checkNumber; a++){
+                    int index = idsOnServer.indexOf(idsOnLocal.get(a));
+                    Log.i("idsSearch", "searched local id: " + idsOnLocal.get(a) + ", found: " + index);
+                    if (index == -1){
+                        deletedIds.add(idsOnLocal.get(a));
+                        eventsDBHelper.updateDoesExitsOnServer(idsOnLocal.get(a), false);
+                    }
+                }
+
+                Log.i("Checked deleted ids", "Deleted ids count: " + deletedIds.size());
+
+                setList();
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -928,7 +980,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onBackPressed() {
 
-        if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+        if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED || mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             eventListButton.setText("Event List Button");
         } else {
@@ -942,5 +994,4 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onPause();
         eventsDBHelper.close();
     }
-
 }

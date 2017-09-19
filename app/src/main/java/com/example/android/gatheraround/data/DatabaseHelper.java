@@ -18,7 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private Context context;
     private static final String DATABASE_NAME = "eventList.db";
-    public static final String TABLE_NAME = "event_table";
+    public static final String TABLE_NAME = "event_table_2";
     public static final String COL_LOCALID = "_id";
     // id for identifying within database
     public static final String COL_NAME = "EVENTNAME";
@@ -30,11 +30,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_CATEGORY = "CATEGORY";
     public static final String COL_GLOBALID = "GLOBALID";
     // id for identifying on the server
+    public static final String COL_DOESEXISTSONSERVER = "DOESEXISTSONSERVER";
+    public static final int BOOLEAN_TRUE = 0;
+    public static final int BOOLEAN_FALSE = 1;
     private DataSenderToServer dataSenderToServer = new DataSenderToServer();
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     private static final String[] ALL_COLUMNS = new String[]{
-            COL_LOCALID,COL_NAME,COL_DATE,COL_PARTICIPANTS,COL_LOCATION,COL_LOCATIONNAME,COL_SUMMARY,COL_CATEGORY,COL_GLOBALID
+            COL_LOCALID,COL_NAME,COL_DATE,COL_PARTICIPANTS,COL_LOCATION,COL_LOCATIONNAME,COL_SUMMARY,COL_CATEGORY,COL_GLOBALID, COL_DOESEXISTSONSERVER
     };
 
     public DatabaseHelper(Context context) {
@@ -53,7 +56,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COL_LOCATIONNAME + " TEXT," +
                 COL_SUMMARY + " TEXT," +
                 COL_CATEGORY + " TEXT," +
-                COL_GLOBALID + ")";
+                COL_GLOBALID + " TEXT," +
+                COL_DOESEXISTSONSERVER + " INTEGER)";
         sqLiteDatabase.execSQL(createTable);
         Log.v("DatabaseHelper","Database Created!");
     }
@@ -63,9 +67,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("DROP IF TABLE EXISTS " + TABLE_NAME);
         onCreate(db);
+
+        if (oldVersion == 1 && newVersion == 2){
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + COL_DOESEXISTSONSERVER + " INTEGER DEFAULT " + BOOLEAN_TRUE);
+        }
     }
 
-    public boolean addData(String event_name, EventDate date, int participants, LatLng location, String locationName, String summary, String category){
+    public boolean addData(String event_name, EventDate date, int participants, LatLng location, String locationName, String summary, String category, boolean doesExistsOnServer){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -83,8 +91,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_LOCATIONNAME, locationName);
         contentValues.put(COL_SUMMARY, summary);
         contentValues.put(COL_CATEGORY, category);
+        if (doesExistsOnServer){
+            contentValues.put(COL_DOESEXISTSONSERVER, BOOLEAN_TRUE);
+        } else{
+            contentValues.put(COL_DOESEXISTSONSERVER, BOOLEAN_FALSE);
+        }
 
-        Events newEvents = new Events(date,event_name,participants,location,locationName,summary, category, "contemporary");
+        Events newEvents = new Events(date,event_name,participants,location,locationName,summary, category, "contemporary", doesExistsOnServer);
         String key = dataSenderToServer.pushToServer(newEvents);
 
         contentValues.put(COL_GLOBALID, key);
@@ -124,6 +137,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             contentValues.put(COL_SUMMARY, events.getEventSummary());
             contentValues.put(COL_CATEGORY, events.getCategory());
             contentValues.put(COL_GLOBALID, events.getGlobalId());
+            if(events.getDoesExitsOnServer()){
+                contentValues.put(COL_DOESEXISTSONSERVER, BOOLEAN_TRUE);
+            }else{
+                contentValues.put(COL_DOESEXISTSONSERVER, BOOLEAN_FALSE);
+            }
+
+            Log.i("does", "" + events.getDoesExitsOnServer());
 
             dataSenderToServer.addOneParticipants(events.getGlobalId());
 
@@ -142,10 +162,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         assert db != null;
         return db.query(true, TABLE_NAME, ALL_COLUMNS,null,null,null,null,null,null);
     }
+
     public boolean checkforExistingEvent(String toCheck){
         ArrayList<String> returner = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor mCursor = db.query(true, TABLE_NAME, ALL_COLUMNS,null,null,null,null,null,null);
+        Cursor mCursor = db.query(true, TABLE_NAME, ALL_COLUMNS, null, null, null, null, null, null);
         Log.v("EventCursor",mCursor.toString());
 
         for(mCursor.moveToFirst(); !mCursor.isAfterLast(); mCursor.moveToNext()) {
@@ -164,5 +185,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
         return checker;
+    }
+
+    public ArrayList<String> getAllIds(){
+
+        ArrayList<String> result = new ArrayList<>();
+
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor mCursor = database.query(TABLE_NAME, new String[]{COL_GLOBALID}, null, null, null, null, null);
+
+        while (mCursor.moveToNext()){
+            result.add(mCursor.getString(mCursor.getColumnIndex(COL_GLOBALID)));
+        }
+
+        mCursor.close();
+
+        return result;
+    }
+
+    public void updateDoesExitsOnServer(String key, boolean doesExitsOnServer){
+        //key = globalId
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+
+        if (doesExitsOnServer){
+            contentValues.put(COL_DOESEXISTSONSERVER, BOOLEAN_TRUE);
+        } else {
+            contentValues.put(COL_DOESEXISTSONSERVER, BOOLEAN_FALSE);
+        }
+
+        database.update(TABLE_NAME, contentValues, COL_GLOBALID + "=?", new String[]{key});
+
+//        database.execSQL("UPDATE " + TABLE_NAME + " SET " + COL_DOESEXISTSONSERVER + "=0" + " WHERE " + Col_);
     }
 }

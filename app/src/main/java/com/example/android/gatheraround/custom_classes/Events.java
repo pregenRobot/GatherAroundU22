@@ -16,12 +16,24 @@ public class Events {
     private String mEventSummary;
     private String mCategory;
     private String mGlobalId;
+    private boolean mDoesExistsOnServer;
 
     public static String CATEGORY_INDIVIDUAL = "INDIVIDUAL";
     public static String CATEGORY_NPO = "NPO";
     public static String CATEGORY_CORPORATE = "CORPORATE";
 
-    public Events(EventDate date, String name,int participants,LatLng Latilong,String locationname, String eventsummary, String category, String key){
+//    public Events(EventDate date, String name,int participants,LatLng Latilong,String locationname, String eventsummary, String category, String key){
+//        mDate = date;
+//        mName = name;
+//        mParticipants = participants;
+//        mLocation = Latilong;
+//        mLocationName = locationname;
+//        mEventSummary = eventsummary;
+//        mCategory = category;
+//        mGlobalId = key;
+//    }
+
+    public Events(EventDate date, String name,int participants,LatLng Latilong,String locationname, String eventsummary, String category, String key, boolean doesExistsOnServer){
         mDate = date;
         mName = name;
         mParticipants = participants;
@@ -30,6 +42,7 @@ public class Events {
         mEventSummary = eventsummary;
         mCategory = category;
         mGlobalId = key;
+        mDoesExistsOnServer =doesExistsOnServer;
     }
 
 //    public Events(long unixTimeStamp, String name,int participants,LatLng Latilong,String locationname, String eventsummary, String category, String globalId){
@@ -79,8 +92,11 @@ public class Events {
         return mGlobalId;
     }
 
+    public boolean getDoesExitsOnServer(){
+        return mDoesExistsOnServer;
+    }
+
     public String toString(){
         return  mDate.makeOneLineText() + " / " + mName + " / " + mParticipants + " / " + mLocation.toString() + " / " + mLocationName + " / " + mEventSummary + " / " + mCategory;
     }
-
 }

@@ -9,4 +9,5 @@
     <color name="recyclerview_background">#8dc1b2</color>
     <color name="eventparticipanttextviewback">#83f7d5</color>
     <color name="middle_cardBackGround">#13ad7e</color>
+    <color name="caution_red">#b22222</color>
 </resources>

@@ -106,7 +106,6 @@ public class EventDate {
         return result;
     }
 
-
     public String makeTimeText(boolean withNewLine){
 
         String result;

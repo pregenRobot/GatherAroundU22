@@ -1,5 +1,6 @@
 package com.example.android.gatheraround;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,10 +14,12 @@ import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +32,10 @@ import android.widget.Toast;
 import com.example.android.gatheraround.custom_classes.EventDate;
 import com.example.android.gatheraround.data.DatabaseHelper;
 import com.example.android.gatheraround.data.MyEventsDatabaseHelper;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -42,6 +49,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -49,6 +57,7 @@ import java.util.Date;
  */
 
 class EventListCursorAdapter extends CursorAdapter {
+
     private LayoutInflater cursorInflater;
     private Calculations calculations = new Calculations();
     private Gson gson = new Gson();
@@ -58,6 +67,7 @@ class EventListCursorAdapter extends CursorAdapter {
 
     private Intent mainActivityIntent;
     private MyEventsDatabaseHelper myEvents;
+    private MainActivity mainActivity;
 
     public EventListCursorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
@@ -71,6 +81,7 @@ class EventListCursorAdapter extends CursorAdapter {
     }
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+
         TextView nameText = view.findViewById(R.id.event_name);
         TextView finishDateText = view.findViewById(R.id.event_time);
         TextView startDateText = view.findViewById(R.id.event_date);
@@ -78,6 +89,7 @@ class EventListCursorAdapter extends CursorAdapter {
         TextView locationText = view.findViewById(R.id.event_location);
         TextView categoryText = view.findViewById(R.id.event_category);
         CardView card = view.findViewById(R.id.CardViewItem);
+        LinearLayout eventNameTopLayout = view.findViewById(R.id.event_name_top_layout);
 
         TextView summaryTitle = view.findViewById(R.id.summaryTitleTextView);
         LinearLayout summaryLayout = view.findViewById(R.id.summaryLinearLayout);
@@ -91,7 +103,18 @@ class EventListCursorAdapter extends CursorAdapter {
         String startDate = calculations.concatenate(eventDate, false, true)[0];
         String finishDate = calculations.concatenate(eventDate, false, true)[1];
 
-        nameText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
+        Log.i("does", "" + mCursor.getInt(mCursor.getColumnIndex(DatabaseHelper.COL_DOESEXISTSONSERVER)));
+
+        if (mCursor.getInt(mCursor.getColumnIndex(DatabaseHelper.COL_DOESEXISTSONSERVER)) == DatabaseHelper.BOOLEAN_FALSE){
+            Log.i("does", "does = " + mCursor.getInt(mCursor.getColumnIndex(DatabaseHelper.COL_DOESEXISTSONSERVER)));
+            eventNameTopLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.caution_red));
+            Log.i("idNoExist", "found id = " + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID)));
+
+            nameText.setText("(" + context.getResources().getString(R.string.cancel) + ") " + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
+        }else{
+            nameText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
+        }
+
         startDateText.setText(startDate);
         finishDateText.setText(finishDate);
         summaryText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_SUMMARY)));

@@ -23,7 +23,6 @@
     <string name="msg">権限を要請</string>
     <string name="once_upon_a_time_a_few_missadfsafasdfasfdf">test</string>
     <string name="one_day">終了日が同じ</string>
-
     <string name="rio_de_janeiro">test</string>
     <string name="save_to_phone">デバイスに保存</string>
     <string name="search">検索</string>
@@ -43,4 +42,5 @@
     <string name="no_internet">インターネットに繋がっていません</string>
     <string name="failedToAddEvent">イベント作成できませんでした</string>
     <string name="fillInAllFields">全欄記入してください</string>
+    <string name="canceled_alert_text"></string>
 </resources>
