@@ -94,6 +94,7 @@ class EventListCursorAdapter extends CursorAdapter {
         String startDate = calculations.concatenate(eventDate, false, true)[0];
         String finishDate = calculations.concatenate(eventDate, false, true)[1];
 
+        //
         if (mCursor.getInt(mCursor.getColumnIndex(DatabaseHelper.COL_DOESEXISTSONSERVER)) == DatabaseHelper.BOOLEAN_FALSE){
             eventNameTopLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.caution_red));
             Log.i("idNoExist", "id = " + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID)));
