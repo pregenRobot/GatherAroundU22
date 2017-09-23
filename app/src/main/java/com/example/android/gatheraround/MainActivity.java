@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -33,7 +32,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.SparseIntArray;
@@ -79,9 +77,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public static BottomSheetBehavior mBottomSheetBehavior;
     public static GoogleMap mMap;
     Button eventListButton;
-    LinearLayoutManager llm;
     Context context;
-    ProgressBar progressBar;
+//    ProgressBar progressBar;
 
     DatabaseHelper eventsDBHelper;
     EventListCursorAdapter eventListCursorAdapter;
@@ -112,7 +109,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_main);
         context = this;
 
-        progressBar = findViewById(R.id.progressBar);
+//        progressBar = findViewById(R.id.progressBar);
 
         internetStatus();
 
@@ -171,18 +168,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
-        llm = new LinearLayoutManager(context);
         eventListView = findViewById(R.id.eventlistview);
 
-
-//        runOnUiThread(new Runnable(){
-//            @Override
-//            public void run(){
-//
-//            }
-//        });
-
-
+//        progressBar.setVisibility(View.INVISIBLE);
     }
 
     public void setList(){
@@ -663,7 +651,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                 setList();
 
-                progressBar.setVisibility(View.INVISIBLE);
+//                progressBar.setVisibility(View.INVISIBLE);
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -1058,23 +1046,23 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         eventsDBHelper.close();
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus){
-        super.onWindowFocusChanged(hasFocus);
-
-        WindowManager manager = getWindowManager();
-        Display display = manager.getDefaultDisplay();
-
-        Point point = new Point();
-        display.getSize(point);
-
-        int progressBarSize = point.x;
-
-        progressBar.setMinimumWidth(progressBarSize / 2);
-        progressBar.setMinimumHeight(progressBarSize / 2);
-        progressBar.setVisibility(View.VISIBLE);
-
-        int width = progressBar.getWidth();
-        Log.i("size", "size: " + width);
-    }
+//    @Override
+//    public void onWindowFocusChanged(boolean hasFocus){
+//        super.onWindowFocusChanged(hasFocus);
+//
+//        WindowManager manager = getWindowManager();
+//        Display display = manager.getDefaultDisplay();
+//
+//        Point point = new Point();
+//        display.getSize(point);
+//
+//        int progressBarSize = point.x;
+//
+//        progressBar.setMinimumWidth(progressBarSize / 2);
+//        progressBar.setMinimumHeight(progressBarSize / 2);
+//        progressBar.setVisibility(View.VISIBLE);
+//
+//        int width = progressBar.getWidth();
+//        Log.i("size", "size: " + width);
+//    }
 }
