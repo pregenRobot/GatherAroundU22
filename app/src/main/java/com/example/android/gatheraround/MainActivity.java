@@ -367,6 +367,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 }
                             });
                         }
+
                         time1.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
