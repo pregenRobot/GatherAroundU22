@@ -109,6 +109,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_main);
         context = this;
 
+        // 170923 13:56
+
 //        progressBar = findViewById(R.id.progressBar);
 
         internetStatus();
