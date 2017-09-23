@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -66,6 +67,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -81,7 +83,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     Button eventListButton;
     LinearLayoutManager llm;
     Context context;
-    ProgressBar progressBar;
 
     DatabaseHelper eventsDBHelper;
     EventListCursorAdapter eventListCursorAdapter;
@@ -111,8 +112,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
-
-        progressBar = findViewById(R.id.progressBar);
 
         internetStatus();
 
@@ -174,15 +173,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         llm = new LinearLayoutManager(context);
         eventListView = findViewById(R.id.eventlistview);
 
-
-//        runOnUiThread(new Runnable(){
-//            @Override
-//            public void run(){
-//
-//            }
-//        });
-
-
     }
 
     public void setList(){
@@ -208,6 +198,19 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = googleMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            this, R.raw.style_json));
+
+            if (!success) {
+                Log.e("Styling", "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e("Styling", "Can't find style. Error: ", e);
+        }
 
         if (ActivityCompat.checkSelfPermission(
                 this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -434,12 +437,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     @Override
                                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
 
+                                        i1+= 1;
                                         String iText, i1Text, i2Text;
 
                                         iText = String.valueOf(i);
 
                                         if ((i1 - 10) < 0){
-                                            i1Text = "0" + i1;
+                                            i1Text = "0" + (i1);
                                         }else{
                                             i1Text = String.valueOf(i1);
                                         }
@@ -467,6 +471,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     @Override
                                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
 
+                                        i1+=1;
                                         String iText, i1Text, i2Text;
 
                                         iText = String.valueOf(i);
@@ -662,8 +667,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.i("Checked deleted ids", "Deleted ids count: " + deletedIds.size());
 
                 setList();
-
-                progressBar.setVisibility(View.INVISIBLE);
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -1058,23 +1061,4 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         eventsDBHelper.close();
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus){
-        super.onWindowFocusChanged(hasFocus);
-
-        WindowManager manager = getWindowManager();
-        Display display = manager.getDefaultDisplay();
-
-        Point point = new Point();
-        display.getSize(point);
-
-        int progressBarSize = point.x;
-
-        progressBar.setMinimumWidth(progressBarSize / 2);
-        progressBar.setMinimumHeight(progressBarSize / 2);
-        progressBar.setVisibility(View.VISIBLE);
-
-        int width = progressBar.getWidth();
-        Log.i("size", "size: " + width);
-    }
 }

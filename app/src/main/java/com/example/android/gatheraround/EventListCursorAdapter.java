@@ -101,6 +101,7 @@ class EventListCursorAdapter extends CursorAdapter {
             nameText.setText("(" + context.getResources().getString(R.string.cancel) + ") " + mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
         }else{
             nameText.setText(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_NAME)));
+            eventNameTopLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.cardbackground));
         }
 
         startDateText.setText(startDate);

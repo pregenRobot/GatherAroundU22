@@ -34,6 +34,7 @@ public class Events {
         mDoesExistsOnServer =doesExistsOnServer;
     }
 
+
     public EventDate getDate(){
         return mDate;
     }
