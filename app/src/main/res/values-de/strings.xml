@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Gather Around</string>
     <string name="addedParticipants">Folgende Veranstaltung</string>
     <string name="cancel">Stornieren</string>
     <string name="cancelledScan">Der Scan wurde abgebrochen</string>
@@ -42,5 +41,5 @@
     <string name="summary">Details:</string>
     <string name="time">Zeit</string>
     <string name="whole_day">Den ganzen Tag</string>
-    <string name="canceled_alert_text">CANCELLED</string>
+    <string name="start_date"></string>
 </resources>

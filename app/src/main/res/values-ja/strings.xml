@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Gather Around</string>
     <string name="cancel">キャンセル</string>
     <string name="category">カテゴリー</string>
     <string name="choose_an_action">選択</string>
@@ -43,4 +42,7 @@
     <string name="failedToAddEvent">イベント作成できませんでした</string>
     <string name="fillInAllFields">全欄記入してください</string>
     <string name="canceled_alert_text"></string>
+    <string name="start_date">開始日</string>
+    <string name="end_date">終了日</string>
+    <string name="search_by_period">期間を指定して検索</string>
 </resources>

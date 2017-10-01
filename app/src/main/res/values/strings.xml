@@ -41,4 +41,8 @@
     <string name="createdEvent">Created Event</string>
     <string name="fillInAllFields">Please fill in all fields</string>
     <string name="failedToAddEvent">Failed to add Event</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="canceled_alert_text">CANCELLED</string>
+    <string name="search_by_period">Search by period</string>
 </resources>
