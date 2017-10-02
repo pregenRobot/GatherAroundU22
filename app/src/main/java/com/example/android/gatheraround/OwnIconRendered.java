@@ -21,6 +21,7 @@ public class OwnIconRendered extends DefaultClusterRenderer<EventMarker> {
     public OwnIconRendered(Context context, GoogleMap map, ClusterManager<EventMarker> clusterManager) {
         super(context, map, clusterManager);
         this.context = context;
+        //test
     }
 
     @Override
