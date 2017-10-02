@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/gatheraround"
+        android:id="@+id/gatheraroundicon"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gatheraroundicon"
+        android:text="Searching for Events"
+        android:layout_centerInParent="true"
+        android:textSize="18sp"
+        android:padding="9dp"
+        android:textStyle="bold"
+        android:textColor="@color/cardbackground"
+        android:id="@+id/accentText"
+        />
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/accentText"
+        android:layout_centerHorizontal="true"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/gatheraroundicon"
+        android:text="Gather Around"
+        android:layout_centerInParent="true"
+        android:textSize="32dp"
+        android:padding="9dp"
+        android:textStyle="bold"
+        android:textColor="@color/cardbackground"
+        />
+
+
+</RelativeLayout>

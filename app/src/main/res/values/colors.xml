@@ -10,4 +10,8 @@
     <color name="eventparticipanttextviewback">#83f7d5</color>
     <color name="middle_cardBackGround">#13ad7e</color>
     <color name="caution_red">#b22222</color>
+    <color name="onedigit">#4db6ac</color>
+    <color name="twodigit">#009688</color>
+    <color name="threedigit">#00796b</color>
+    <color name="fourdigit">#004d40</color>
 </resources>

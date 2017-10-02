@@ -19,7 +19,6 @@ public class ApplicationContext extends Application {
         context = this;
         Firebase.setAndroidContext(this);
     }
-
     public Context getContext(){
         return context;
     }

@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -32,6 +34,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.SparseIntArray;
@@ -52,24 +55,37 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import com.example.android.gatheraround.custom_classes.EventDate;
+import com.example.android.gatheraround.custom_classes.EventMarker;
 import com.example.android.gatheraround.custom_classes.Events;
 import com.example.android.gatheraround.data.DatabaseHelper;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.firebase.client.core.view.Event;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.algo.Algorithm;
+import com.google.maps.android.clustering.algo.GridBasedAlgorithm;
+import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm;
+import com.google.maps.android.clustering.algo.PreCachingAlgorithmDecorator;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+
+import static android.R.attr.x;
 import static com.example.android.gatheraround.R.id.map;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback{
@@ -77,8 +93,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public static BottomSheetBehavior mBottomSheetBehavior;
     public static GoogleMap mMap;
     Button eventListButton;
+    LinearLayoutManager llm;
     Context context;
-//    ProgressBar progressBar;
 
     DatabaseHelper eventsDBHelper;
     EventListCursorAdapter eventListCursorAdapter;
@@ -91,7 +107,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     SupportMapFragment mapFragment;
     FloatingActionButton searchButton;
     FloatingActionButton scanButton;
-    ArrayList<Marker> receivedMarkers;
     ArrayList<String> idsOnLocal;
     ArrayList<String> deletedIds;
 
@@ -101,6 +116,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     Calendar calendar = Calendar.getInstance();
     EventDate eventDate;
     final String PREFS_NAME = "MyPrefsFile";
+    ClusterManager<EventMarker> mClusterManager;
+    ArrayList<Events> eventArr = new ArrayList<>();
+    private Algorithm<EventMarker> clusterManagerAlgorithm;
+    ArrayList<Events> receivedEvents;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,9 +128,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_main);
         context = this;
 
-//        progressBar = findViewById(R.id.progressBar);
-
         internetStatus();
+
+//        eventArr = (ArrayList<Events>)getIntent().getSerializableExtra("EventsonServer");
+//        for(Events x:eventArr){
+//            Log.v("ReceivedatMainActivity",x.getName());
+//        }
 
         eventsDBHelper = new DatabaseHelper(context);
 
@@ -168,9 +190,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
+        llm = new LinearLayoutManager(context);
         eventListView = findViewById(R.id.eventlistview);
 
-//        progressBar.setVisibility(View.INVISIBLE);
     }
 
     public void setList(){
@@ -192,10 +214,24 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
     }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = googleMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            this, R.raw.style_json));
+
+            if (!success) {
+                Log.e("Styling", "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e("Styling", "Can't find style. Error: ", e);
+        }
 
         if (ActivityCompat.checkSelfPermission(
                 this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -422,12 +458,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     @Override
                                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
 
+                                        i1+= 1;
                                         String iText, i1Text, i2Text;
 
                                         iText = String.valueOf(i);
 
                                         if ((i1 - 10) < 0){
-                                            i1Text = "0" + i1;
+                                            i1Text = "0" + (i1);
                                         }else{
                                             i1Text = String.valueOf(i1);
                                         }
@@ -455,6 +492,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     @Override
                                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
 
+                                        i1+=1;
                                         String iText, i1Text, i2Text;
 
                                         iText = String.valueOf(i);
@@ -551,18 +589,17 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 });
             }
         });
+        mClusterManager = new ClusterManager<EventMarker>(MainActivity.this,mMap);
+        clusterManagerAlgorithm = new NonHierarchicalDistanceBasedAlgorithm();
+        mClusterManager.setAlgorithm(clusterManagerAlgorithm);
+        mMap.setOnCameraIdleListener(mClusterManager);
 
-    }
-
-    private MarkerOptions newMarkerOptions;
-    public Bitmap resizeMapIcons(String iconName, int width, int height){
-        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),getResources().getIdentifier(iconName, "drawable", getPackageName()));
-        return Bitmap.createScaledBitmap(imageBitmap, width, height, false);
     }
 
     @Override
     public void onResume(){
         super.onResume();
+        receivedEvents = new ArrayList<>();
 
         if(mMap != null){
             mMap.clear();
@@ -573,7 +610,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                final ArrayList<Marker> markArray = new ArrayList<>();
+                final ArrayList<EventMarker> clusterItemArray = new ArrayList<>();
 
                 idsOnLocal = new ArrayList<>();
                 idsOnLocal = eventsDBHelper.getAllIds();
@@ -611,33 +648,22 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                     Events newEvents = new Events(date, event_name, participants, location, locationName, summary, category, globalId, true);
 
-                    if(newEvents.getCategory().equals(Events.CATEGORY_INDIVIDUAL)) {
-                        newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
-                                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("individual", 75, 75)));
-                    }else if(newEvents.getCategory().equals(Events.CATEGORY_CORPORATE)){
-                        newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
-                                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("corporate", 75, 75)));
-                    }else if(newEvents.getCategory().equals(Events.CATEGORY_NPO)){
-                        newMarkerOptions = new MarkerOptions().position(newEvents.getLocation()).title(newEvents.getName())
-                                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("npo", 75, 75)));
-                    }
-                    Marker mMarker = mMap.addMarker(newMarkerOptions);
-                    mMarker.setTag(newEvents);
-                    markArray.add(mMarker);
+                    EventMarker eventMarker = new EventMarker(newEvents,MainActivity.this);
+                    mClusterManager.addItem(eventMarker);
+                    clusterItemArray.add(eventMarker);
+                    receivedEvents.add(newEvents);
                 }
 
-                receivedMarkers = markArray;
-                setMapMarkerListener(markArray);
-                setmBottomsheetbehvior(markArray);
-                searchFunctionality(markArray);
+                searchFunctionality(receivedEvents);
                 scanFunctionality();
+                clusterItemFunctionality();
+                mClusterManager.setRenderer(new OwnIconRendered(MainActivity.this, mMap, mClusterManager));
 
                 Log.i("idsOnServer", "count: " + idsOnServer.size());
 
                 deletedIds = new ArrayList<>();
 
                 int checkNumber = idsOnLocal.size();
-
                 for (int a = 0; a < checkNumber; a++){
                     int index = idsOnServer.indexOf(idsOnLocal.get(a));
                     Log.i("idsSearch", "searched local id: " + idsOnLocal.get(a) + ", result: " + index);
@@ -646,12 +672,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         eventsDBHelper.updateDoesExitsOnServer(idsOnLocal.get(a), false);
                     }
                 }
-
                 Log.i("Checked deleted ids", "Deleted ids count: " + deletedIds.size());
-
                 setList();
-
-//                progressBar.setVisibility(View.INVISIBLE);
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -660,133 +682,21 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    public void setMapMarkerListener(ArrayList<Marker> markArray){
-
-        final ArrayList<Marker> markerArrayList = markArray;
-
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-
-                for(Marker x:markerArrayList){
-                    if(marker.toString().equals(x.toString())){
-                        final Events nowEvents = (Events) marker.getTag();
-                        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-                        View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
-
-                        mBuilder.setView(mView);
-                        final AlertDialog dialog = mBuilder.create();
-                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
-                        summaryText.setMovementMethod(new ScrollingMovementMethod());
-                        assert nowEvents != null;
-                        summaryText.setText(nowEvents.getEventSummary());
-                        TextView nameText = mView.findViewById(R.id.eventNameMark);
-                        nameText.setText(nowEvents.getName());
-                        TextView dateText = mView.findViewById(R.id.eventDateMark);
-                        try{
-                            Log.v("THisistotaly","Ok!");
-                        }catch (NullPointerException n){
-                            Log.v("THISistotaly","Not Ok!");
-                        }
-                        String[] dateandTime = calculations.concatenate(nowEvents.getDate(),false,false);
-                        dateText.setText(dateandTime[0]);
-                        TextView timeText = mView.findViewById(R.id.eventTimeMark);
-                        timeText.setText(dateandTime[1]);
-                        TextView locationText = mView.findViewById(R.id.eventLocationMark);
-                        locationText.setText(nowEvents.getLocationName());
-                        TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
-                        participantText.setText(nowEvents.getParticipants()+"");
-                        FloatingActionButton followButton = mView.findViewById(R.id.follow);
-
-                        followButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                boolean insertData = eventsDBHelper.addParticipant(nowEvents);
-                                if (insertData) {
-
-                                    mapFragment.getMapAsync(MainActivity.this);
-                                    dialog.dismiss();
-                                    Toast.makeText(MainActivity.this,R.string.addedParticipants,Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(MainActivity.this,MainActivity.class);
-                                    startActivity(intent);
-                                } else {
-                                    Toast.makeText(MainActivity.this,R.string.event_exists,Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                        dialog.show();
-
-                    }
-                }
-                return true;
-            }
-        });
-    }
-    public void setmBottomsheetbehvior(ArrayList<Marker> markerArrayList){
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
-        final ArrayList<Marker> markerarray = markerArrayList;
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
+    public void clusterItemFunctionality(){
+        mClusterManager.setOnClusterItemClickListener(
+                new ClusterManager.OnClusterItemClickListener<EventMarker>() {
                     @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.action_individual:
-                                for(Marker x:markerarray){
-                                    Events tempEvent = (Events) x.getTag();
-                                    if(tempEvent != null) {
-                                        String currentCategory = tempEvent.getCategory();
-                                        if (currentCategory.equals(Events.CATEGORY_INDIVIDUAL)) {
-                                            x.setVisible(true);
-                                        } else if (currentCategory.equals(Events.CATEGORY_CORPORATE)) {
-                                            x.setVisible(false);
-                                        } else if (currentCategory.equals(Events.CATEGORY_NPO)) {
-                                            x.setVisible(false);
-                                        }
-                                    }else{
-                                        internetStatus();
-                                    }
-                                }
-                                break;
-                            case R.id.action_corporate:
-                                for(Marker x:markerarray){
-                                    Events tempEvent = (Events) x.getTag();
-                                    if(tempEvent != null) {
-                                        String currentCategory = tempEvent.getCategory();
-                                        if (currentCategory.equals(Events.CATEGORY_INDIVIDUAL)) {
-                                            x.setVisible(false);
-                                        } else if (currentCategory.equals(Events.CATEGORY_CORPORATE)) {
-                                            x.setVisible(true);
-                                        } else if (currentCategory.equals(Events.CATEGORY_NPO)) {
-                                            x.setVisible(false);
-                                        }
-                                    }else{
-                                        internetStatus();
-                                    }
-                                }
-                                break;
-                            case R.id.action_npo:
-                                for(Marker x:markerarray){
-                                    Events tempEvent = (Events) x.getTag();
-                                    if(tempEvent != null) {
-                                        String currentCategory = tempEvent.getCategory();
-                                        if (currentCategory.equals(Events.CATEGORY_INDIVIDUAL)) {
-                                            x.setVisible(false);
-                                        } else if (currentCategory.equals(Events.CATEGORY_CORPORATE)) {
-                                            x.setVisible(false);
-                                        } else if (currentCategory.equals(Events.CATEGORY_NPO)) {
-                                            x.setVisible(true);
-                                        }
-                                    }else{
-                                        internetStatus();
-                                    }
-                                }
-                                break;
-                        }
+                    public boolean onClusterItemClick(EventMarker eventMarker) {
+                        Events dealingEvent = eventMarker.getTag();
+                        dialogCreator(dealingEvent);
+                        Log.v("ItemClickedYo!","ClusterTest");
                         return true;
                     }
-                });
+                }
+        );
+        mMap.setOnMarkerClickListener(mClusterManager);
     }
+
     public void internetStatus(){
         ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
@@ -795,9 +705,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
     }
-    public void searchFunctionality(ArrayList<Marker> markArray){
+    public void searchFunctionality(final ArrayList<Events> gotEvents){
         searchButton = findViewById(R.id.searchMain);
-        final ArrayList<Marker> markArray2 = markArray;
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -814,9 +724,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 searchQuery.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
-                        for(Marker x:markArray2){
-                            Events queryingEvent =(Events) x.getTag();
+                        for(Events x:gotEvents){
+                            Events queryingEvent = x;
                             assert queryingEvent != null;
                             if(enterText.getText().toString().equals(queryingEvent.getGlobalId())){
                                 final Events nowEvents = queryingEvent;
@@ -893,14 +802,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+        Collection<EventMarker> items = clusterManagerAlgorithm.getItems();
         if(result != null){
             if(result.getContents()==null){
                 Toast.makeText(MainActivity.this,R.string.cancelledScan,Toast.LENGTH_SHORT).show();
 
             }else{
                 boolean gatherAroundCode = false;
-                for(Marker x: receivedMarkers){
-                    newEvent = (Events) x.getTag();
+                for(Events x: receivedEvents){
+                    Log.v("This is stufff!",x.getName());
+                    newEvent = x;
                     assert newEvent != null;
                     String testString = "gatheraround/"+newEvent.getGlobalId();
                     if(testString.equals(result.getContents())){
@@ -951,6 +862,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         }
+        Log.v("ScannedQR",result.getContents());
 
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -1044,25 +956,57 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override public void onPause(){
         super.onPause();
         eventsDBHelper.close();
+        mClusterManager.clearItems();
     }
 
-//    @Override
-//    public void onWindowFocusChanged(boolean hasFocus){
-//        super.onWindowFocusChanged(hasFocus);
-//
-//        WindowManager manager = getWindowManager();
-//        Display display = manager.getDefaultDisplay();
-//
-//        Point point = new Point();
-//        display.getSize(point);
-//
-//        int progressBarSize = point.x;
-//
-//        progressBar.setMinimumWidth(progressBarSize / 2);
-//        progressBar.setMinimumHeight(progressBarSize / 2);
-//        progressBar.setVisibility(View.VISIBLE);
-//
-//        int width = progressBar.getWidth();
-//        Log.i("size", "size: " + width);
-//    }
+    public void dialogCreator(Events events){
+
+        final Events nowEvents = events;
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
+
+        mBuilder.setView(mView);
+        final AlertDialog dialog = mBuilder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
+        summaryText.setMovementMethod(new ScrollingMovementMethod());
+        assert nowEvents != null;
+        summaryText.setText(nowEvents.getEventSummary());
+        TextView nameText = mView.findViewById(R.id.eventNameMark);
+        nameText.setText(nowEvents.getName());
+        TextView dateText = mView.findViewById(R.id.eventDateMark);
+        try{
+            Log.v("THisistotaly","Ok!");
+        }catch (NullPointerException n){
+            Log.v("THISistotaly","Not Ok!");
+        }
+        String[] dateandTime = calculations.concatenate(nowEvents.getDate(),false,false);
+        dateText.setText(dateandTime[0]);
+        TextView timeText = mView.findViewById(R.id.eventTimeMark);
+        timeText.setText(dateandTime[1]);
+        TextView locationText = mView.findViewById(R.id.eventLocationMark);
+        locationText.setText(nowEvents.getLocationName());
+        TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
+        participantText.setText(nowEvents.getParticipants()+"");
+        FloatingActionButton followButton = mView.findViewById(R.id.follow);
+
+        followButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean insertData = eventsDBHelper.addParticipant(nowEvents);
+                if (insertData) {
+
+                    mapFragment.getMapAsync(MainActivity.this);
+                    dialog.dismiss();
+                    Toast.makeText(MainActivity.this,R.string.addedParticipants,Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(MainActivity.this,MainActivity.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(MainActivity.this,R.string.event_exists,Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        dialog.show();
+    }
+
 }
