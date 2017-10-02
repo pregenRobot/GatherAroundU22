@@ -1,0 +1,56 @@
+[
+   {
+      "stylers": [
+         {
+            "hue": "#baf4c4"
+         },
+         {
+            "saturation": 10
+         }
+      ]
+   },
+   {
+      "featureType": "water",
+      "stylers": [
+         {
+            "color": "#effefd"
+         }
+      ]
+   },
+   {
+      "featureType": "all",
+      "elementType": "labels",
+      "stylers": [
+         {
+            "visibility": "on"
+         }
+      ]
+   },
+   {
+      "featureType": "administrative",
+      "elementType": "labels",
+      "stylers": [
+         {
+            "visibility": "on"
+         }
+      ]
+   },
+   {
+      "featureType": "road",
+      "elementType": "all",
+      "stylers": [
+         {
+            "visibility": "on"
+         }
+      ]
+   },
+   {
+      "featureType": "transit",
+      "elementType": "all",
+      "stylers": [
+         {
+            "visibility": "on"
+         }
+      ]
+   }
+]
