@@ -8,18 +8,56 @@
     tools:context="com.example.android.gatheraround.LoginActivity">
 
     <LinearLayout
+        android:id="@+id/loginLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/userIdEditText"
+            android:id="@+id/loginEmailEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/text_email"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/loginPasswordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/text_password"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/login_button_text" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/signUpLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/signUpText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/text_signUpHintText" />
+
+        <EditText
+            android:id="@+id/emailEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="@string/text_user_id"
-            android:inputType="textPersonName" />
+            android:hint="@string/text_email"
+            android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/passwordEditText"
@@ -30,12 +68,21 @@
             android:hint="@string/text_password"
             android:inputType="textPassword" />
 
-        <Button
-            android:id="@+id/loginButton"
+        <EditText
+            android:id="@+id/signUpPasswordConfirmEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/login_button_text" />
+            android:ems="10"
+            android:hint="@string/confirmPasswordButton_text"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/signUpButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/text_signUp" />
 
     </LinearLayout>
 

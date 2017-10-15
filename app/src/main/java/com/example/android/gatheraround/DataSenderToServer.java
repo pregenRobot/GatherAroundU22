@@ -3,6 +3,7 @@ package com.example.android.gatheraround;
 import android.util.Log;
 
 import com.example.android.gatheraround.custom_classes.Events;
+import com.example.android.gatheraround.custom_classes.UserProfile;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -15,11 +16,12 @@ import com.firebase.client.Transaction;
 
 public class DataSenderToServer{
 
-    public static final String FIREBASE_TITLE_URL = "https://u22-project-gather-around.firebaseio.com/eventPostDetails";
+    public static final String FIREBASE_EVENT_URL = "https://u22-project-gather-around.firebaseio.com/eventPostDetails";
+    public static final String FIREBASE_PROFILE_URL = "https://u22-project-gather-around.firebaseio.com/users_profiles";
 
     public String pushToServer(Events newEvent){
 
-        Firebase firebase = new Firebase(FIREBASE_TITLE_URL);
+        Firebase firebase = new Firebase(FIREBASE_EVENT_URL);
         Firebase push = firebase.push();
         push.setValue(newEvent);
         String key = push.getKey();
@@ -30,12 +32,12 @@ public class DataSenderToServer{
 
     void eraseEntry(String key){
 
-        Firebase firebase = new Firebase(FIREBASE_TITLE_URL + "/" + key);
+        Firebase firebase = new Firebase(FIREBASE_EVENT_URL + "/" + key);
         firebase.removeValue();
     }
 
     public void addOneParticipants(String key){
-        Firebase firebase = new Firebase(FIREBASE_TITLE_URL + "/" + key + "/participants");
+        Firebase firebase = new Firebase(FIREBASE_EVENT_URL + "/" + key + "/participants");
         firebase.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
@@ -57,5 +59,11 @@ public class DataSenderToServer{
                 }
             }
         });
+    }
+
+    // send profile to server
+    public void addNewUser(UserProfile profile){
+        Firebase firebase = new Firebase(FIREBASE_PROFILE_URL);
+        firebase.child(profile.getmEmail()).setValue(profile);
     }
 }
