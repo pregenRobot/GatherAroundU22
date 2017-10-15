@@ -18,6 +18,8 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
 
+    // commit&push on 171016/1:08
+
     Button loginButton, signUpButton;
     EditText loginEmailEditText, loginPasswordEditText, emailEditText, passwordEditText, confirmPasswordEditText;
 
