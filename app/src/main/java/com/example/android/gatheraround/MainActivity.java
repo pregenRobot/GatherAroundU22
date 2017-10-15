@@ -721,6 +721,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 Button searchQuery = mView.findViewById(R.id.searchButton);
                 final EditText enterText = mView.findViewById(R.id.searchTextEdit);
 
+                // query by date search here
+
                 searchQuery.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

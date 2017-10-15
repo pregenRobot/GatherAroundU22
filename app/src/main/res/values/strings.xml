@@ -41,4 +41,7 @@
     <string name="createdEvent">Created Event</string>
     <string name="fillInAllFields">Please fill in all fields</string>
     <string name="failedToAddEvent">Failed to add Event</string>
+    <string name="login_button_text">Login</string>
+    <string name="text_user_id">User ID</string>
+    <string name="text_password">Password</string>
 </resources>

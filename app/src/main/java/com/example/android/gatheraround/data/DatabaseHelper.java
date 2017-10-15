@@ -17,6 +17,7 @@ import java.util.ArrayList;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private Context context;
+
     private static final String DATABASE_NAME = "eventList.db";
     public static final String TABLE_NAME = "event_table_2";
     public static final String COL_LOCALID = "_id";
@@ -33,12 +34,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_DOESEXISTSONSERVER = "DOESEXISTSONSERVER";
     public static final int BOOLEAN_TRUE = 0;
     public static final int BOOLEAN_FALSE = 1;
-    private DataSenderToServer dataSenderToServer = new DataSenderToServer();
     private static final int DB_VERSION = 2;
 
-    private static final String[] ALL_COLUMNS = new String[]{
-            COL_LOCALID,COL_NAME,COL_DATE,COL_PARTICIPANTS,COL_LOCATION,COL_LOCATIONNAME,COL_SUMMARY,COL_CATEGORY,COL_GLOBALID, COL_DOESEXISTSONSERVER
-    };
+    // TODO: 2017/10/15 delete these user_info_table related codes if not needed
+//    public static final String USER_INFO_TABLE = "user_info_table";
+//    public static final String COL_USER_INFO_ID = "id";
+//    public static final String COL_USERID = "user_id";
+//    public static final String COL_LOGINID = "login_id";
+//    public static final String COL_LOGIN_DATE = "login_date";
+
+    private DataSenderToServer dataSenderToServer = new DataSenderToServer();
+
+    private static final String[] ALL_COLUMNS = new String[]{COL_LOCALID,COL_NAME,COL_DATE,COL_PARTICIPANTS,COL_LOCATION,COL_LOCATIONNAME,COL_SUMMARY,COL_CATEGORY,COL_GLOBALID, COL_DOESEXISTSONSERVER};
+
+//    private static final String[] USER_INFO_ALL_COLUMNS = new String[]{COL_USER_INFO_ID, COL_USERID, COL_LOGINID, COL_LOGIN_DATE};
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DB_VERSION);
@@ -47,7 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String createTable = "CREATE TABLE " + TABLE_NAME + "( " +
+        String createTable = "CREATE TABLE " + TABLE_NAME + " (" +
                 COL_LOCALID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COL_NAME + " TEXT," +
                 COL_DATE + " TEXT," +
@@ -60,6 +69,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COL_DOESEXISTSONSERVER + " INTEGER)";
         sqLiteDatabase.execSQL(createTable);
         Log.v("DatabaseHelper","Database Created!");
+
+//        String createUserInfoTable = "CREATE TABLE " + USER_INFO_TABLE + " (" + COL_USER_INFO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COL_USERID + " TEXT, " + COL_LOGINID + " TEXT" + COL_LOGIN_DATE + " INTEGER)";
     }
 
     @Override
@@ -219,4 +230,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         database.update(TABLE_NAME, contentValues, COL_GLOBALID + "=?", new String[]{key});
     }
+
+    // TODO: 2017/10/15 delete the following if it is not used
+//    public void addNewLogin(String userId, String loginId){
+//
+//    }
 }
