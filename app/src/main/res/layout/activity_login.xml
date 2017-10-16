@@ -77,6 +77,15 @@
             android:hint="@string/confirmPasswordButton_text"
             android:inputType="textPassword" />
 
+        <EditText
+            android:id="@+id/signUpNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/signUpNameEditText_hintText"
+            android:inputType="text" />
+
         <Button
             android:id="@+id/signUpButton"
             android:layout_width="match_parent"

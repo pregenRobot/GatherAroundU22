@@ -17,11 +17,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
-
-    // commit&push on 171016/1:08
-
+    
     Button loginButton, signUpButton;
-    EditText loginEmailEditText, loginPasswordEditText, emailEditText, passwordEditText, confirmPasswordEditText;
+    EditText loginEmailEditText, loginPasswordEditText, emailEditText, passwordEditText, confirmPasswordEditText, signUpNameEditText;
 
     UserProfile profile;
 
@@ -39,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         emailEditText = (EditText)findViewById(R.id.emailEditText);
         passwordEditText = (EditText)findViewById(R.id.passwordEditText);
         confirmPasswordEditText = (EditText)findViewById(R.id.signUpPasswordConfirmEditText);
+        signUpNameEditText = (EditText)findViewById(R.id.signUpNameEditText);
 
         signUpButton = (Button)findViewById(R.id.signUpButton);
         loginButton = (Button)findViewById(R.id.loginButton);
@@ -87,6 +86,8 @@ public class LoginActivity extends AppCompatActivity {
         final String password = builder.toString();
         builder = (SpannableStringBuilder)confirmPasswordEditText.getText();
         final String confirm = builder.toString();
+        builder = (SpannableStringBuilder)signUpNameEditText.getText();
+        final String name = builder.toString();
 
         if(password.equals(confirm)){
             auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -95,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()){
                         Toast.makeText(LoginActivity.this, "Successfully created a new account", Toast.LENGTH_SHORT).show();
 
-                        profile = new UserProfile(email, password);
+                        profile = new UserProfile(email, name);
                         DataSenderToServer sender = new DataSenderToServer();
                         sender.addNewUser(profile);
 
