@@ -46,12 +46,12 @@ public class InitialActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user == null){
-                    Log.i("user_check", "account does not exist");
                     Intent intent = new Intent();
                     intent.setClass(InitialActivity.this, LoginActivity.class);
                     startActivity(intent);
                 }else{
-                    Log.i("user_check", "logged in with email:" + user.getEmail());
+
+                    Toast.makeText(InitialActivity.this, "Logged in with email:" + user.getEmail(), Toast.LENGTH_SHORT).show();
 
                     final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_EVENT_URL);
                     firebase.addListenerForSingleValueEvent(new ValueEventListener() {
