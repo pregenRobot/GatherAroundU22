@@ -13,8 +13,4 @@ public class UserProfile {
         mEmail = email;
         mName = name;
     }
-
-    public String getmEmail(){
-        return mEmail;
-    }
 }

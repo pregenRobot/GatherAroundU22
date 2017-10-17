@@ -32,15 +32,17 @@ public class LoginActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
+        // for login
         loginEmailEditText = (EditText)findViewById(R.id.loginEmailEditText);
         loginPasswordEditText = (EditText)findViewById(R.id.loginPasswordEditText);
+        // for sign up
         emailEditText = (EditText)findViewById(R.id.emailEditText);
         passwordEditText = (EditText)findViewById(R.id.passwordEditText);
         confirmPasswordEditText = (EditText)findViewById(R.id.signUpPasswordConfirmEditText);
         signUpNameEditText = (EditText)findViewById(R.id.signUpNameEditText);
 
-        signUpButton = (Button)findViewById(R.id.signUpButton);
         loginButton = (Button)findViewById(R.id.loginButton);
+        signUpButton = (Button)findViewById(R.id.signUpButton);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,18 +66,22 @@ public class LoginActivity extends AppCompatActivity {
         builder = (SpannableStringBuilder)loginPasswordEditText.getText();
         final String password = builder.toString();
 
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()){
-                    Intent intent = new Intent();
-                    intent.setClass(LoginActivity.this, InitialActivity.class);
-                    startActivity(intent);
-                }else{
-                    Toast.makeText(LoginActivity.this, "Seems failed to login. Please try again.", Toast.LENGTH_SHORT).show();
+        if(!email.isEmpty() && !password.isEmpty()){
+            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()){
+                        Intent intent = new Intent();
+                        intent.setClass(LoginActivity.this, InitialActivity.class);
+                        startActivity(intent);
+                    }else{
+                        Toast.makeText(LoginActivity.this, "Seems failed to login. Please try again.", Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
-        });
+            });
+        } else{
+            Toast.makeText(this, "Please fill up the form to login.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void signUp(){
@@ -89,29 +95,33 @@ public class LoginActivity extends AppCompatActivity {
         builder = (SpannableStringBuilder)signUpNameEditText.getText();
         final String name = builder.toString();
 
-        if(password.equals(confirm)){
-            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()){
-                        Toast.makeText(LoginActivity.this, "Successfully created a new account", Toast.LENGTH_SHORT).show();
+        if(!email.isEmpty() && !password.isEmpty() && !name.isEmpty()){
+            if(password.equals(confirm)){
+                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()){
+                            Toast.makeText(LoginActivity.this, "Successfully created a new account", Toast.LENGTH_SHORT).show();
 
-                        profile = new UserProfile(email, name);
-                        DataSenderToServer sender = new DataSenderToServer();
-                        sender.addNewUser(profile);
+                            profile = new UserProfile(email, name);
+                            DataSenderToServer sender = new DataSenderToServer();
+                            sender.addNewUser(profile);
 
-                        login();
+                            login();
 
-                        Intent intent = new Intent();
-                        intent.setClass(LoginActivity.this, InitialActivity.class);
-                        startActivity(intent);
-                    }else{
-                        Toast.makeText(LoginActivity.this, "Failed created a new account", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent();
+                            intent.setClass(LoginActivity.this, InitialActivity.class);
+                            startActivity(intent);
+                        }else{
+                            Toast.makeText(LoginActivity.this, "Failed created a new account", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }
-            });
-        }else{
-            Toast.makeText(LoginActivity.this, "Password and confirmation does not match. Try again.", Toast.LENGTH_SHORT).show();
+                });
+            }else{
+                Toast.makeText(LoginActivity.this, "Password and confirmation does not match. Try again.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "Please fill up the form to sign up.", Toast.LENGTH_SHORT).show();
         }
     }
 }

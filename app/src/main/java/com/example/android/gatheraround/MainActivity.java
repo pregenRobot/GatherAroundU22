@@ -106,7 +106,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private Algorithm<EventMarker> clusterManagerAlgorithm;
     ArrayList<Events> receivedEvents;
 
-    final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
     static final String prefs_isFirstActivation = "isFirstActivation";
 
     @Override
@@ -118,6 +117,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_main);
         context = this;
 
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isFirstActivation = preferences.getBoolean(prefs_isFirstActivation, true);
         if (isFirstActivation){
             // write function for first activation here

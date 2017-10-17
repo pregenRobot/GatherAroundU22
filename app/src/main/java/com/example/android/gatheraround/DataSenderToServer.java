@@ -9,6 +9,8 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.MutableData;
 import com.firebase.client.Transaction;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by chiharu_miyoshi on 2017/08/30.
@@ -18,6 +20,10 @@ public class DataSenderToServer{
 
     public static final String FIREBASE_EVENT_URL = "https://u22-project-gather-around.firebaseio.com/eventPostDetails";
     public static final String FIREBASE_PROFILE_URL = "https://u22-project-gather-around.firebaseio.com/users_profiles";
+
+    public static final String FIREBASE_PROFILE_TITLE = "users_profiles";
+
+    private DatabaseReference mDatabase;
 
     public String pushToServer(Events newEvent){
 
@@ -63,7 +69,9 @@ public class DataSenderToServer{
 
     // send profile to server
     public void addNewUser(UserProfile profile){
+        // TODO: 2017/10/17 maybe this is not working correctly
         Firebase firebase = new Firebase(FIREBASE_PROFILE_URL);
-        firebase.child(profile.getmEmail()).setValue(profile);
+        Firebase push = firebase.push();
+        push.setValue(profile);
     }
 }
