@@ -18,6 +18,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -105,6 +106,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private Algorithm<EventMarker> clusterManagerAlgorithm;
     ArrayList<Events> receivedEvents;
 
+    final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+    static final String prefs_isFirstActivation = "isFirstActivation";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -113,6 +117,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
+
+        boolean isFirstActivation = preferences.getBoolean(prefs_isFirstActivation, true);
+        if (isFirstActivation){
+            // write function for first activation here
+            preferences.edit().putBoolean(prefs_isFirstActivation, false).apply();
+        }
 
         internetStatus();
 
