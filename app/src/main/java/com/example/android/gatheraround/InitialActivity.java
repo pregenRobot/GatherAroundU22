@@ -96,7 +96,7 @@ public class InitialActivity extends AppCompatActivity {
                                 eventsonServer.add(newEvents);
                             }
                             Log.v("Firebase","Retreived Information");
-                            Intent intent = new Intent(InitialActivity.this,MainActivity.class);
+                            Intent intent = new Intent(InitialActivity.this,mapfeed.class);
 //                Bundle bundle= new Bundle();
 //                bundle.putParcelable("events",(ArrayList<? extends Parcelable>) eventsonServer.get(position).getSongs());
 //                intent.putExtra("EventsonServer",eventsonServer);
