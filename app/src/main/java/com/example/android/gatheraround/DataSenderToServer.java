@@ -62,8 +62,8 @@ public class DataSenderToServer{
     }
 
     // send profile to server
-    public void addNewUser(UserProfile profile){
+    public void addNewUser(String userId, UserProfile profile){
         Firebase firebase = new Firebase(FIREBASE_PROFILE_URL);
-        firebase.child(profile.getmEmail()).setValue(profile);
+        firebase.child(userId).setValue(profile);
     }
 }

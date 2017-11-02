@@ -14,7 +14,7 @@ public class UserProfile {
         mName = name;
     }
 
-    public String getmEmail(){
-        return mEmail;
-    }
+//    public String getmEmail(){
+//        return mEmail;
+//    }
 }

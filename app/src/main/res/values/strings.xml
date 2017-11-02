@@ -43,7 +43,7 @@
     <string name="failedToAddEvent">Failed to add Event</string>
     <string name="login_button_text">Login</string>
     <string name="text_user_id">User ID</string>
-    <string name="text_password">Password</string>
+    <string name="text_password">Password (more than 6 characters)</string>
     <string name="text_email">Email</string>
     <string name="text_signUp">Sign Up</string>
     <string name="text_signUpHintText">Does not have an account? Create an account with your email.</string>
