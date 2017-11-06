@@ -73,6 +73,7 @@ public class FeedFragmenttab extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(new FeedAdapter(temp,getContext()));
         recyclerView.addOnScrollListener(new CenterScrollListener());
+        //
 
 
         return view;
