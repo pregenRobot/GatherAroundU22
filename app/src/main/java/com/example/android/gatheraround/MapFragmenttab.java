@@ -26,6 +26,7 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -34,6 +35,7 @@ import android.widget.Toast;
 import com.example.android.gatheraround.custom_classes.EventDate;
 import com.example.android.gatheraround.custom_classes.EventMarker;
 import com.example.android.gatheraround.custom_classes.Events;
+import com.example.android.gatheraround.data.DatabaseHelper;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -73,9 +75,13 @@ public class MapFragmenttab extends Fragment {
     private BottomSheetBehavior bottomSheetBehavior;
     private TextView bottomSheetHeading;
 
+    DatabaseHelper eventsDBHelper;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.tabmapfragment, container, false);
+
+        eventsDBHelper = new DatabaseHelper(getContext());
 
         ///New content
         /**
@@ -84,6 +90,36 @@ public class MapFragmenttab extends Fragment {
          * hide show
          *
          * **/
+        final View cardback = (View) rootView.findViewById(R.id.scroller);
+        final View cardfront = (View) rootView.findViewById(R.id.mapviewer);
+
+        Button flip1 = (Button) rootView.findViewById(R.id.flipfront);
+        Button flip2 = (Button) rootView.findViewById(R.id.flipback);
+
+        flip1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FlipAnimation flipAnimation = new FlipAnimation(cardfront, cardback);
+
+                if (cardfront.getVisibility() == View.GONE)
+                {
+                    flipAnimation.reverse();
+                }
+                rootView.startAnimation(flipAnimation);
+            }
+        });
+        flip2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FlipAnimation flipAnimation = new FlipAnimation(cardback, cardfront);
+
+                if (cardback.getVisibility() == View.GONE)
+                {
+                    flipAnimation.reverse();
+                }
+                rootView.startAnimation(flipAnimation);
+            }
+        });
 
 
         mMapView = (MapView) rootView.findViewById(R.id.map1);
@@ -412,36 +448,36 @@ public class MapFragmenttab extends Fragment {
                         doneButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-//                                if(!eventNameEdit.getText().toString().equals("")
-//                                        && !eventDate.getmDay().equals(EventDate.DEFAULT_TIME)
-//                                        && latLng != null
-//                                        && !locationNameEdit.getText().toString().equals("")
-//                                        && !summaryEdit.getText().toString().equals("")) {
-//                                    boolean insertData = eventsDBHelper.addData(
-//                                            eventNameEdit.getText().toString(),
-//                                            eventDate,
-//                                            0,
-//                                            latLng,
-//                                            locationNameEdit.getText().toString(),
-//                                            summaryEdit.getText().toString(),
-//                                            Events.CATEGORY_INDIVIDUAL,
-//                                            true
-//                                    );
-//
-//                                    if (insertData) {
-//                                        dialog.dismiss();
-//                                        mapFragment.getMapAsync(MainActivity.this);
-//                                        Toast.makeText(MainActivity.this,R.string.createdEvent,Toast.LENGTH_SHORT).show();
-//                                        Intent intent = new Intent(MainActivity.this,MainActivity.class);
-//                                        startActivity(intent);
+                                if(!eventNameEdit.getText().toString().equals("")
+                                        && !eventDate.getmDay().equals(EventDate.DEFAULT_TIME)
+                                        && latLng != null
+                                        && !locationNameEdit.getText().toString().equals("")
+                                        && !summaryEdit.getText().toString().equals("")) {
+                                    boolean insertData = eventsDBHelper.addData(
+                                            eventNameEdit.getText().toString(),
+                                            eventDate,
+                                            0,
+                                            latLng,
+                                            locationNameEdit.getText().toString(),
+                                            summaryEdit.getText().toString(),
+                                            Events.CATEGORY_INDIVIDUAL,
+                                            true
+                                    );
+
+                                    if (insertData) {
+                                        dialog.dismiss();
+                                        //Map async
+                                        Toast.makeText(getContext(),R.string.createdEvent,Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(getContext(),mapfeed.class);
+                                        startActivity(intent);
 //                                        Intent Main = new Intent(MainActivity.this,MainActivity.class);
 //                                        startActivity(Main);
-//                                    } else {
-//                                        Toast.makeText(MainActivity.this,R.string.failedToAddEvent,Toast.LENGTH_SHORT).show();
-//                                    }
-//                                }else{
-//                                    Toast.makeText(MainActivity.this,R.string.fillInAllFields,Toast.LENGTH_SHORT).show();
-//                                }
+                                    } else {
+                                        Toast.makeText(getContext(),R.string.failedToAddEvent,Toast.LENGTH_SHORT).show();
+                                    }
+                                }else{
+                                    Toast.makeText(getContext(),R.string.fillInAllFields,Toast.LENGTH_SHORT).show();
+                                }
                                 Toast.makeText(getContext(),"Hello you long pressed",Toast.LENGTH_LONG).show();
                             }
                         });
