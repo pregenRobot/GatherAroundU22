@@ -15,7 +15,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -497,19 +499,11 @@ public class MapFragmenttab extends Fragment {
             }
         });
 
-        return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mMapView.onResume();
 
         final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_EVENT_URL);
         firebase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 final ArrayList<EventMarker> clusterItemArray = new ArrayList<>();
 
 //                idsOnLocal = new ArrayList<>();
@@ -558,6 +552,8 @@ public class MapFragmenttab extends Fragment {
 //                scanFunctionality();
                 clusterItemFunctionality();
                 mClusterManager.setRenderer(new OwnIconRendered(getContext(), mMap, mClusterManager));
+                Log.v("serverevents",receivedEvents.toString());
+                setList(receivedEvents);
 
                 Log.i("idsOnServer", "count: " + idsOnServer.size());
 
@@ -580,6 +576,16 @@ public class MapFragmenttab extends Fragment {
 //                internetStatus();
             }
         });
+
+        return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMapView.onResume();
+
+
     }
 
     @Override
@@ -662,5 +668,16 @@ public class MapFragmenttab extends Fragment {
             }
         });
         dialog.show();
+    }
+    private void setList(ArrayList<Events> events){
+
+        final RecyclerView twitfeed = (RecyclerView) rootView.findViewById(R.id.defaultscroller);
+        final ScrollFeedAdapter scrollFeedAdapter = new ScrollFeedAdapter(events,getContext());
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        twitfeed.setLayoutManager(layoutManager);
+        twitfeed.setItemAnimator(new DefaultItemAnimator());
+        twitfeed.setAdapter(scrollFeedAdapter);
+
     }
 }
