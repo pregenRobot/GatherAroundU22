@@ -49,4 +49,6 @@
     <string name="text_signUpHintText">Does not have an account? Create an account with your email.</string>
     <string name="confirmPasswordButton_text">Confirm Password</string>
     <string name="signUpNameEditText_hintText">Pick up a name</string>
+    <string name="add_image_text">Select image for your profile picture</string>
+    <string name="selectImageDescription_text">Please select image from your phone for your profile picture.</string>
 </resources>

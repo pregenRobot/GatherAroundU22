@@ -1,6 +1,10 @@
 package com.example.android.gatheraround;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.android.gatheraround.custom_classes.UserProfile;
@@ -18,10 +23,16 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.io.FileDescriptor;
+import java.io.IOException;
+
 public class LoginActivity extends AppCompatActivity {
     
     Button loginButton, signUpButton;
     EditText loginEmailEditText, loginPasswordEditText, emailEditText, passwordEditText, confirmPasswordEditText, signUpNameEditText;
+    ImageView selectImageButton;
+
+    boolean isImageSelected;
 
     UserProfile profile;
 
@@ -44,6 +55,10 @@ public class LoginActivity extends AppCompatActivity {
         signUpButton = (Button)findViewById(R.id.signUpButton);
         loginButton = (Button)findViewById(R.id.loginButton);
 
+        selectImageButton = (ImageView)findViewById(R.id.selectImageButton);
+
+        setBlankImageToSelectImage();
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,6 +70,16 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 signUp();
+            }
+        });
+
+        selectImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("image/*");
+                startActivityForResult(intent, 0);
             }
         });
     }
@@ -117,6 +142,35 @@ public class LoginActivity extends AppCompatActivity {
             });
         }else{
             Toast.makeText(LoginActivity.this, "Password and confirmation does not match. Try again.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void setBlankImageToSelectImage(){
+        selectImageButton.setImageResource(R.drawable.button_add_image);
+        isImageSelected = false;
+    }
+
+    private Bitmap getBitmapFromUri(Uri uri) throws IOException{
+        ParcelFileDescriptor parcelFileDescriptor = getContentResolver().openFileDescriptor(uri, "r");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        parcelFileDescriptor.close();
+        return bitmap;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData){
+        // TODO: 2017/11/07 requestCodeを理解する
+        Uri uri = null;
+        if(resultData != null){
+            uri = resultData.getData();
+
+            try{
+                Bitmap bitmap = getBitmapFromUri(uri);
+                selectImageButton.setImageBitmap(bitmap);
+            }catch(IOException e){
+                e.printStackTrace();
+            }
         }
     }
 }

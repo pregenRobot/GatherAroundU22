@@ -86,6 +86,21 @@
             android:hint="@string/signUpNameEditText_hintText"
             android:inputType="text" />
 
+        <TextView
+            android:id="@+id/selectPictureText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/add_image_text" />
+
+        <ImageView
+            android:id="@+id/selectImageButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/selectImageDescription_text" />
+
         <Button
             android:id="@+id/signUpButton"
             android:layout_width="match_parent"

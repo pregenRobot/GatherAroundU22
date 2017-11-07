@@ -18,6 +18,12 @@ public class MyInfoActivity extends AppCompatActivity {
 
     TextView userNameTextView, profileTextView;
 
+    boolean isMyProfile;
+
+    public static final String isMyProfile_Intent = "isMyProfile";
+
+    //when start from other Activity, put value to an intent, isMyProfile.
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,25 +32,29 @@ public class MyInfoActivity extends AppCompatActivity {
         userNameTextView = (TextView)findViewById(R.id.userNameTextView);
         profileTextView = (TextView)findViewById(R.id.profileTextView);
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user == null){
-            Toast.makeText(MyInfoActivity.this, "Not sighed in.", Toast.LENGTH_SHORT).show();
-        }else{
-            String uid = user.getUid();
+        isMyProfile = getIntent().getBooleanExtra(isMyProfile_Intent, true);
 
-            final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_PROFILE_URL + "/" + uid);
-            firebase.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    userNameTextView.setText(dataSnapshot.child("mEmail").getValue().toString());
-                    profileTextView.setText(dataSnapshot.child("mName").getValue().toString());
-                }
+        if (isMyProfile) {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if(user == null){
+                Toast.makeText(MyInfoActivity.this, "Not sighed in.", Toast.LENGTH_SHORT).show();
+            }else{
+                String uid = user.getUid();
 
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
+                final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_PROFILE_URL + "/" + uid);
+                firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        userNameTextView.setText(dataSnapshot.child("mEmail").getValue().toString());
+                        profileTextView.setText(dataSnapshot.child("mName").getValue().toString());
+                    }
 
-                }
-            });
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                });
+            }
         }
     }
 }
