@@ -51,4 +51,6 @@
     <string name="signUpNameEditText_hintText">Pick up a name</string>
     <string name="add_image_text">Select image for your profile picture</string>
     <string name="selectImageDescription_text">Please select image from your phone for your profile picture.</string>
+    <string name="passwordLengthErrorMessage_text">Password should be more than 6 characters.</string>
+    <string name="passwordConfirmationNoMatchMessage_text">Password and confirmation does not match. Please try again.</string>
 </resources>

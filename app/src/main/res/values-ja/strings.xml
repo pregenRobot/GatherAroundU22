@@ -42,7 +42,17 @@
     <string name="no_internet">インターネットに繋がっていません</string>
     <string name="failedToAddEvent">イベント作成できませんでした</string>
     <string name="fillInAllFields">全欄記入してください</string>
-    <string name="canceled_alert_text"></string>
+    <string name="canceled_alert_text">キャンセル</string>
     <string name="add_image_text">プロフィール画像を追加</string>
     <string name="selectImageDescription_text">プロフィール画像に使用する画像を選択してください</string>
+    <string name="passwordLengthErrorMessage_text">パスワードは6文字以上にしてください</string>
+    <string name="passwordConfirmationNoMatchMessage_text">パスワードが一致しません</string>
+    <string name="text_signUp">アカウント作成</string>
+    <string name="text_email">メールアドレス</string>
+    <string name="text_password">パスワード（6文字以上）</string>
+    <string name="text_user_id">ユーザーID</string>
+    <string name="login_button_text">ログイン</string>
+    <string name="text_signUpHintText">アカウントをお持ちでない場合は下記に記入してアカウントを作成しましょう。</string>
+    <string name="confirmPasswordButton_text">確認用パスワード（もう一度入力）</string>
+    <string name="signUpNameEditText_hintText">名前を入力</string>
 </resources>

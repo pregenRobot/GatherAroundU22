@@ -118,31 +118,35 @@ public class LoginActivity extends AppCompatActivity {
         final String name = builder.toString();
 
         if(password.equals(confirm)){
-            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()){
-                        Toast.makeText(LoginActivity.this, "Successfully created a new account", Toast.LENGTH_SHORT).show();
+            if (password.length() < 6){
+                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()){
+                            Toast.makeText(LoginActivity.this, "Successfully created a new account", Toast.LENGTH_SHORT).show();
 
-                        profile = new UserProfile(email, name);
-                        DataSenderToServer sender = new DataSenderToServer();
+                            profile = new UserProfile(email, name);
+                            DataSenderToServer sender = new DataSenderToServer();
 
-                        FirebaseUser user = auth.getCurrentUser();
+                            FirebaseUser user = auth.getCurrentUser();
 
-                        sender.addNewUser(user.getUid(), profile, profileUri);
+                            sender.addNewUser(user.getUid(), profile, profileUri);
 
-                        Intent intent = new Intent();
-                        intent.setClass(LoginActivity.this, InitialActivity.class);
-                        startActivity(intent);
-                    }else{
-                        Toast.makeText(LoginActivity.this, "Failed created a new account", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent();
+                            intent.setClass(LoginActivity.this, InitialActivity.class);
+                            startActivity(intent);
+                        }else{
+                            Toast.makeText(LoginActivity.this, "Failed created a new account", Toast.LENGTH_SHORT).show();
 
-                        Log.i("Failed", "Failed:" + task.getException().getMessage());
+                            Log.i("Failed", "Failed:" + task.getException().getMessage());
+                        }
                     }
-                }
-            });
+                });
+            }else{
+                Toast.makeText(LoginActivity.this, getResources().getString(R.string.passwordLengthErrorMessage_text), Toast.LENGTH_SHORT).show();
+            }
         }else{
-            Toast.makeText(LoginActivity.this, "Password and confirmation does not match. Try again.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, getResources().getString(R.string.passwordConfirmationNoMatchMessage_text), Toast.LENGTH_SHORT).show();
         }
     }
 
