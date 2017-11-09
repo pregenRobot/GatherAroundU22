@@ -33,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     ImageView selectImageButton;
 
     boolean isImageSelected;
+    Uri profileUri;
 
     UserProfile profile;
 
@@ -128,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         FirebaseUser user = auth.getCurrentUser();
 
-                        sender.addNewUser(user.getUid(), profile);
+                        sender.addNewUser(user.getUid(), profile, profileUri);
 
                         Intent intent = new Intent();
                         intent.setClass(LoginActivity.this, InitialActivity.class);
@@ -161,12 +162,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData){
         // TODO: 2017/11/07 requestCodeを理解する
-        Uri uri = null;
+        profileUri= null;
         if(resultData != null){
-            uri = resultData.getData();
+            profileUri = resultData.getData();
 
             try{
-                Bitmap bitmap = getBitmapFromUri(uri);
+                Bitmap bitmap = getBitmapFromUri(profileUri);
                 selectImageButton.setImageBitmap(bitmap);
             }catch(IOException e){
                 e.printStackTrace();

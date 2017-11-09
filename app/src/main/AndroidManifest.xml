@@ -50,6 +50,7 @@
         <!-- "AIzaSyDYeT85TEsG18YZpABHVVll6nBebRcbJZU" -->
 
         <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".MyInfoActivity"></activity>
     </application>
 
 </manifest>
