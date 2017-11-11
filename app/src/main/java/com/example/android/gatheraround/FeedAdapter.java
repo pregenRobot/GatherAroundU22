@@ -187,7 +187,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
                             DataSenderToServer dataSenderToServer = new DataSenderToServer();
                             dataSenderToServer.eraseEntry(events.getGlobalId());
                             db.delete
-                                    (DatabaseHelper.TABLE_NAME, "-"+DatabaseHelper.COL_GLOBALID + " = " + events.getGlobalId(), null);
+                                    (DatabaseHelper.TABLE_NAME, DatabaseHelper.COL_GLOBALID + " = " + events.getGlobalId(), null);
 
                         }else{
                             db.delete

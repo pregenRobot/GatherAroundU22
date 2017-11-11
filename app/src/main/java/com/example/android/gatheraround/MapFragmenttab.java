@@ -2,10 +2,13 @@ package com.example.android.gatheraround;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import android.support.design.widget.AppBarLayout;
@@ -97,6 +100,7 @@ public class MapFragmenttab extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.tabmapfragment, container, false);
 
+
         bottomSheet = getActivity().findViewById(R.id.mapfragbottomsheet);
         maincontent = getActivity().findViewById(R.id.container);
 
@@ -164,6 +168,94 @@ public class MapFragmenttab extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_EVENT_URL);
+        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final ArrayList<EventMarker> clusterItemArray = new ArrayList<>();
+
+//                idsOnLocal = new ArrayList<>();
+//                idsOnLocal = eventsDBHelper.getAllIds();
+
+                ArrayList<String> idsOnServer = new ArrayList<>();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+
+                    String year = snapshot.child("date/mYear").getValue().toString();
+                    String month = snapshot.child("date/mMonth").getValue().toString();
+                    String day = snapshot.child("date/mDay").getValue().toString();
+                    String hour = snapshot.child("date/mHour").getValue().toString();
+                    String minute = snapshot.child("date/mMinute").getValue().toString();
+
+                    String year2 = snapshot.child("date/mYear2").getValue().toString();
+                    String month2 = snapshot.child("date/mMonth2").getValue().toString();
+                    String day2 = snapshot.child("date/mDay2").getValue().toString();
+                    String hour2 = snapshot.child("date/mHour2").getValue().toString();
+                    String minute2 = snapshot.child("date/mMinute2").getValue().toString();
+
+                    EventDate date = new EventDate(year, month, day, hour, minute, year2, month2, day2, hour2, minute2);
+
+                    String event_name = snapshot.child("name").getValue().toString();
+                    int participants = Integer.parseInt(snapshot.child("participants").getValue().toString());
+                    double longitude = (double)snapshot.child("location/longitude").getValue();
+                    double latitude = (double)snapshot.child("location/latitude").getValue();
+                    String locationName = snapshot.child("locationName").getValue().toString();
+                    String summary = snapshot.child("eventSummary").getValue().toString();
+                    String category = snapshot.child("category").getValue().toString();
+                    String globalId = snapshot.child("key").getValue().toString();
+
+                    idsOnServer.add(globalId);
+
+                    LatLng location = new LatLng(latitude,longitude);
+
+                    Events newEvents = new Events(date, event_name, participants, location, locationName, summary, category, globalId, true);
+
+                    EventMarker eventMarker = new EventMarker(newEvents,getContext());
+                    mClusterManager.addItem(eventMarker);
+                    clusterItemArray.add(eventMarker);
+                    receivedEvents.add(newEvents);
+                }
+
+//                searchFunctionality(receivedEvents);
+//                scanFunctionality();
+                clusterItemFunctionality();
+                mClusterManager.setRenderer(new OwnIconRendered(getContext(), mMap, mClusterManager));
+                Log.v("serverevents",receivedEvents.toString());
+                setList(receivedEvents);
+
+                Log.i("idsOnServer", "count: " + idsOnServer.size());
+
+//                deletedIds = new ArrayList<>();
+
+//                int checkNumber = idsOnLocal.size();
+//                for (int a = 0; a < checkNumber; a++){
+//                    int index = idsOnServer.indexOf(idsOnLocal.get(a));
+//                    Log.i("idsSearch", "searched local id: " + idsOnLocal.get(a) + ", result: " + index);
+//                    if (index == -1){
+//                        deletedIds.add(idsOnLocal.get(a));
+//                        eventsDBHelper.updateDoesExitsOnServer(idsOnLocal.get(a), false);
+//                    }
+//                }
+//                Log.i("Checked deleted ids", "Deleted ids count: " + deletedIds.size());
+//                setList();
+
+                TextView evName = getActivity().findViewById(R.id.bottomsheeteventname);
+                LinearLayout linlear = getActivity().findViewById(R.id.bottomsheeteventdate);
+                TextView evLoc = getActivity().findViewById(R.id.eventLocationMark);
+
+                int peekheight = evName.getHeight() + linlear.getHeight() + evLoc.getHeight();
+                Log.v("Bottomsheet ",peekheight+"");
+
+                bottomSheet.getLayoutParams().height = maincontent.getHeight();
+                bottomSheetBehavior.setPeekHeight(peekheight);
+
+            }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                internetStatus();
+            }
+        });
 
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -544,93 +636,7 @@ public class MapFragmenttab extends Fragment {
 //        }
 
 
-        final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_EVENT_URL);
-        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                final ArrayList<EventMarker> clusterItemArray = new ArrayList<>();
 
-//                idsOnLocal = new ArrayList<>();
-//                idsOnLocal = eventsDBHelper.getAllIds();
-
-                ArrayList<String> idsOnServer = new ArrayList<>();
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-
-                    String year = snapshot.child("date/mYear").getValue().toString();
-                    String month = snapshot.child("date/mMonth").getValue().toString();
-                    String day = snapshot.child("date/mDay").getValue().toString();
-                    String hour = snapshot.child("date/mHour").getValue().toString();
-                    String minute = snapshot.child("date/mMinute").getValue().toString();
-
-                    String year2 = snapshot.child("date/mYear2").getValue().toString();
-                    String month2 = snapshot.child("date/mMonth2").getValue().toString();
-                    String day2 = snapshot.child("date/mDay2").getValue().toString();
-                    String hour2 = snapshot.child("date/mHour2").getValue().toString();
-                    String minute2 = snapshot.child("date/mMinute2").getValue().toString();
-
-                    EventDate date = new EventDate(year, month, day, hour, minute, year2, month2, day2, hour2, minute2);
-
-                    String event_name = snapshot.child("name").getValue().toString();
-                    int participants = Integer.parseInt(snapshot.child("participants").getValue().toString());
-                    double longitude = (double)snapshot.child("location/longitude").getValue();
-                    double latitude = (double)snapshot.child("location/latitude").getValue();
-                    String locationName = snapshot.child("locationName").getValue().toString();
-                    String summary = snapshot.child("eventSummary").getValue().toString();
-                    String category = snapshot.child("category").getValue().toString();
-                    String globalId = snapshot.child("key").getValue().toString();
-
-                    idsOnServer.add(globalId);
-
-                    LatLng location = new LatLng(latitude,longitude);
-
-                    Events newEvents = new Events(date, event_name, participants, location, locationName, summary, category, globalId, true);
-
-                    EventMarker eventMarker = new EventMarker(newEvents,getContext());
-                    mClusterManager.addItem(eventMarker);
-                    clusterItemArray.add(eventMarker);
-                    receivedEvents.add(newEvents);
-                }
-
-//                searchFunctionality(receivedEvents);
-//                scanFunctionality();
-                clusterItemFunctionality();
-                mClusterManager.setRenderer(new OwnIconRendered(getContext(), mMap, mClusterManager));
-                Log.v("serverevents",receivedEvents.toString());
-                setList(receivedEvents);
-
-                Log.i("idsOnServer", "count: " + idsOnServer.size());
-
-//                deletedIds = new ArrayList<>();
-
-//                int checkNumber = idsOnLocal.size();
-//                for (int a = 0; a < checkNumber; a++){
-//                    int index = idsOnServer.indexOf(idsOnLocal.get(a));
-//                    Log.i("idsSearch", "searched local id: " + idsOnLocal.get(a) + ", result: " + index);
-//                    if (index == -1){
-//                        deletedIds.add(idsOnLocal.get(a));
-//                        eventsDBHelper.updateDoesExitsOnServer(idsOnLocal.get(a), false);
-//                    }
-//                }
-//                Log.i("Checked deleted ids", "Deleted ids count: " + deletedIds.size());
-//                setList();
-
-                TextView evName = getActivity().findViewById(R.id.bottomsheeteventname);
-                LinearLayout linlear = getActivity().findViewById(R.id.bottomsheeteventdate);
-                TextView evLoc = getActivity().findViewById(R.id.eventLocationMark);
-
-                int peekheight = evName.getHeight() + linlear.getHeight() + evLoc.getHeight();
-                Log.v("Bottomsheet ",peekheight+"");
-
-                bottomSheet.getLayoutParams().height = maincontent.getHeight();
-                bottomSheetBehavior.setPeekHeight(peekheight);
-
-            }
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-//                internetStatus();
-            }
-        });
 
         return rootView;
     }
@@ -639,6 +645,7 @@ public class MapFragmenttab extends Fragment {
     public void onResume() {
         super.onResume();
         mMapView.onResume();
+
 
 
     }
@@ -755,6 +762,14 @@ public class MapFragmenttab extends Fragment {
         twitfeed.setLayoutManager(layoutManager);
         twitfeed.setItemAnimator(new DefaultItemAnimator());
         twitfeed.setAdapter(scrollFeedAdapter);
+
+    }
+    public void internetStatus(){
+        ConnectivityManager connectivityManager = (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if(networkInfo == null || !networkInfo.isConnected()){
+            Toast.makeText(getContext(), R.string.no_internet, Toast.LENGTH_LONG).show();
+        }
 
     }
 }

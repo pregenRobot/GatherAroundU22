@@ -112,47 +112,50 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void signUp(){
+    public void signUp() {
 
-        SpannableStringBuilder builder = (SpannableStringBuilder)emailEditText.getText();
+        SpannableStringBuilder builder = (SpannableStringBuilder) emailEditText.getText();
         final String email = builder.toString();
-        builder = (SpannableStringBuilder)passwordEditText.getText();
+        builder = (SpannableStringBuilder) passwordEditText.getText();
         final String password = builder.toString();
-        builder = (SpannableStringBuilder)confirmPasswordEditText.getText();
+        builder = (SpannableStringBuilder) confirmPasswordEditText.getText();
         final String confirm = builder.toString();
-        builder = (SpannableStringBuilder)signUpNameEditText.getText();
+        builder = (SpannableStringBuilder) signUpNameEditText.getText();
         final String name = builder.toString();
 
-        if(!email.isEmpty() && !password.isEmpty() && !name.isEmpty()){if(password.equals(confirm)){
-            if (password.length() < 6){auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()){
-                        Toast.makeText(LoginActivity.this, "Successfully created a new account", Toast.LENGTH_SHORT).show();
+        if (!email.isEmpty() && !password.isEmpty() && !name.isEmpty()) {
+            if (password.equals(confirm)) {
+                if (password.length() < 6) {
+                    auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(LoginActivity.this, "Successfully created a new account", Toast.LENGTH_SHORT).show();
 
-                        profile = new UserProfile(email, name);
-                        DataSenderToServer sender = new DataSenderToServer();
+                                profile = new UserProfile(email, name);
+                                DataSenderToServer sender = new DataSenderToServer();
 
 
-                        FirebaseUser user = auth.getCurrentUser();
+                                FirebaseUser user = auth.getCurrentUser();
 
-                            sender.addNewUser(user.getUid(), profile, profileUri);
+                                sender.addNewUser(user.getUid(), profile, profileUri);
 
-                            Intent intent = new Intent();
-                            intent.setClass(LoginActivity.this, InitialActivity.class);
-                            startActivity(intent);
-                        }else{
-                            Toast.makeText(LoginActivity.this, "Failed created a new account", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent();
+                                intent.setClass(LoginActivity.this, InitialActivity.class);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Failed created a new account", Toast.LENGTH_SHORT).show();
 
-                            Log.i("Failed", "Failed:" + task.getException().getMessage());
+                                Log.i("Failed", "Failed:" + task.getException().getMessage());
+                            }
                         }
-                    }
-                });
-            }else{
-                Toast.makeText(LoginActivity.this, getResources().getString(R.string.passwordLengthErrorMessage_text), Toast.LENGTH_SHORT).show();
+                    });
+                } else {
+                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.passwordLengthErrorMessage_text), Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(LoginActivity.this, getResources().getString(R.string.passwordConfirmationNoMatchMessage_text), Toast.LENGTH_SHORT).show();
             }
-        }else{
-            Toast.makeText(LoginActivity.this, getResources().getString(R.string.passwordConfirmationNoMatchMessage_text), Toast.LENGTH_SHORT).show();
         }
     }
 
