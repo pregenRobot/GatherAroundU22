@@ -57,12 +57,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/userNameTextView"/>
+                android:id="@+id/userNameTextView"
+                android:layout_marginLeft="20dp"
+                android:textColor="@color/black"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/profileTextView"/>
+                android:id="@+id/profileTextView"
+                android:layout_marginLeft="20dp"
+                android:textColor="@color/black"/>
 
         </LinearLayout>
 

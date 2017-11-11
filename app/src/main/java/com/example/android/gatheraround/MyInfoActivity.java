@@ -1,7 +1,10 @@
 package com.example.android.gatheraround;
 
+import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Display;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,11 +52,23 @@ public class MyInfoActivity extends AppCompatActivity {
             }else{
                 String uid = user.getUid();
 
+                WindowManager manager = getWindowManager();
+                Display display = manager.getDefaultDisplay();
+                Point size = new Point();
+                display.getRealSize(size);
+                int width = size.x;
+
+                userNameTextView.setTextSize((float)(width/20));
+                profileTextView.setTextSize((float)(width/20));
+
+                profileImageView.setMaxWidth(width/10);
+                profileImageView.setMaxHeight(width/10);
+
                 final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_PROFILE_URL + "/" + uid);
                 firebase.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        userNameTextView.setText(dataSnapshot.child("mEmail").getValue().toString());
+                        userNameTextView.setText(dataSnapshot.child("mName").getValue().toString());
                         profileTextView.setText(dataSnapshot.child("mName").getValue().toString());
                     }
 

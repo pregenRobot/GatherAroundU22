@@ -14,4 +14,5 @@
     <color name="twodigit">#009688</color>
     <color name="threedigit">#00796b</color>
     <color name="fourdigit">#004d40</color>
+    <color name="black">#000000</color>
 </resources>

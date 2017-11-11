@@ -110,9 +110,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        // postFunction on 171017
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
