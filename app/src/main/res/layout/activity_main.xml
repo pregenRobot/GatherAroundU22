@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/coordinateLayout"
@@ -69,7 +70,9 @@
         android:layout_height="match_parent"
         android:clipToPadding="true"
         android:orientation="vertical"
-        app:layout_behavior="@string/bottom_sheet_behavior">
+        app:layout_behavior="@string/bottom_sheet_behavior"
+
+        >
 
         <TextView
             android:layout_width="match_parent"
@@ -92,6 +95,7 @@
             android:background="@color/recyclerview_background">
 
             <ListView
+
                 android:id="@+id/eventlistview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
