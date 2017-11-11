@@ -125,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (!email.isEmpty() && !password.isEmpty() && !name.isEmpty()) {
             if (password.equals(confirm)) {
-                if (password.length() < 6) {
+                if (!(password.length() < 6)) {
                     auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {

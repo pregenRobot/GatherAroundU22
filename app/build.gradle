@@ -48,11 +48,12 @@ dependencies {
 
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.google.zxing:core:3.2.1'
-    compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.github.wdullaer:MaterialDateTimePicker:v3.0.0'
     compile 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
     testCompile 'junit:junit:4.12'
     compile 'com.azoft.carousellayoutmanager:carousel:1.2.1'
+    compile 'com.mikhaellopez:circularimageview:3.0.2'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

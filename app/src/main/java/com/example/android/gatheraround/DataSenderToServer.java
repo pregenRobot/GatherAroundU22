@@ -19,7 +19,7 @@ import com.google.firebase.storage.UploadTask;
 public class DataSenderToServer{
 
     public static final String FIREBASE_EVENT_URL = "https://u22-project-gather-around.firebaseio.com/eventPostDetails";
-    public static final String FIREBASE_PROFILE_URL = "https://u22-project-gather-around.firebaseio.com/users_profiles";
+    public static final String FIREBASE_PROFILE_URL = "https://u22-project-gather-around.firebaseio.com/users";
 
     public static final String USERS_REFERENCE_TITLE = "users";
     public static final String IMAGE_REFERENCE_TITLE = "images";
