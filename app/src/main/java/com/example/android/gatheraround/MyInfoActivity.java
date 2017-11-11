@@ -19,12 +19,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 
 public class MyInfoActivity extends AppCompatActivity {
 
     TextView userNameTextView, profileTextView;
-    ImageView profileImageView;
+    CircularImageView profileImageView;
 
     boolean isMyProfile;
 
@@ -42,7 +43,7 @@ public class MyInfoActivity extends AppCompatActivity {
         userNameTextView = (TextView)findViewById(R.id.userNameTextView);
         profileTextView = (TextView)findViewById(R.id.profileTextView);
 
-//        profileImageView = findViewById(R.id.profileImageView);
+        profileImageView = findViewById(R.id.profileImageView);
 
         isMyProfile = getIntent().getBooleanExtra(isMyProfile_Intent, true);
 
@@ -81,7 +82,7 @@ public class MyInfoActivity extends AppCompatActivity {
 
                 StorageReference imageReference = storage.getReference().child(DataSenderToServer.IMAGE_REFERENCE_TITLE + "/" + uid);
 
-//                Glide.with(this).using(new FirebaseImageLoader()).load(imageReference).into(profileImageView);
+                Glide.with(this).using(new FirebaseImageLoader()).load(imageReference).into(profileImageView);
             }
         }
     }

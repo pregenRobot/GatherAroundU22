@@ -23,7 +23,7 @@
             android:layout_margin="8dp"
 
             >
-            <android.support.v4.widget.CircleImageView
+            <com.mikhaellopez.circularimageview.CircularImageView
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"

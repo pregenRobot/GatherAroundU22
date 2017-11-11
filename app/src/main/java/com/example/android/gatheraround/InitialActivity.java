@@ -109,7 +109,7 @@ public class InitialActivity extends AppCompatActivity {
 
 //                            Intent intent = new Intent(InitialActivity.this, mapfeed.class);
 
-                            Intent intent = new Intent(InitialActivity.this, MyInfoActivity.class);
+                            Intent intent = new Intent(InitialActivity.this, mapfeed.class);
 
                             startActivity(intent);
                         }
@@ -130,7 +130,6 @@ public class InitialActivity extends AppCompatActivity {
         if(networkInfo == null || !networkInfo.isConnected()){
             Toast.makeText(InitialActivity.this, R.string.no_internet, Toast.LENGTH_LONG).show();
         }
-
     }
 
     // following two are necessary for auth(account check)

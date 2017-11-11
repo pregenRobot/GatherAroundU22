@@ -184,14 +184,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
                     public void onClick(View view) {
 
                         if((myEvents.checkforExistingEvent(events.getGlobalId()))){
+                            Log.v("DeletingNow","event: " + events.getGlobalId() + "server:" + DatabaseHelper.COL_GLOBALID);
+                            db.delete(DatabaseHelper.TABLE_NAME, DatabaseHelper.COL_GLOBALID + " = " + events.getGlobalId(), null);
                             DataSenderToServer dataSenderToServer = new DataSenderToServer();
                             dataSenderToServer.eraseEntry(events.getGlobalId());
-                            db.delete
-                                    (DatabaseHelper.TABLE_NAME, DatabaseHelper.COL_GLOBALID + " = " + events.getGlobalId(), null);
 
                         }else{
                             db.delete
-                                    (DatabaseHelper.TABLE_NAME, DatabaseHelper.COL_LOCALID + " = " + events.getGlobalId(), null);
+                                    (DatabaseHelper.TABLE_NAME, DatabaseHelper.COL_GLOBALID + " = " + events.getGlobalId(), null);
                         }
 
                         dialog.dismiss();
