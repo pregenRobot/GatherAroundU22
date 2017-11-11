@@ -51,7 +51,7 @@ c    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDphN4bVaQHzDfIcE5XL3ESwi5t7C_h-1k" />
+            android:value="AIzaSyDYeT85TEsG18YZpABHVVll6nBebRcbJZU" />
         <!-- "AIzaSyDphN4bVaQHzDfIcE5XL3ESwi5t7C_h-1k" -->
         <!-- "AIzaSyDYeT85TEsG18YZpABHVVll6nBebRcbJZU" -->
 
