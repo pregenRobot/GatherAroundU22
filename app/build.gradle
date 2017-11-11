@@ -52,10 +52,10 @@ dependencies {
     compile 'com.github.wdullaer:MaterialDateTimePicker:v3.0.0'
     compile 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
     testCompile 'junit:junit:4.12'
+    compile 'com.mikhaellopez:circularimageview:3.0.2'
     compile 'com.azoft.carousellayoutmanager:carousel:1.2.1'
 
     compile 'com.theartofdev.edmodo:android-image-cropper:2.5.+'
-    compile 'com.mikhaellopez:circularimageview:3.0.2'
 
 }
 
