@@ -179,6 +179,7 @@ class EventListCursorAdapter extends CursorAdapter {
                 deleteButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        //Tetst
 
                         if((myEvents.checkforExistingEvent(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID))))){
                             DataSenderToServer dataSenderToServer = new DataSenderToServer();
