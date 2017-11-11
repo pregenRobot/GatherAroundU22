@@ -22,6 +22,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -32,12 +34,16 @@ public class LoginActivity extends AppCompatActivity {
     EditText loginEmailEditText, loginPasswordEditText, emailEditText, passwordEditText, confirmPasswordEditText, signUpNameEditText;
     ImageView selectImageButton;
 
+    CropImageView cropImageView;
+
     boolean isImageSelected;
     Uri profileUri;
 
     UserProfile profile;
 
     private FirebaseAuth auth;
+
+    static final int IMAGE_PICK_REQUEST_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +65,8 @@ public class LoginActivity extends AppCompatActivity {
         signUpButton = (Button)findViewById(R.id.signUpButton);
 
         selectImageButton = (ImageView)findViewById(R.id.selectImageButton);
+
+        cropImageView = (CropImageView)findViewById(R.id.cropImageView);
 
         setBlankImageToSelectImage();
 
@@ -172,18 +180,49 @@ public class LoginActivity extends AppCompatActivity {
         return bitmap;
     }
 
+    public void cropImage(Uri uri){
+        CropImage
+                .activity(uri)
+                .setAspectRatio(1, 1)
+                .setFixAspectRatio(true)
+//                .setGuidelines(CropImageView.Guidelines.ON)
+                .setCropShape(CropImageView.CropShape.RECTANGLE)
+                .setAutoZoomEnabled(false)
+                .start(this);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData){
         // TODO: 2017/11/07 requestCodeを理解する
-        profileUri= null;
-        if(resultData != null){
-            profileUri = resultData.getData();
 
-            try{
-                Bitmap bitmap = getBitmapFromUri(profileUri);
-                selectImageButton.setImageBitmap(bitmap);
-            }catch(IOException e){
-                e.printStackTrace();
+        if (requestCode == IMAGE_PICK_REQUEST_CODE){
+            profileUri= null;
+            if(resultData != null){
+                profileUri = resultData.getData();
+
+                cropImage(profileUri);
+
+                try{
+                    Bitmap bitmap = getBitmapFromUri(profileUri);
+                    selectImageButton.setImageBitmap(bitmap);
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+            CropImage.ActivityResult result = CropImage.getActivityResult(resultData);
+            if (resultCode == RESULT_OK){
+                profileUri = result.getUri();
+                Log.i("result_uri", profileUri.toString());
+
+                try{
+                    Bitmap bitmap = getBitmapFromUri(profileUri);
+                    selectImageButton.setImageBitmap(bitmap);
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+            }else{
+                Toast.makeText(LoginActivity.this, "Failed", Toast.LENGTH_SHORT).show();
             }
         }
     }

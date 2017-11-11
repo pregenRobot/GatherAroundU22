@@ -14,7 +14,7 @@ import android.widget.Button;
  * Created by tamimazmain on 2017/11/11.
  */
 
-public class ContactFragmenttab extends Fragment {
+public class ContactFragmentTab extends Fragment {
 
     View rootView;
 
