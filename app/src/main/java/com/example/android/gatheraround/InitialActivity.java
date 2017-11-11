@@ -107,9 +107,7 @@ public class InitialActivity extends AppCompatActivity {
 //
 //                            mapFragment.setArguments(bundle);
 
-//                            Intent intent = new Intent(InitialActivity.this, mapfeed.class);
-
-                            Intent intent = new Intent(InitialActivity.this, MyInfoActivity.class);
+                            Intent intent = new Intent(InitialActivity.this, mapfeed.class);
 
                             startActivity(intent);
                         }

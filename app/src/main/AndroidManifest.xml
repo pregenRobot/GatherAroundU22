@@ -34,14 +34,10 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".mapfeed"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="fullSensor"
@@ -56,8 +52,11 @@
         <!-- "AIzaSyDphN4bVaQHzDfIcE5XL3ESwi5t7C_h-1k" -->
         <!-- "AIzaSyDYeT85TEsG18YZpABHVVll6nBebRcbJZU" -->
 
-        <activity android:name=".LoginActivity"></activity>
-        <activity android:name=".MyInfoActivity"></activity>
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".MyInfoActivity" />
+        <activity android:name=".ImageCropActivity"></activity>
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"/>
     </application>
 
 </manifest>
