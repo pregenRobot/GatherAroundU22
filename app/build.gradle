@@ -55,7 +55,8 @@ dependencies {
     compile 'com.azoft.carousellayoutmanager:carousel:1.2.1'
 
     compile 'com.theartofdev.edmodo:android-image-cropper:2.5.+'
-}
+    compile 'com.mikhaellopez:circularimageview:3.0.2'
 
+}
 
 apply plugin: 'com.google.gms.google-services'

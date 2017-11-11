@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+
 public class MyInfoActivity extends AppCompatActivity {
 
     TextView userNameTextView, profileTextView;
@@ -41,14 +42,14 @@ public class MyInfoActivity extends AppCompatActivity {
         userNameTextView = (TextView)findViewById(R.id.userNameTextView);
         profileTextView = (TextView)findViewById(R.id.profileTextView);
 
-        profileImageView = (ImageView)findViewById(R.id.profileImageView);
+//        profileImageView = findViewById(R.id.profileImageView);
 
         isMyProfile = getIntent().getBooleanExtra(isMyProfile_Intent, true);
 
         if (isMyProfile) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if(user == null){
-                Toast.makeText(MyInfoActivity.this, "Not sighed in.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MyInfoActivity.this, "Not signed in.", Toast.LENGTH_SHORT).show();
             }else{
                 String uid = user.getUid();
 
@@ -80,7 +81,7 @@ public class MyInfoActivity extends AppCompatActivity {
 
                 StorageReference imageReference = storage.getReference().child(DataSenderToServer.IMAGE_REFERENCE_TITLE + "/" + uid);
 
-                Glide.with(this).using(new FirebaseImageLoader()).load(imageReference).into(profileImageView);
+//                Glide.with(this).using(new FirebaseImageLoader()).load(imageReference).into(profileImageView);
             }
         }
     }
