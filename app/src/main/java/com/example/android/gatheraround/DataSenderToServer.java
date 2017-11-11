@@ -1,5 +1,6 @@
 package com.example.android.gatheraround;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.example.android.gatheraround.custom_classes.Events;
@@ -9,15 +10,19 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.MutableData;
 import com.firebase.client.Transaction;
-
-/**
- * Created by chiharu_miyoshi on 2017/08/30.
- */
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 public class DataSenderToServer{
 
     public static final String FIREBASE_EVENT_URL = "https://u22-project-gather-around.firebaseio.com/eventPostDetails";
     public static final String FIREBASE_PROFILE_URL = "https://u22-project-gather-around.firebaseio.com/users_profiles";
+
+    public static final String USERS_REFERENCE_TITLE = "users";
+    public static final String IMAGE_REFERENCE_TITLE = "images";
 
     public String pushToServer(Events newEvent){
 
@@ -62,8 +67,21 @@ public class DataSenderToServer{
     }
 
     // send profile to server
-    public void addNewUser(UserProfile profile){
-        Firebase firebase = new Firebase(FIREBASE_PROFILE_URL);
-        firebase.child(profile.getmEmail()).setValue(profile);
+    public void addNewUser(String userId, UserProfile profile, Uri imageUri){
+
+        if (imageUri != null){
+//            Firebase firebase = new Firebase(FIREBASE_PROFILE_URL);
+//            firebase.child(userId).setValue(profile);
+
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+            databaseReference.child(USERS_REFERENCE_TITLE + "/" + userId).setValue(profile);
+
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference reference = storage.getReference();
+            StorageReference imageStorageReference = reference.child(IMAGE_REFERENCE_TITLE);
+            StorageReference imageReference = imageStorageReference.child(userId);
+
+            UploadTask uploadTask = imageReference.putFile(imageUri);
+        }
     }
 }

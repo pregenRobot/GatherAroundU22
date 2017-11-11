@@ -6,15 +6,15 @@ package com.example.android.gatheraround.custom_classes;
 
 public class UserProfile {
 
-    private String mEmail;
-    private String mName;
+    public String mEmail;
+    public String mName;
 
     public UserProfile(String email, String name){
         mEmail = email;
         mName = name;
     }
 
-    public String getmEmail(){
-        return mEmail;
-    }
+//    public String getmEmail(){
+//        return mEmail;
+//    }
 }
