@@ -9,8 +9,7 @@
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="0dp"
-    tools:context=".MainActivity"
-
+    tools:context=".mapfeed"
     >
     <RelativeLayout
         android:layout_width="match_parent"
@@ -29,15 +28,6 @@
             android:layout_height="wrap_content"
             android:text="flip"
             android:id="@+id/flipfront"
-            />
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:text="@string/eventlist_button"
-            android:id="@+id/eventlistbutton1"
-            android:layout_alignParentBottom="true"
-            android:background="@color/cardbackground"
             />
         <!--<android.support.design.widget.FloatingActionButton-->
         <!--android:layout_width="wrap_content"-->
@@ -70,7 +60,7 @@
         <!--/>-->
 
     </RelativeLayout>
-    <!--<include layout="@layout/bottomsheet"/>-->
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -1,11 +1,14 @@
 package com.example.android.gatheraround.custom_classes;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by chiharu_miyoshi on 2017/09/15.
  */
 
-public class EventDate {
+public class EventDate implements Parcelable{
 
     private String mYear;
     private String mMonth;
@@ -34,6 +37,18 @@ public class EventDate {
         mHour2 = hour2;
         mMinute2 = minute2;
     }
+    private static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        @Override
+        public EventDate createFromParcel(Parcel parcel) {
+            return new EventDate (parcel);
+        }
+
+        @Override
+        public EventDate[] newArray(int i) {
+            return new EventDate[i];
+        }
+    };
+
     public void updateDate1(String year,String month,String day){
         mYear = year;
         mMonth = month;
@@ -99,9 +114,49 @@ public class EventDate {
 
         return result;
     }
-    public String toString(){
-        return
-                mYear + " / " + mMonth + " / " + mDay + " / " + mHour + " : " + mMinute + " ~ "
-                + mYear2 + " / " + mMonth2 + " / " + mDay2 + " / " + mHour2 + " : " + mMinute2;
+
+    public EventDate(Parcel in){
+        this.mYear = in.readString();
+        this.mMonth = in.readString();
+        this.mDay = in.readString();
+        this.mHour = in.readString();
+        this.mMinute = in.readString();
+
+        this.mYear2 = in.readString();
+        this.mMonth2 = in.readString();
+        this.mDay2 = in.readString();
+        this.mHour2 = in.readString();
+        this.mMinute2 = in.readString();
+
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.mYear);
+        dest.writeString(this.mMonth);
+        dest.writeString(this.mDay);
+        dest.writeString(this.mHour);
+        dest.writeString(this.mMinute);
+    }
+
+    @Override
+    public String toString() {
+        return "Events{" +
+                "mYear='" + mYear + '\'' +
+                ", mMonth='" + mMonth + '\'' +
+                ", mDay='" + mDay + '\'' +
+                ", mHour='" + mHour + '\'' +
+                ", mMinute='" + mMinute + '\'' +
+                ", mYear2='" + mYear2 + '\'' +
+                ", mMonth2='" + mMonth2 + '\'' +
+                ", mDay2='" + mDay2 + '\'' +
+                ", mHour2='" + mHour2 + '\'' +
+                ", mMinute2='" + mMinute2 + '\'' +
+                '}';
     }
 }

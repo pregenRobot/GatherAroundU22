@@ -43,18 +43,6 @@ public class FeedFragmenttab extends Fragment {
         View view = inflater.inflate(R.layout.tabfeedfragment,container,false);
 
         eventsDBHelper = new DatabaseHelper(getContext());
-//        boolean insertData = eventsDBHelper.addData(
-//                                            "Hello test",
-//                                            new EventDate("2017","11","4","-1","-1","-1",
-//                                                    "-1","-1","-1","-1"),
-//                                            0,
-//                                            new LatLng(23,23),
-//                                            "Test",
-//                                            "Summary Test",
-//                                            Events.CATEGORY_INDIVIDUAL,
-//                                            true
-//                                    );
-
 
         eventCursor = eventsDBHelper.getAllEvents();
 

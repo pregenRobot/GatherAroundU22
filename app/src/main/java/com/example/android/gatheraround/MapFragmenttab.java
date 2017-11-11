@@ -52,6 +52,8 @@ import com.google.maps.android.clustering.algo.Algorithm;
 import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm;
 import com.example.android.gatheraround.Calculations;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -63,7 +65,7 @@ public class MapFragmenttab extends Fragment {
     View rootView;
 
     MapView mMapView;
-    private GoogleMap mMap;
+    public static GoogleMap mMap;
     EventDate eventDate;
     Calendar calendar = Calendar.getInstance();
     ClusterManager<EventMarker> mClusterManager;
@@ -74,14 +76,42 @@ public class MapFragmenttab extends Fragment {
     Button eventListButton;
     LinearLayoutManager llm;
 
-    private BottomSheetBehavior bottomSheetBehavior;
-    private TextView bottomSheetHeading;
-
     DatabaseHelper eventsDBHelper;
+
+
+    private BottomSheetBehavior bottomSheetBehavior;
+
+    public static TextView eventNamebot;
+    public static TextView eventDatebot;
+    public static TextView eventTimebot;
+    public static TextView eventLocationbot;
+    public static TextView eventSummarybot;
+    public static TextView eventfollowersbot;
+
+    public static View bottomSheet;
+
+    public static View maincontent;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.tabmapfragment, container, false);
+
+        bottomSheet = getActivity().findViewById(R.id.mapfragbottomsheet);
+        maincontent = getActivity().findViewById(R.id.container);
+
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        bottomSheetBehavior.setHideable(true);
+        bottomSheetBehavior.setPeekHeight(ViewGroup.LayoutParams.MATCH_PARENT);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        eventNamebot = (TextView) getActivity().findViewById(R.id.bottomsheeteventname);
+        eventDatebot = (TextView) getActivity().findViewById(R.id.eventDateMark);
+        eventTimebot = (TextView) getActivity().findViewById(R.id.eventTimeMark);
+        eventLocationbot = (TextView) getActivity().findViewById(R.id.eventLocationMark);
+        eventSummarybot = (TextView) getActivity().findViewById(R.id.summaryTextBrowser);
+        eventfollowersbot = (TextView) getActivity().findViewById(R.id.eventParticipantsMark);
+
 
         eventsDBHelper = new DatabaseHelper(getContext());
 
@@ -499,6 +529,20 @@ public class MapFragmenttab extends Fragment {
             }
         });
 
+//        ArrayList<String> testparcelstring;
+//        ArrayList<Events> testparcelevents;
+//
+//        Bundle datafromServer = this.getArguments();
+//
+////        if(datafromServer != null){
+//            testparcelstring = datafromServer.getStringArrayList("IdsonServer");
+//            testparcelevents = datafromServer.getParcelableArrayList("EventsOnServer");
+//
+////        }
+//        for(Events x: testparcelevents){
+//            Log.v("myparcel",receivedEvents.toString());
+//        }
+
 
         final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_EVENT_URL);
         firebase.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -570,6 +614,17 @@ public class MapFragmenttab extends Fragment {
 //                }
 //                Log.i("Checked deleted ids", "Deleted ids count: " + deletedIds.size());
 //                setList();
+
+                TextView evName = getActivity().findViewById(R.id.bottomsheeteventname);
+                LinearLayout linlear = getActivity().findViewById(R.id.bottomsheeteventdate);
+                TextView evLoc = getActivity().findViewById(R.id.eventLocationMark);
+
+                int peekheight = evName.getHeight() + linlear.getHeight() + evLoc.getHeight();
+                Log.v("Bottomsheet ",peekheight+"");
+
+                bottomSheet.getLayoutParams().height = maincontent.getHeight();
+                bottomSheetBehavior.setPeekHeight(peekheight);
+
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -612,7 +667,8 @@ public class MapFragmenttab extends Fragment {
                     @Override
                     public boolean onClusterItemClick(EventMarker eventMarker) {
                         Events dealingEvent = eventMarker.getTag();
-                        dialogCreator(dealingEvent);
+//                        dialogCreator(dealingEvent);
+                        bottomSheetCreator(dealingEvent);
                         Log.v("ItemClickedYo!","ClusterTest");
                         return true;
                     }
@@ -620,6 +676,28 @@ public class MapFragmenttab extends Fragment {
         );
         mMap.setOnMarkerClickListener(mClusterManager);
     }
+    public void bottomSheetCreator( Events events){
+        final Events nowevents = events;
+
+
+        if(bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN){
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }else if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        }
+
+        eventNamebot.setText(nowevents.getName());
+
+        String date1 = calculations.concatenate(nowevents.getDate(),false,false)[0];
+        String date2 = calculations.concatenate(nowevents.getDate(),false,false)[1];
+
+        eventDatebot.setText(date1);
+        eventTimebot.setText(date2);
+        eventLocationbot.setText(nowevents.getLocationName());
+        eventSummarybot.setText(nowevents.getEventSummary());
+        eventfollowersbot.setText(nowevents.getParticipants()+"");
+    }
+
     public void dialogCreator(Events events){
 
         final Events nowEvents = events;
@@ -631,7 +709,6 @@ public class MapFragmenttab extends Fragment {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
         summaryText.setMovementMethod(new ScrollingMovementMethod());
-        assert nowEvents != null;
         summaryText.setText(nowEvents.getEventSummary());
         TextView nameText = mView.findViewById(R.id.eventNameMark);
         nameText.setText(nowEvents.getName());

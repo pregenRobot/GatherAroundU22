@@ -28,6 +28,145 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:id = "@+id/mapfragbottomsheet"
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        android:clipToPadding="true"
+        >
+        <LinearLayout
+
+            android:id="@+id/bottomsheet1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="true"
+            android:orientation="vertical"
+            app:layout_behavior="@string/bottom_sheet_behavior"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@color/cardbackground"
+                android:gravity="center"
+                android:text="EventName"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:id="@+id/bottomsheeteventname"
+                />
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="9"
+                android:background="@color/cardbackground2"
+                android:orientation="vertical"
+
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/bottomsheeteventdate"
+                    >
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/date"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:id="@+id/eventDateMark"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp"
+                        android:textStyle="bold"
+                        />
+                    <!--android:id="@+id/eventDateMark"-->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/time"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:id="@+id/eventTimeMark"
+                        android:padding="8dp"
+                        android:textStyle="bold"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp"
+                        />
+                    <!--android:id="@+id/eventTimeMark"-->
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/location_name"
+                    android:textSize="18sp"
+                    android:textColor="@color/white"
+                    android:padding="18dp"
+                    android:layout_margin="9dp"
+                    android:id="@+id/eventLocationMark"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Hello my name is "
+                    android:textSize="14sp"
+                    android:textColor="@color/white"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="8dp"
+                    android:layout_marginLeft="18dp"
+                    android:layout_marginRight="18dp"
+                    android:id="@+id/summaryTextBrowser"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:text="@string/followers"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:layout_margin="9dp"
+                        android:textStyle="bold"
+                        />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:layout_margin="9dp"
+                        android:id="@+id/eventParticipantsMark"
+                        android:textStyle="bold"
+                        />
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
 
 
 </android.support.design.widget.CoordinatorLayout>

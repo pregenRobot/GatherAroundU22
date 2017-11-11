@@ -13,6 +13,7 @@ import android.graphics.Movie;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
@@ -57,6 +58,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
     private List<Events> feedlist;
     Calculations calculations = new Calculations();
     Context mContext;
+    Gson gson = new Gson();
+    BottomSheetBehavior bottomSheetBehavior;
+    View bottomSheet;
+    private DatabaseHelper dbHelper;
+    private MyEventsDatabaseHelper myEvents;
+    Intent mainActivityIntent;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView
@@ -91,7 +98,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
     public FeedAdapter(List<Events> feedlistinput, Context Context) {
         this.feedlist = feedlistinput;
         this.mContext = Context;
-    }
+        myEvents  = new MyEventsDatabaseHelper(mContext);
+        }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -116,179 +124,183 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
 
         final int position1 = position;
 
-//        holder.locationText.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//
-//                LatLng location = gson.fromJson(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_LOCATION)),LatLng.class);
-//                final CameraPosition camLocation  = CameraPosition.builder().target(location).zoom(18).build();
-//                MainActivity.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camLocation));
-//            }
-//        });
+        holder.locationText.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
 
-//        holder.summaryLayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                makeSummaryDialog(events.getEventSummary());
-//            }
-//        });
-//
-//        holder.summaryText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                makeSummaryDialog(events.getEventSummary());
-//            }
-//        });
-//
-//        holder.card.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View view) {
-//                LayoutInflater mLayoutInflater;
-//                mLayoutInflater = LayoutInflater.from(mContext);
-//                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
-//                View mView = mLayoutInflater.inflate(R.layout.canceldelete_editor,null);
-//
-//                final Button cancelButton = mView.findViewById(R.id.cancelAction);
-//                final Button deleteButton = mView.findViewById(R.id.deleteEntryAction);
-//                final Button qrGenButton = mView.findViewById(R.id.qrAction);
-//
-//                mBuilder.setView(mView);
-//                final AlertDialog dialog = mBuilder.create();
-//
-////                dialog.show();
-////                dbHelper = new DatabaseHelper(mContext);
-////                final SQLiteDatabase db = dbHelper.getWritableDatabase();
-//
-//                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                    @Override
-//                    public void onDismiss(DialogInterface dialogInterface) {
-//                        notifyDataSetChanged();
-//                    }
-//                });
-//                cancelButton.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        dialog.dismiss();
-//                    }
-//                });
-//                deleteButton.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//
-////                        if((myEvents.checkforExistingEvent(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID))))){
-////                            DataSenderToServer dataSenderToServer = new DataSenderToServer();
-////                            dataSenderToServer.eraseEntry(mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID)));
-////                            db.delete
-////                                    (DatabaseHelper.TABLE_NAME, DatabaseHelper.COL_LOCALID + " = " + mCursor.getInt
-////                                            (mCursor.getColumnIndex(DatabaseHelper.COL_LOCALID)), null);
-////
-////                        }else{
-////                            db.delete
-////                                    (DatabaseHelper.TABLE_NAME, DatabaseHelper.COL_LOCALID + " = " + mCursor.getInt
-////                                            (mCursor.getColumnIndex(DatabaseHelper.COL_LOCALID)), null);
-////                        }
-////
-////                        dialog.dismiss();
-////
-////                        mainActivityIntent = new Intent(mContext,MainActivity.class);
-////                        mContext.startActivity(mainActivityIntent);
-//
-//                    }
-//                });
-//                qrGenButton.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        LayoutInflater mLayoutInflator;
-//                        mLayoutInflator = LayoutInflater.from(mContext);
-//                        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
-//                        View mView = mLayoutInflator.inflate(R.layout.qrgenerated,null);
-//
-//                        final ImageView qrImage = mView.findViewById(R.id.qrImage);
-//                        Button savetoPhone = mView.findViewById(R.id.saveQrButton);
-//
-//                        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-//
-//                        try{
-//                            String tempString = events.getGlobalId();
-//                            BitMatrix bitMatrix = multiFormatWriter.encode("gatheraround/" + tempString,  BarcodeFormat.QR_CODE,500,500);
-//
-//                            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-//                            Bitmap qrCodeBitmap = barcodeEncoder.createBitmap(bitMatrix);
-//
-//                            int textSize = 25;
-//                            int paddingBottom = 10;
-//                            int textPaddingLeft = 25;
-//                            int iconSize = 75;
-//
-//                            int height = qrCodeBitmap.getHeight() + Math.max(textSize, iconSize) + paddingBottom;
-//                            int width = qrCodeBitmap.getWidth();
-//
-//                            Bitmap completeBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-//
-//                            Bitmap iconBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.gatheraround_ic, null);
-//
-//                            Bitmap iconResize = Bitmap.createScaledBitmap(iconBitmap, iconSize, iconSize, false);
-//
-//                            Canvas canvas = new Canvas(completeBitmap);
-//
-//                            canvas.drawARGB(255, 255, 255, 255);
-//
-//                            canvas.drawBitmap(qrCodeBitmap, 0, 0, null);
-//
-//                            canvas.drawBitmap(iconResize, textPaddingLeft, paddingBottom + qrCodeBitmap.getHeight() - textSize, null);
-//
-//                            Paint paint = new Paint();
-//                            paint.setColor(Color.BLACK);
-//                            paint.setTextSize((float)textSize);
-//
-//                            String eventNameText;
-//                            eventNameText = events.getName();
-//
-//                            canvas.drawText(eventNameText, textPaddingLeft + iconResize.getWidth() + textPaddingLeft, paddingBottom + qrCodeBitmap.getHeight() + (iconResize.getHeight() - textSize) / 2, paint);
-//
-//                            int [] allpixels = new int [completeBitmap.getHeight() * completeBitmap.getWidth()];
-//
-//                            completeBitmap.getPixels(allpixels, 0, completeBitmap.getWidth(), 0, 0, completeBitmap.getWidth(), completeBitmap.getHeight());
-//
-//                            for(int i = 0; i < allpixels.length; i++)
-//                            {
-//                                if(allpixels[i] == Color.BLACK)
-//                                {
-//                                    allpixels[i] = Color.rgb(18,153,112);
-//                                }
-//                            }
-//
-//                            completeBitmap.setPixels(allpixels,0,completeBitmap.getWidth(),0, 0, completeBitmap.getWidth(),completeBitmap.getHeight());
-//
-//                            qrImage.setImageBitmap(completeBitmap);
-//
-//                        }catch (WriterException e){
-//                            e.printStackTrace();
-//                        }
-//
-//                        mBuilder.setView(mView);
-//                        final AlertDialog dialog = mBuilder.create();
-//
-//                        savetoPhone.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                BitmapDrawable drawable = (BitmapDrawable) qrImage.getDrawable();
-//                                Bitmap bitmap = drawable.getBitmap();
-//                                String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
-//                                String mImageName="MI_"+ timeStamp +".jpg";
-////                                createDirectoryAndSaveFile(bitmap,mImageName);
-//                                Toast.makeText(mContext,"Saved Image to Phone",Toast.LENGTH_SHORT).show();
-//
-//                            }
-//                        });
-//
-//                        dialog.show();
-//
-//                    }
-//                });
-//                return true;
-//            }
-//        });
+                LatLng location = events.getLocation();
+                final CameraPosition camLocation  = CameraPosition.builder().target(location).zoom(18).build();
+                MapFragmenttab.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camLocation));
+            }
+        });
+
+        holder.summaryLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                makeSummaryDialog(events.getEventSummary());
+            }
+        });
+
+        holder.summaryText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                makeSummaryDialog(events.getEventSummary());
+            }
+        });
+
+        holder.card.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                LayoutInflater mLayoutInflater;
+                mLayoutInflater = LayoutInflater.from(mContext);
+                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
+                View mView = mLayoutInflater.inflate(R.layout.canceldelete_editor,null);
+
+                final Button cancelButton = mView.findViewById(R.id.cancelAction);
+                final Button deleteButton = mView.findViewById(R.id.deleteEntryAction);
+                final Button qrGenButton = mView.findViewById(R.id.qrAction);
+
+                mBuilder.setView(mView);
+                final AlertDialog dialog = mBuilder.create();
+
+                dialog.show();
+                dbHelper = new DatabaseHelper(mContext);
+                final SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        notifyDataSetChanged();
+                    }
+                });
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+                deleteButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if((myEvents.checkforExistingEvent(events.getGlobalId()))){
+                            DataSenderToServer dataSenderToServer = new DataSenderToServer();
+                            dataSenderToServer.eraseEntry(events.getGlobalId());
+                            db.delete
+                                    (DatabaseHelper.TABLE_NAME, "-"+DatabaseHelper.COL_GLOBALID + " = " + events.getGlobalId(), null);
+
+                        }else{
+                            db.delete
+                                    (DatabaseHelper.TABLE_NAME, DatabaseHelper.COL_LOCALID + " = " + events.getGlobalId(), null);
+                        }
+
+                        dialog.dismiss();
+
+                        mainActivityIntent = new Intent(mContext,MainActivity.class);
+                        mContext.startActivity(mainActivityIntent);
+
+                    }
+                });
+                qrGenButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        LayoutInflater mLayoutInflator;
+                        mLayoutInflator = LayoutInflater.from(mContext);
+                        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
+                        View mView = mLayoutInflator.inflate(R.layout.qrgenerated,null);
+
+                        final ImageView qrImage = mView.findViewById(R.id.qrImage);
+                        Button savetoPhone = mView.findViewById(R.id.saveQrButton);
+
+                        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+
+                        try{
+                            String tempString = events.getGlobalId();
+                            BitMatrix bitMatrix = multiFormatWriter.encode("gatheraround/" + tempString,  BarcodeFormat.QR_CODE,500,500);
+
+                            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                            Bitmap qrCodeBitmap = barcodeEncoder.createBitmap(bitMatrix);
+
+                            int textSize = 25;
+                            int paddingBottom = 10;
+                            int textPaddingLeft = 25;
+                            int iconSize = 75;
+
+                            int height = qrCodeBitmap.getHeight() + Math.max(textSize, iconSize) + paddingBottom;
+                            int width = qrCodeBitmap.getWidth();
+
+                            Bitmap completeBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+                            Bitmap iconBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.gatheraround_ic, null);
+
+                            Bitmap iconResize = Bitmap.createScaledBitmap(iconBitmap, iconSize, iconSize, false);
+
+                            Canvas canvas = new Canvas(completeBitmap);
+
+                            canvas.drawARGB(255, 255, 255, 255);
+
+                            canvas.drawBitmap(qrCodeBitmap, 0, 0, null);
+
+                            canvas.drawBitmap(iconResize, textPaddingLeft, paddingBottom + qrCodeBitmap.getHeight() - textSize, null);
+
+                            Paint paint = new Paint();
+                            paint.setColor(Color.BLACK);
+                            paint.setTextSize((float)textSize);
+
+                            String eventNameText;
+                            eventNameText = events.getName();
+
+                            canvas.drawText(eventNameText, textPaddingLeft + iconResize.getWidth() + textPaddingLeft, paddingBottom + qrCodeBitmap.getHeight() + (iconResize.getHeight() - textSize) / 2, paint);
+
+                            int [] allpixels = new int [completeBitmap.getHeight() * completeBitmap.getWidth()];
+
+                            completeBitmap.getPixels(allpixels, 0, completeBitmap.getWidth(), 0, 0, completeBitmap.getWidth(), completeBitmap.getHeight());
+
+                            for(int i = 0; i < allpixels.length; i++)
+                            {
+                                if(allpixels[i] == Color.BLACK)
+                                {
+                                    allpixels[i] = Color.rgb(18,153,112);
+                                }
+                            }
+
+                            completeBitmap.setPixels(allpixels,0,completeBitmap.getWidth(),0, 0, completeBitmap.getWidth(),completeBitmap.getHeight());
+
+                            qrImage.setImageBitmap(completeBitmap);
+
+                        }catch (WriterException e){
+                            e.printStackTrace();
+                        }
+
+                        mBuilder.setView(mView);
+                        final AlertDialog dialog = mBuilder.create();
+
+                        savetoPhone.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                BitmapDrawable drawable = (BitmapDrawable) qrImage.getDrawable();
+                                Bitmap bitmap = drawable.getBitmap();
+                                String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+                                String mImageName="MI_"+ timeStamp +".jpg";
+//                                createDirectoryAndSaveFile(bitmap,mImageName);
+                                Toast.makeText(mContext,"Saved Image to Phone",Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
+
+                        dialog.show();
+
+                    }
+                });
+                return true;
+            }
+        });
+        holder.card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetCreator(events);
+            }
+        });
 
     }
 
@@ -311,5 +323,32 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
         final AlertDialog dialog = mBuilder.create();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
+    }
+    public void bottomSheetCreator( Events events){
+        final Events nowevents = events;
+
+        View bottomSheet = MapFragmenttab.bottomSheet;
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        bottomSheet.getLayoutParams().height = MapFragmenttab.maincontent.getHeight();
+
+        MapFragmenttab.eventNamebot.setText(nowevents.getName());
+
+        String date1 = calculations.concatenate(nowevents.getDate(),false,false)[0];
+        String date2 = calculations.concatenate(nowevents.getDate(),false,false)[1];
+
+        MapFragmenttab.eventDatebot.setText(date1);
+        MapFragmenttab.eventTimebot.setText(date2);
+        MapFragmenttab.eventLocationbot.setText(nowevents.getLocationName());
+        MapFragmenttab.eventSummarybot.setText(nowevents.getEventSummary());
+        MapFragmenttab.eventfollowersbot.setText(nowevents.getParticipants()+"");
+
+
+        if(bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN){
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }else if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        }
+
+
     }
 }

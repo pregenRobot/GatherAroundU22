@@ -36,7 +36,7 @@ public class mapfeed extends AppCompatActivity {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
 
         adapter.addFragment(new MapFragmenttab(),"Map");
-        adapter.addFragment(new FeedFragmenttab(),"Feed");
+        adapter.addFragment(new FeedFragmenttab(),"Drawer");
 
 
         pager.setAdapter(adapter);

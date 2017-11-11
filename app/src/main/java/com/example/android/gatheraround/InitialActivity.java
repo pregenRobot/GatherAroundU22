@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -96,10 +98,17 @@ public class InitialActivity extends AppCompatActivity {
                                 eventsonServer.add(newEvents);
                             }
                             Log.v("Firebase","Retreived Information");
+
+//                            Fragment mapFragment = new MapFragmenttab();
+//
+//                            Bundle bundle = new Bundle();
+//                            bundle.putParcelableArrayList("EventsOnServer",eventsonServer);
+//                            bundle.putStringArrayList("IdsonServer",idsOnServer);
+//
+//                            mapFragment.setArguments(bundle);
+
                             Intent intent = new Intent(InitialActivity.this,mapfeed.class);
-//                Bundle bundle= new Bundle();
-//                bundle.putParcelable("events",(ArrayList<? extends Parcelable>) eventsonServer.get(position).getSongs());
-//                intent.putExtra("EventsonServer",eventsonServer);
+
                             startActivity(intent);
                         }
                         @Override
