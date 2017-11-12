@@ -1,6 +1,8 @@
 package com.example.android.gatheraround;
 
 import android.content.Context;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +49,12 @@ public class ScrollFeedAdapter extends RecyclerView.Adapter<ScrollFeedAdapter.My
         holder.date1.setText(date1);
         holder.date2.setText(date2);
         holder.summaryText.setText(event.getEventSummary());
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetCreator(event);
+            }
+        });
 
     }
 
@@ -60,6 +68,7 @@ public class ScrollFeedAdapter extends RecyclerView.Adapter<ScrollFeedAdapter.My
         public TextView date1;
         public TextView date2;
         public TextView summaryText;
+        public CardView cardView;
 
         public MyViewHolder (View view){
             super(view);
@@ -67,8 +76,30 @@ public class ScrollFeedAdapter extends RecyclerView.Adapter<ScrollFeedAdapter.My
             date1 = view.findViewById(R.id.eventDateFirebase);
             date2 = view.findViewById(R.id.eventTimeFirebase);
             summaryText = view.findViewById(R.id.eventSmmaryFirebase);
-
+            cardView = view.findViewById(R.id.cardfirebasemain);
         }
+    }
+
+    public void bottomSheetCreator( Events events){
+        final Events nowevents = events;
+
+
+        if(MapFragmenttab.bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN){
+            MapFragmenttab.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }else if (MapFragmenttab.bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
+            MapFragmenttab.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        }
+
+        MapFragmenttab.eventNamebot.setText(nowevents.getName());
+
+        String date1 = calculations.concatenate(nowevents.getDate(),false,false)[0];
+        String date2 = calculations.concatenate(nowevents.getDate(),false,false)[1];
+
+        MapFragmenttab.eventDatebot.setText(date1);
+        MapFragmenttab.eventTimebot.setText(date2);
+        MapFragmenttab.eventLocationbot.setText(nowevents.getLocationName());
+        MapFragmenttab.eventSummarybot.setText(nowevents.getEventSummary());
+        MapFragmenttab.eventfollowersbot.setText(nowevents.getParticipants()+"");
     }
 
 }

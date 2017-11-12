@@ -43,21 +43,7 @@
         <!--app:fabSize="normal"-->
         <!--app:borderWidth="-120000dp"-->
 
-        <!--/>-->
-        <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:src="@drawable/scanner"-->
-        <!--android:id="@+id/scanMain1"-->
-        <!--android:clickable="true"-->
-        <!--app:backgroundTint="@color/cardbackground2"-->
-        <!--app:fabSize="normal"-->
-        <!--app:borderWidth="-120000dp"-->
-        <!--android:layout_marginLeft="12dp"-->
-        <!--android:layout_marginRight="12dp"-->
-        <!--android:layout_below="@+id/searchMain"-->
-        <!--android:layout_marginTop="8dp"-->
-        <!--/>-->
+
 
     </RelativeLayout>
 

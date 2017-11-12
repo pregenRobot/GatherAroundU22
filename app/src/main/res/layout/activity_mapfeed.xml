@@ -6,7 +6,44 @@
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:background="@color/recyclerview_background"
+    android:fitsSystemWindows="true"
+    >
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/scanMain1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="36dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:src="@drawable/scanner"
+        app:backgroundTint="@color/cardbackground2"
+        app:borderWidth="-120000dp"
+        app:fabSize="normal"
+        app:layout_anchor="@id/mapfragbottomsheet"
+        app:layout_anchorGravity="top|end"
+        />
+    <android.support.design.widget.FloatingActionButton
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/follow1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="36dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        android:clickable="true"
+        android:src="@drawable/follow"
+        app:backgroundTint="@color/cardbackground2"
+        app:borderWidth="-120000dp"
+        app:fabSize="normal"
+        app:layout_anchor="@id/mapfragbottomsheet"
+        app:layout_anchorGravity="top|end"
+        />
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -30,13 +67,13 @@
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id = "@+id/mapfragbottomsheet"
-        app:layout_behavior="@string/bottom_sheet_behavior"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:clipToPadding="true"
+        app:layout_behavior="@string/bottom_sheet_behavior"
         >
         <LinearLayout
 
@@ -49,6 +86,7 @@
             >
 
             <TextView
+                android:id="@+id/bottomsheeteventname"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -58,7 +96,6 @@
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:id="@+id/bottomsheeteventname"
                 />
 
             <LinearLayout
@@ -72,93 +109,93 @@
                 >
 
                 <LinearLayout
+                    android:id="@+id/bottomsheeteventdate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:id="@+id/bottomsheeteventdate"
                     >
                     <TextView
+                        android:id="@+id/eventDateMark"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="@string/date"
-                        android:textSize="18sp"
-                        android:textColor="@color/white"
-                        android:id="@+id/eventDateMark"
-                        android:paddingTop="16dp"
                         android:paddingBottom="16dp"
+                        android:paddingTop="16dp"
+                        android:text="@string/date"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         />
                     <!--android:id="@+id/eventDateMark"-->
                     <TextView
+                        android:id="@+id/eventTimeMark"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="@string/time"
-                        android:textSize="18sp"
-                        android:textColor="@color/white"
-                        android:id="@+id/eventTimeMark"
                         android:padding="8dp"
-                        android:textStyle="bold"
-                        android:paddingTop="16dp"
                         android:paddingBottom="16dp"
+                        android:paddingTop="16dp"
+                        android:text="@string/time"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
                         />
                     <!--android:id="@+id/eventTimeMark"-->
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/eventLocationMark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/location_name"
-                    android:textSize="18sp"
-                    android:textColor="@color/white"
-                    android:padding="18dp"
                     android:layout_margin="9dp"
-                    android:id="@+id/eventLocationMark"
+                    android:gravity="center"
+                    android:padding="18dp"
+                    android:text="@string/location_name"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
                     />
                 <TextView
+                    android:id="@+id/summaryTextBrowser"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Hello my name is "
-                    android:textSize="14sp"
-                    android:textColor="@color/white"
-                    android:paddingTop="4dp"
+                    android:layout_marginLeft="18dp"
+                    android:layout_marginRight="18dp"
                     android:paddingBottom="4dp"
                     android:paddingLeft="16dp"
                     android:paddingRight="8dp"
-                    android:layout_marginLeft="18dp"
-                    android:layout_marginRight="18dp"
-                    android:id="@+id/summaryTextBrowser"
+                    android:paddingTop="4dp"
+                    android:text="Hello my name is "
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
                     />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
+                    android:paddingBottom="8dp"
                     android:paddingLeft="16dp"
                     android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
                     >
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="9dp"
                         android:gravity="center_vertical"
                         android:text="@string/followers"
-                        android:textSize="18sp"
                         android:textColor="@color/white"
-                        android:layout_margin="9dp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         />
                     <TextView
+                        android:id="@+id/eventParticipantsMark"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:textSize="18sp"
-                        android:textColor="@color/white"
                         android:layout_margin="9dp"
-                        android:id="@+id/eventParticipantsMark"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         />
                 </LinearLayout>

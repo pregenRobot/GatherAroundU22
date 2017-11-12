@@ -13,6 +13,7 @@ import android.graphics.Movie;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Environment;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -43,7 +44,10 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -121,6 +125,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
         holder.summaryText.setText(events.getEventSummary());
         holder.locationText.setText(events.getLocationName());
         holder.categoryText.setText(events.getCategory());
+        holder.nameText.setText(events.getName());
 
         final int position1 = position;
 
@@ -183,9 +188,19 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
                     @Override
                     public void onClick(View view) {
 
+                        Cursor eventCursor = dbHelper.getAllEvents();
+
+                        for(eventCursor.moveToFirst(); !eventCursor.isAfterLast(); eventCursor.moveToNext()) {
+                            // The Cursor is now set to the right position
+
+                            Log.v("These are the entries:",eventCursor.getString(eventCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID)));
+
+                        }
+
                         if((myEvents.checkforExistingEvent(events.getGlobalId()))){
                             Log.v("DeletingNow","event: " + events.getGlobalId() + "server:" + DatabaseHelper.COL_GLOBALID);
-                            db.delete(DatabaseHelper.TABLE_NAME, DatabaseHelper.COL_GLOBALID + " = " + events.getGlobalId(), null);
+                            int CheckOutID = dbHelper.checkoutID(events.getGlobalId());
+                            db.delete(DatabaseHelper.TABLE_NAME, DatabaseHelper.COL_LOCALID + " = " + CheckOutID, null);
                             DataSenderToServer dataSenderToServer = new DataSenderToServer();
                             dataSenderToServer.eraseEntry(events.getGlobalId());
 
@@ -196,7 +211,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
 
                         dialog.dismiss();
 
-                        mainActivityIntent = new Intent(mContext,MainActivity.class);
+                        mainActivityIntent = new Intent(mContext,mapfeed.class);
                         mContext.startActivity(mainActivityIntent);
 
                     }
@@ -282,7 +297,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
                                 Bitmap bitmap = drawable.getBitmap();
                                 String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
                                 String mImageName="MI_"+ timeStamp +".jpg";
-//                                createDirectoryAndSaveFile(bitmap,mImageName);
+                                createDirectoryAndSaveFile(bitmap,mImageName);
                                 Toast.makeText(mContext,"Saved Image to Phone",Toast.LENGTH_SHORT).show();
 
                             }
@@ -302,6 +317,29 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
             }
         });
 
+    }
+
+    private void createDirectoryAndSaveFile(Bitmap imageToSave, String fileName) {
+
+        File direct = new File(Environment.getExternalStorageDirectory() + "/GatherAround");
+
+        if (!direct.exists()) {
+            File wallpaperDirectory = new File("/storage/emulated/0/Pictures/GatherAround/");
+            wallpaperDirectory.mkdirs();
+        }
+
+        File file = new File(new File("/storage/emulated/0/Pictures/GatherAround/"), fileName);
+        if (file.exists())
+            file.delete();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            imageToSave.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

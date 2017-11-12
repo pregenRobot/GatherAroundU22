@@ -70,8 +70,13 @@ public class MyInfoActivity extends AppCompatActivity {
                 firebase.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        userNameTextView.setText(dataSnapshot.child("mName").getValue().toString());
-                        profileTextView.setText(dataSnapshot.child("mName").getValue().toString());
+
+                        try {
+                            userNameTextView.setText(dataSnapshot.child("mName").getValue().toString());
+                            profileTextView.setText(dataSnapshot.child("mName").getValue().toString());
+                        }catch (NullPointerException e){
+                            Toast.makeText(MyInfoActivity.this,"Cannot Display info",Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     @Override

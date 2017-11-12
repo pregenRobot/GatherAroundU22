@@ -1,5 +1,6 @@
 package com.example.android.gatheraround;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -11,6 +12,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
@@ -54,11 +57,14 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.Algorithm;
 import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm;
 import com.example.android.gatheraround.Calculations;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 
 /**
  * Created by tamimazmain on 2017/11/01.
@@ -67,22 +73,22 @@ import java.util.Calendar;
 public class MapFragmenttab extends Fragment {
     View rootView;
 
+
+
     MapView mMapView;
     public static GoogleMap mMap;
     EventDate eventDate;
     Calendar calendar = Calendar.getInstance();
     ClusterManager<EventMarker> mClusterManager;
     private Algorithm<EventMarker> clusterManagerAlgorithm;
-    ArrayList<Events> receivedEvents;
+    public static ArrayList<Events> receivedEvents;
     Calculations calculations = new Calculations();
 
-    Button eventListButton;
-    LinearLayoutManager llm;
 
     DatabaseHelper eventsDBHelper;
+    float down = 0;
 
-
-    private BottomSheetBehavior bottomSheetBehavior;
+    public static BottomSheetBehavior bottomSheetBehavior;
 
     public static TextView eventNamebot;
     public static TextView eventDatebot;
@@ -95,6 +101,10 @@ public class MapFragmenttab extends Fragment {
 
     public static View maincontent;
 
+    int width;
+    int height;
+
+    Events thisevent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -103,6 +113,8 @@ public class MapFragmenttab extends Fragment {
 
         bottomSheet = getActivity().findViewById(R.id.mapfragbottomsheet);
         maincontent = getActivity().findViewById(R.id.container);
+
+
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         bottomSheetBehavior.setHideable(true);
@@ -218,7 +230,7 @@ public class MapFragmenttab extends Fragment {
                 }
 
 //                searchFunctionality(receivedEvents);
-//                scanFunctionality();
+
                 clusterItemFunctionality();
                 mClusterManager.setRenderer(new OwnIconRendered(getContext(), mMap, mClusterManager));
                 Log.v("serverevents",receivedEvents.toString());
@@ -249,6 +261,46 @@ public class MapFragmenttab extends Fragment {
 
                 bottomSheet.getLayoutParams().height = maincontent.getHeight();
                 bottomSheetBehavior.setPeekHeight(peekheight);
+                width = mapfeed.scanButton.getWidth();
+                height = mapfeed.scanButton.getHeight();
+
+
+
+                bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+                    @Override
+                    public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                        if (BottomSheetBehavior.STATE_DRAGGING == newState) {
+
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //Do something after 100ms
+                                    if(down > 0) {
+                                        mapfeed.follow.setVisibility(View.VISIBLE);
+                                        mapfeed.scanButton.animate().scaleX(0).scaleY(0).setDuration(300).start();
+                                        mapfeed.follow.animate().scaleX(1).scaleY(1).setDuration(300).start();
+                                    }
+                                }
+                            }, 100);
+                        } else if (BottomSheetBehavior.STATE_COLLAPSED == newState) {
+                            mapfeed.scanButton.animate().scaleX(1).scaleY(1).setDuration(300).start();
+                            mapfeed.follow.animate().scaleX(0).scaleY(0).setDuration(300).start();
+                            mapfeed.follow.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                        if(slideOffset > 0){
+                            down = 1;
+                        }else if (slideOffset < 0){
+                            down = -1;
+                        }else {
+                            down = 0;
+                        }
+                    }
+                });
 
             }
             @Override
@@ -703,56 +755,24 @@ public class MapFragmenttab extends Fragment {
         eventLocationbot.setText(nowevents.getLocationName());
         eventSummarybot.setText(nowevents.getEventSummary());
         eventfollowersbot.setText(nowevents.getParticipants()+"");
-    }
 
-    public void dialogCreator(Events events){
-
-        final Events nowEvents = events;
-        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
-        View mView = getActivity().getLayoutInflater().inflate(R.layout.markerdialog,null);
-
-        mBuilder.setView(mView);
-        final AlertDialog dialog = mBuilder.create();
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
-        summaryText.setMovementMethod(new ScrollingMovementMethod());
-        summaryText.setText(nowEvents.getEventSummary());
-        TextView nameText = mView.findViewById(R.id.eventNameMark);
-        nameText.setText(nowEvents.getName());
-        TextView dateText = mView.findViewById(R.id.eventDateMark);
-        try{
-            Log.v("THisistotaly","Ok!");
-        }catch (NullPointerException n){
-            Log.v("THISistotaly","Not Ok!");
-        }
-        String[] dateandTime = calculations.concatenate(nowEvents.getDate(),false,false);
-        dateText.setText(dateandTime[0]);
-        TextView timeText = mView.findViewById(R.id.eventTimeMark);
-        timeText.setText(dateandTime[1]);
-        TextView locationText = mView.findViewById(R.id.eventLocationMark);
-        locationText.setText(nowEvents.getLocationName());
-        TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
-        participantText.setText(nowEvents.getParticipants()+"");
-        FloatingActionButton followButton = mView.findViewById(R.id.follow);
-
-        followButton.setOnClickListener(new View.OnClickListener() {
+        mapfeed.follow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                boolean insertData = eventsDBHelper.addParticipant(nowEvents);
-//                if (insertData) {
-//
-//                    mapFragment.getMapAsync(MainActivity.this);
-//                    dialog.dismiss();
-//                    Toast.makeText(MainActivity.this,R.string.addedParticipants,Toast.LENGTH_SHORT).show();
-//                    Intent intent = new Intent(MainActivity.this,MainActivity.class);
-//                    startActivity(intent);
-//                } else {
-//                    Toast.makeText(MainActivity.this,R.string.event_exists,Toast.LENGTH_SHORT).show();
-//                }
+                boolean insertData = eventsDBHelper.addParticipant(nowevents);
+
+                if (insertData) {
+                    Toast.makeText(getContext(),R.string.addedParticipants,Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getContext(),mapfeed.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getContext(),R.string.event_exists,Toast.LENGTH_SHORT).show();
+                }
             }
         });
-        dialog.show();
     }
+
+
     private void setList(ArrayList<Events> events){
 
         final RecyclerView twitfeed = (RecyclerView) rootView.findViewById(R.id.defaultscroller);
@@ -772,4 +792,5 @@ public class MapFragmenttab extends Fragment {
         }
 
     }
+
 }

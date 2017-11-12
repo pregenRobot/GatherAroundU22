@@ -235,6 +235,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //    public void addNewLogin(String userId, String loginId){
 //
 //    }
+    public int checkoutID(String findString){
+
+        int returner =  0;
+
+        Cursor mCursor = getAllEvents();
+
+        for(mCursor.moveToFirst(); !mCursor.isAfterLast(); mCursor.moveToNext()) {
+            // The Cursor is now set to the right position
+
+            if(mCursor.getString(mCursor.getColumnIndex(COL_GLOBALID)).equals(findString)){
+                returner = mCursor.getInt(mCursor.getColumnIndex(COL_LOCALID));
+            }
+
+        }
+
+        return  returner;
+    }
 
 
 }
