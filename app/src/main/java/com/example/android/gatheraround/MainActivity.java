@@ -35,6 +35,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.SparseIntArray;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -1002,5 +1003,18 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
         dialog.show();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+
+            moveTaskToBack(true);
+
+            return super.onKeyDown(keyCode, event);
+
+        }else{
+            return false;
+        }
     }
 }

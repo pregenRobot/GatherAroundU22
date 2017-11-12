@@ -6,8 +6,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.example.android.gatheraround.DataSenderToServer;
 import com.example.android.gatheraround.custom_classes.EventDate;
+import com.example.android.gatheraround.custom_classes.UserProfile;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.example.android.gatheraround.custom_classes.Events;
@@ -31,6 +34,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_CATEGORY = "CATEGORY";
     public static final String COL_GLOBALID = "GLOBALID";
     // id for identifying on the server
+
+    public static final String USERS_TABLE_NAME = "users_table";
+    public static final String COL_USER_NAME = "USER_NAME";
+    public static final String COL_USER_ID = "USER_ID";
+
     public static final String COL_DOESEXISTSONSERVER = "DOESEXISTSONSERVER";
     public static final int BOOLEAN_TRUE = 0;
     public static final int BOOLEAN_FALSE = 1;
@@ -56,7 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String createTable = "CREATE TABLE " + TABLE_NAME + " (" +
+        String createTableSQL = "CREATE TABLE " + TABLE_NAME + " (" +
                 COL_LOCALID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COL_NAME + " TEXT," +
                 COL_DATE + " TEXT," +
@@ -67,16 +75,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COL_CATEGORY + " TEXT," +
                 COL_GLOBALID + " TEXT," +
                 COL_DOESEXISTSONSERVER + " INTEGER)";
-        sqLiteDatabase.execSQL(createTable);
-        Log.v("DatabaseHelper","Database Created!");
+        sqLiteDatabase.execSQL(createTableSQL);
 
 //        String createUserInfoTable = "CREATE TABLE " + USER_INFO_TABLE + " (" + COL_USER_INFO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COL_USERID + " TEXT, " + COL_LOGINID + " TEXT" + COL_LOGIN_DATE + " INTEGER)";
+
+        String createUsersTableSQL = "CREATE TABLE " + USERS_TABLE_NAME + " (" + COL_USER_ID + " TEXT," + COL_USER_NAME + " TEXT)";
+        sqLiteDatabase.execSQL(createUsersTableSQL);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        db.execSQL("DROP IF TABLE EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
 
         if (oldVersion == 1 && newVersion == 2){
@@ -229,6 +239,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         database.update(TABLE_NAME, contentValues, COL_GLOBALID + "=?", new String[]{key});
+    }
+
+    public boolean addNewUserToUsers(UserProfile profile){
+
+        boolean doesExist = false;
+
+        for (UserProfile profileFromDatabase : getAllUsers()){
+            if (profileFromDatabase.getUid().equals(profile.getUid())){
+                doesExist = true;
+            }
+        }
+
+        if (!doesExist){
+            SQLiteDatabase database = this.getWritableDatabase();
+            ContentValues contentValues = new ContentValues();
+
+            contentValues.put(COL_USER_ID, profile.getUid());
+            contentValues.put(COL_USER_NAME, profile.getName());
+
+            database.insert(USERS_TABLE_NAME, null, contentValues);
+        }
+
+        return doesExist;
+    }
+
+    public ArrayList<UserProfile> getAllUsers(){
+
+        ArrayList<UserProfile> result = new ArrayList<>();
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        Cursor cursor = database.query(USERS_TABLE_NAME, new String[]{COL_USER_ID, COL_USER_NAME}, null, null, null, null, null);
+
+        while(cursor.moveToNext()){
+            UserProfile profile = new UserProfile(cursor.getString(cursor.getColumnIndex(COL_USER_ID)),"NotPublic", cursor.getString(cursor.getColumnIndex(COL_USER_NAME)));
+            result.add(profile);
+        }
+
+        cursor.close();
+
+        return result;
     }
 
     // TODO: 2017/10/15 delete the following if it is not used

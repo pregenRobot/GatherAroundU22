@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * Created by tamimazmain on 2017/11/01.
  */
 
-public class FeedFragmenttab extends Fragment {
+public class FeedFragmentTab extends Fragment {
 
     DatabaseHelper eventsDBHelper;
     Cursor eventCursor;
@@ -66,8 +66,7 @@ public class FeedFragmenttab extends Fragment {
                     eventCursor.getString(eventCursor.getColumnIndex(DatabaseHelper.COL_CATEGORY)),
                     eventCursor.getString(eventCursor.getColumnIndex(DatabaseHelper.COL_GLOBALID)),
                     true
-                    ));
-
+            ));
         }
 
 

@@ -28,8 +28,10 @@ public class MyInfoActivity extends AppCompatActivity {
     CircularImageView profileImageView;
 
     boolean isMyProfile;
+    String userId;
 
     public static final String isMyProfile_Intent = "isMyProfile";
+    public static final String userId_Intent = "userId";
 
     FirebaseStorage storage = FirebaseStorage.getInstance();
 
@@ -47,6 +49,10 @@ public class MyInfoActivity extends AppCompatActivity {
 
         isMyProfile = getIntent().getBooleanExtra(isMyProfile_Intent, true);
 
+        if (!isMyProfile){
+            userId = getIntent().getStringExtra(userId_Intent);
+        }
+
         if (isMyProfile) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if(user == null){
@@ -63,8 +69,8 @@ public class MyInfoActivity extends AppCompatActivity {
                 userNameTextView.setTextSize((float)(width/20));
                 profileTextView.setTextSize((float)(width/20));
 
-                profileImageView.setMaxWidth(width/10);
-                profileImageView.setMaxHeight(width/10);
+//                profileImageView.setMaxWidth(width/10);
+//                profileImageView.setMaxHeight(width/10);
 
                 final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_PROFILE_URL + "/" + uid);
                 firebase.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -84,7 +90,6 @@ public class MyInfoActivity extends AppCompatActivity {
 
                     }
                 });
-
                 StorageReference imageReference = storage.getReference().child(DataSenderToServer.IMAGE_REFERENCE_TITLE + "/" + uid);
 
                 Glide.with(this).using(new FirebaseImageLoader()).load(imageReference).into(profileImageView);

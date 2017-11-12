@@ -735,6 +735,7 @@ public class MapFragmenttab extends Fragment {
         );
         mMap.setOnMarkerClickListener(mClusterManager);
     }
+
     public void bottomSheetCreator( Events events){
         final Events nowevents = events;
 
@@ -773,6 +774,7 @@ public class MapFragmenttab extends Fragment {
     }
 
 
+
     private void setList(ArrayList<Events> events){
 
         final RecyclerView twitfeed = (RecyclerView) rootView.findViewById(R.id.defaultscroller);
@@ -783,6 +785,7 @@ public class MapFragmenttab extends Fragment {
         twitfeed.setItemAnimator(new DefaultItemAnimator());
         twitfeed.setAdapter(scrollFeedAdapter);
     }
+
     public void internetStatus(){
         ConnectivityManager connectivityManager = (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();

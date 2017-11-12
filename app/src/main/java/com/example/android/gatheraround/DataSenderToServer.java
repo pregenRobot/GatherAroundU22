@@ -67,19 +67,19 @@ public class DataSenderToServer{
     }
 
     // send profile to server
-    public void addNewUser(String userId, UserProfile profile, Uri imageUri){
+    public void addNewUser(UserProfile profile, Uri imageUri){
 
         if (imageUri != null){
 //            Firebase firebase = new Firebase(FIREBASE_PROFILE_URL);
 //            firebase.child(userId).setValue(profile);
 
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-            databaseReference.child(USERS_REFERENCE_TITLE + "/" + userId).setValue(profile);
+            databaseReference.child(USERS_REFERENCE_TITLE + "/" + profile.getUid()).setValue(profile);
 
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference reference = storage.getReference();
             StorageReference imageStorageReference = reference.child(IMAGE_REFERENCE_TITLE);
-            StorageReference imageReference = imageStorageReference.child(userId);
+            StorageReference imageReference = imageStorageReference.child(profile.getUid());
 
             UploadTask uploadTask = imageReference.putFile(imageUri);
         }

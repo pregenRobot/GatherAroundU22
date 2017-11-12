@@ -132,6 +132,8 @@ public class LoginActivity extends AppCompatActivity {
         builder = (SpannableStringBuilder)loginPasswordEditText.getText();
         final String password = builder.toString();
 
+        Toast.makeText(this, "Login on going", Toast.LENGTH_SHORT).show();
+
         if(!email.isEmpty() && !password.isEmpty()){
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
@@ -162,38 +164,44 @@ public class LoginActivity extends AppCompatActivity {
         final String name = builder.toString();
 
         if (!email.isEmpty() && !password.isEmpty() && !name.isEmpty()) {
-            if (password.equals(confirm)) {
-                if (!(password.length() < 6)) {
-                    auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(LoginActivity.this, "Successfully created a new account", Toast.LENGTH_SHORT).show();
+            if(!(profileUri == null)){
+                if (password.equals(confirm)) {
+                    if (!(password.length() < 6)) {
+                        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(LoginActivity.this, "Successfully created a new account", Toast.LENGTH_SHORT).show();
 
-                                profile = new UserProfile(email, name);
-                                DataSenderToServer sender = new DataSenderToServer();
+                                    DataSenderToServer sender = new DataSenderToServer();
 
+                                    FirebaseUser user = auth.getCurrentUser();
 
-                                FirebaseUser user = auth.getCurrentUser();
+                                    profile = new UserProfile(user.getUid(), email, name);
 
-                                sender.addNewUser(user.getUid(), profile, profileUri);
+                                    sender.addNewUser(profile, profileUri);
 
-                                Intent intent = new Intent();
-                                intent.setClass(LoginActivity.this, InitialActivity.class);
-                                startActivity(intent);
-                            } else {
-                                Toast.makeText(LoginActivity.this, "Failed created a new account", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent();
+                                    intent.setClass(LoginActivity.this, InitialActivity.class);
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(LoginActivity.this, "Failed created a new account", Toast.LENGTH_SHORT).show();
 
-                                Log.i("Failed", "Failed:" + task.getException().getMessage());
+                                    Log.i("Failed", "Failed:" + task.getException().getMessage());
+                                }
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.passwordLengthErrorMessage_text), Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.passwordLengthErrorMessage_text), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.passwordConfirmationNoMatchMessage_text), Toast.LENGTH_SHORT).show();
                 }
-            } else {
-                Toast.makeText(LoginActivity.this, getResources().getString(R.string.passwordConfirmationNoMatchMessage_text), Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(this, "Please set a profile image", Toast.LENGTH_SHORT).show();
             }
+        }else{
+            Toast.makeText(this, "Please fill up the form", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -218,6 +226,7 @@ public class LoginActivity extends AppCompatActivity {
 //                .setGuidelines(CropImageView.Guidelines.ON)
                 .setCropShape(CropImageView.CropShape.RECTANGLE)
                 .setAutoZoomEnabled(false)
+                .setMaxCropResultSize(100,100)
                 .start(this);
     }
 

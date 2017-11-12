@@ -99,11 +99,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
     }
 
 
-    public FeedAdapter(List<Events> feedlistinput, Context Context) {
-        this.feedlist = feedlistinput;
+    public FeedAdapter(List<Events> feedListInput, Context Context) {
+        this.feedlist = feedListInput;
         this.mContext = Context;
         myEvents  = new MyEventsDatabaseHelper(mContext);
-        }
+    }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -346,6 +346,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
     public int getItemCount() {
         return feedlist.size();
     }
+
     private void makeSummaryDialog(String info){
         LayoutInflater mLayoutInflater;
         mLayoutInflater = LayoutInflater.from(mContext);
@@ -362,6 +363,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }
+
     public void bottomSheetCreator( Events events){
         final Events nowevents = events;
 
@@ -386,6 +388,5 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
         }else if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         }
-
     }
 }

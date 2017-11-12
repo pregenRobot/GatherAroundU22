@@ -107,6 +107,8 @@ public class InitialActivity extends AppCompatActivity {
                             intent.putExtras(bundle);
 
                             startActivity(intent);
+
+                            InitialActivity.this.finish();
                         }
                         @Override
                         public void onCancelled(FirebaseError firebaseError) {

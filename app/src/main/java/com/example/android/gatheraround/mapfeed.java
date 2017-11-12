@@ -60,8 +60,8 @@ public class mapfeed extends AppCompatActivity {
         //temp
 
 //        if(datafromServer != null){
-            testparcelstring = datafromServer.getStringArrayList("IdsonServer");
-            testparcelevents = datafromServer.getParcelableArrayList("EventsOnServer");
+//            testparcelstring = datafromServer.getStringArrayList("IdsonServer");
+//            testparcelevents = datafromServer.getParcelableArrayList("EventsOnServer");
 //
 //        }
         for(Events x: testparcelevents){
@@ -132,7 +132,7 @@ public class mapfeed extends AppCompatActivity {
 
         adapter.addFragment(new ContactFragmentTab(),"Contacts");
         adapter.addFragment(new MapFragmenttab(),"Map");
-        adapter.addFragment(new FeedFragmenttab(),"Drawer");
+        adapter.addFragment(new FeedFragmentTab(),"Drawer");
 
 
         pager.setAdapter(adapter);
