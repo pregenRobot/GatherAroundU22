@@ -34,6 +34,11 @@ public class LoginActivity extends AppCompatActivity {
     EditText loginEmailEditText, loginPasswordEditText, emailEditText, passwordEditText, confirmPasswordEditText, signUpNameEditText;
     ImageView selectImageButton;
 
+    View loginbackview;
+    View signinfaceview;
+    View logincoordinate;
+    Button switcher;
+
     CropImageView cropImageView;
 
     boolean isImageSelected;
@@ -49,6 +54,31 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        loginbackview = findViewById(R.id.loginback);
+        signinfaceview = findViewById(R.id.signface);
+        logincoordinate = findViewById(R.id.cordinateparent);
+
+        switcher = findViewById(R.id.switcher);
+
+        switcher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FlipAnimation flipAnimation;
+                if(loginbackview.getVisibility() == View.GONE){
+                    flipAnimation = new FlipAnimation(loginbackview,signinfaceview);
+                    flipAnimation.reverse();
+                    logincoordinate.startAnimation(flipAnimation);
+                    switcher.setText("Create a new account?");
+                }else if(signinfaceview.getVisibility() == View.GONE){
+                    flipAnimation = new FlipAnimation(signinfaceview,loginbackview);
+                    flipAnimation.reverse();
+                    logincoordinate.startAnimation(flipAnimation);
+                    switcher.setText("Already have an account?");
+                }
+            }
+        });
+
 
         auth = FirebaseAuth.getInstance();
 
@@ -168,7 +198,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void setBlankImageToSelectImage(){
-        selectImageButton.setImageResource(R.drawable.button_add_image);
+        selectImageButton.setImageResource(R.drawable.selectprofile);
         isImageSelected = false;
     }
 

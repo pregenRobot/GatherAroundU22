@@ -387,6 +387,5 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         }
 
-
     }
 }
