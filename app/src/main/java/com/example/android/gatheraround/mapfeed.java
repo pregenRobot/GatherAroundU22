@@ -52,6 +52,22 @@ public class mapfeed extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        ArrayList<String> testparcelstring = new ArrayList<>();
+        ArrayList<Events> testparcelevents = new ArrayList<>();
+
+        Bundle datafromServer = savedInstanceState;
+        //temp
+
+//        if(datafromServer != null){
+            testparcelstring = datafromServer.getStringArrayList("IdsonServer");
+            testparcelevents = datafromServer.getParcelableArrayList("EventsOnServer");
+//
+//        }
+        for(Events x: testparcelevents){
+            Log.v("myparcel",x.toString());
+        }
+
         scanButton = findViewById(R.id.scanMain1);
         follow = findViewById(R.id.follow1);
 
@@ -96,46 +112,6 @@ public class mapfeed extends AppCompatActivity {
                     assert newEvent != null;
                     String testString = "gatheraround/"+newEvent.getGlobalId();
                     if(testString.equals(result.getContents())){
-//                        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mapfeed.this);
-//                        View mView = getLayoutInflater().inflate(R.layout.markerdialog,null);
-//                        mBuilder.setView(mView);
-//                        final AlertDialog dialog = mBuilder.create();
-//                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//                        TextView summaryText = mView.findViewById(R.id.summaryTextBrowser);
-//                        summaryText.setMovementMethod(new ScrollingMovementMethod());
-//                        summaryText.setText(newEvent.getEventSummary());
-//                        TextView nameText = mView.findViewById(R.id.eventNameMark);
-//                        nameText.setText(newEvent.getName());
-//                        TextView dateText = mView.findViewById(R.id.eventDateMark);
-//                        String[] dateandTime = calculations.concatenate(newEvent.getDate(),false,false);
-//                        dateText.setText(dateandTime[0]);
-//                        TextView timeText = mView.findViewById(R.id.eventTimeMark);
-//                        timeText.setText(dateandTime[1]);
-//                        TextView locationText = mView.findViewById(R.id.eventLocationMark);
-//                        locationText.setText(newEvent.getLocationName());
-//                        TextView participantText = mView.findViewById(R.id.eventParticipantsMark);
-//                        participantText.setText(newEvent.getParticipants()+"");
-//                        FloatingActionButton followButton =  mView.findViewById(R.id.follow);
-//
-//                        followButton.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//
-////                                boolean insertData = eventsDBHelper.addParticipant(newEvent);
-////
-////                                if (insertData) {
-////                                    dialog.dismiss();
-//////                                    mapFragment.getMapAsync(MainActivity.this);
-////                                    Toast.makeText(getContext(),R.string.addedParticipants,Toast.LENGTH_SHORT).show();
-////                                    Intent intent = new Intent(getContext(),mapfeed.class);
-////                                    startActivity(intent);
-////                                } else {
-////                                    Toast.makeText(getContext(),R.string.event_exists,Toast.LENGTH_SHORT).show();
-////                                }
-//                            }
-//                        });
-//                        dialog.show();
-//                        gatherAroundCode = true;
                         bottomSheetCreator(newEvent);
                     }
                 }

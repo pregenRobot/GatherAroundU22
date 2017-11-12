@@ -68,7 +68,6 @@ public class FeedFragmenttab extends Fragment {
                     true
                     ));
 
-
         }
 
 

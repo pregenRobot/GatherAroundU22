@@ -99,17 +99,12 @@ public class InitialActivity extends AppCompatActivity {
                             }
                             Log.v("Firebase","Retreived Information");
 
-//                            Fragment mapFragment = new MapFragmenttab();
-//
-//                            Bundle bundle = new Bundle();
-//                            bundle.putParcelableArrayList("EventsOnServer",eventsonServer);
-//                            bundle.putStringArrayList("IdsonServer",idsOnServer);
-//
-//                            mapFragment.setArguments(bundle);
-
-//                            Intent intent = new Intent(InitialActivity.this, mapfeed.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putParcelableArrayList("EventsOnServer",eventsonServer);
+                            bundle.putStringArrayList("IdsonServer",idsOnServer);
 
                             Intent intent = new Intent(InitialActivity.this, mapfeed.class);
+                            intent.putExtras(bundle);
 
                             startActivity(intent);
                         }

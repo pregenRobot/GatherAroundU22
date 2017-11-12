@@ -782,7 +782,6 @@ public class MapFragmenttab extends Fragment {
         twitfeed.setLayoutManager(layoutManager);
         twitfeed.setItemAnimator(new DefaultItemAnimator());
         twitfeed.setAdapter(scrollFeedAdapter);
-
     }
     public void internetStatus(){
         ConnectivityManager connectivityManager = (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
