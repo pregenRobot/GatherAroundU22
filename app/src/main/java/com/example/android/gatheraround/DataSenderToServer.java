@@ -23,6 +23,8 @@ public class DataSenderToServer{
 
     public static final String USERS_REFERENCE_TITLE = "users";
     public static final String IMAGE_REFERENCE_TITLE = "images";
+    public static final String IMAGE_REFERENCE_PROFILE = "profile";
+    public static final String IMAGE_REFERENCE_BACKGROUND = "background";
 
     public String pushToServer(Events newEvent){
 
@@ -67,21 +69,20 @@ public class DataSenderToServer{
     }
 
     // send profile to server
-    public void addNewUser(UserProfile profile, Uri imageUri){
+    public void addNewUser(UserProfile profile, Uri profileImageUri, Uri backgroundImageUri){
 
-        if (imageUri != null){
-//            Firebase firebase = new Firebase(FIREBASE_PROFILE_URL);
-//            firebase.child(userId).setValue(profile);
+        //Upload profile
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child(USERS_REFERENCE_TITLE + "/" + profile.getUid()).setValue(profile);
 
-            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-            databaseReference.child(USERS_REFERENCE_TITLE + "/" + profile.getUid()).setValue(profile);
-
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference reference = storage.getReference();
-            StorageReference imageStorageReference = reference.child(IMAGE_REFERENCE_TITLE);
-            StorageReference imageReference = imageStorageReference.child(profile.getUid());
-
-            UploadTask uploadTask = imageReference.putFile(imageUri);
-        }
+        //upload image
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference reference = storage.getReference();
+        //for profile
+        StorageReference imageReference = reference.child(IMAGE_REFERENCE_TITLE).child(profile.getUid()).child(IMAGE_REFERENCE_PROFILE);
+        imageReference.putFile(profileImageUri);
+        //for background
+        imageReference = reference.child(IMAGE_REFERENCE_TITLE).child(profile.getUid()).child(IMAGE_REFERENCE_BACKGROUND);
+        imageReference.putFile(backgroundImageUri);
     }
 }

@@ -10,12 +10,14 @@ public class UserProfileForFragment {
 
     public String mUid;
     public String mUserName;
-    public Bitmap bitmap;
+    public Bitmap mProfileImage;
+    public String mProfileText;
 
-    public UserProfileForFragment(String uid, String userName, Bitmap profileImage){
+    public UserProfileForFragment(String uid, String userName, Bitmap profileImage, String profileText){
         mUid = uid;
         mUserName = userName;
-        bitmap = profileImage;
+        mProfileImage = profileImage;
+        mProfileText = profileText;
     }
 
     public String getUid(){
@@ -27,6 +29,10 @@ public class UserProfileForFragment {
     }
 
     public Bitmap getBitmap(){
-        return bitmap;
+        return mProfileImage;
+    }
+
+    public String getProfileText(){
+        return mProfileText;
     }
 }

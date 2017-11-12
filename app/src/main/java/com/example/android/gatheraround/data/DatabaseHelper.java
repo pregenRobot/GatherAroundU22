@@ -38,6 +38,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String USERS_TABLE_NAME = "users_table";
     public static final String COL_USER_NAME = "USER_NAME";
     public static final String COL_USER_ID = "USER_ID";
+    public static final String COL_USER_PROFILE_TEXT = "PROFILE_TEXT";
 
     public static final String COL_DOESEXISTSONSERVER = "DOESEXISTSONSERVER";
     public static final int BOOLEAN_TRUE = 0;
@@ -79,7 +80,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 //        String createUserInfoTable = "CREATE TABLE " + USER_INFO_TABLE + " (" + COL_USER_INFO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COL_USERID + " TEXT, " + COL_LOGINID + " TEXT" + COL_LOGIN_DATE + " INTEGER)";
 
-        String createUsersTableSQL = "CREATE TABLE " + USERS_TABLE_NAME + " (" + COL_USER_ID + " TEXT," + COL_USER_NAME + " TEXT)";
+        String createUsersTableSQL = "CREATE TABLE " + USERS_TABLE_NAME + " (" + COL_USER_ID + " TEXT," + COL_USER_NAME + " TEXT," + COL_USER_PROFILE_TEXT + " TEXT)";
         sqLiteDatabase.execSQL(createUsersTableSQL);
     }
 
@@ -241,7 +242,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         database.update(TABLE_NAME, contentValues, COL_GLOBALID + "=?", new String[]{key});
     }
 
-    public boolean addNewUserToUsers(UserProfile profile){
+    public boolean addNewUserToContactList(UserProfile profile){
 
         boolean doesExist = false;
 
@@ -273,7 +274,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = database.query(USERS_TABLE_NAME, new String[]{COL_USER_ID, COL_USER_NAME}, null, null, null, null, null);
 
         while(cursor.moveToNext()){
-            UserProfile profile = new UserProfile(cursor.getString(cursor.getColumnIndex(COL_USER_ID)),"NotPublic", cursor.getString(cursor.getColumnIndex(COL_USER_NAME)));
+            UserProfile profile = new UserProfile(cursor.getString(cursor.getColumnIndex(COL_USER_ID)),"NotPublic", cursor.getString(cursor.getColumnIndex(COL_USER_NAME)), cursor.getString(cursor.getColumnIndex(COL_USER_PROFILE_TEXT)));
             result.add(profile);
         }
 
@@ -282,10 +283,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    // TODO: 2017/10/15 delete the following if it is not used
-//    public void addNewLogin(String userId, String loginId){
-//
-//    }
     public int checkoutID(String findString){
 
         int returner =  0;
@@ -303,6 +300,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return  returner;
     }
-
-
 }

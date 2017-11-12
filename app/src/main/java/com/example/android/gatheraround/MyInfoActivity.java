@@ -1,15 +1,19 @@
 package com.example.android.gatheraround;
 
+import android.content.Intent;
 import android.graphics.Point;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.android.gatheraround.data.DatabaseHelper;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -26,6 +30,8 @@ public class MyInfoActivity extends AppCompatActivity {
 
     TextView userNameTextView, profileTextView;
     CircularImageView profileImageView;
+    ImageView backgroundImageView;
+    FloatingActionButton addToContactButton;
 
     boolean isMyProfile;
     String userId;
@@ -46,54 +52,89 @@ public class MyInfoActivity extends AppCompatActivity {
         profileTextView = (TextView)findViewById(R.id.profileTextView);
 
         profileImageView = findViewById(R.id.profileImageView);
+        backgroundImageView = findViewById(R.id.backgroundImageView);
+
+        addToContactButton = findViewById(R.id.addToContactButton);
 
         isMyProfile = getIntent().getBooleanExtra(isMyProfile_Intent, true);
 
         if (!isMyProfile){
             userId = getIntent().getStringExtra(userId_Intent);
-        }
 
-        if (isMyProfile) {
+            showProfile(userId);
+
+            addToContactButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DatabaseHelper helper = new DatabaseHelper(MyInfoActivity.this);
+
+                    DataGetterFromServer getter = new DataGetterFromServer();
+
+                    boolean doesExist = helper.addNewUserToContactList(getter.getProfileFromUid(userId));
+
+                    if (!doesExist){
+                        Toast.makeText(MyInfoActivity.this, getResources().getString(R.string.contactsAlreadyExists), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }else{
+
+            addToContactButton.setVisibility(View.INVISIBLE);
+
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if(user == null){
+
                 Toast.makeText(MyInfoActivity.this, "Not signed in.", Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent();
+                intent.setClass(MyInfoActivity.this, LoginActivity.class);
+                startActivity(intent);
             }else{
-                String uid = user.getUid();
 
-                WindowManager manager = getWindowManager();
-                Display display = manager.getDefaultDisplay();
-                Point size = new Point();
-                display.getRealSize(size);
-                int width = size.x;
+                userId = user.getUid();
 
-                userNameTextView.setTextSize((float)(width/20));
-                profileTextView.setTextSize((float)(width/20));
+                showProfile(userId);
+            }
+        }
+    }
+
+    public void showProfile(String uid){
+
+        WindowManager manager = getWindowManager();
+        Display display = manager.getDefaultDisplay();
+        Point size = new Point();
+        display.getRealSize(size);
+        int width = size.x;
+
+        userNameTextView.setTextSize((float)(width/20));
+        profileTextView.setTextSize((float)(width/20));
 
 //                profileImageView.setMaxWidth(width/10);
 //                profileImageView.setMaxHeight(width/10);
 
-                final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_PROFILE_URL + "/" + uid);
-                firebase.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+        final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_PROFILE_URL).child(uid);
+        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        try {
-                            userNameTextView.setText(dataSnapshot.child("mName").getValue().toString());
-                            profileTextView.setText(dataSnapshot.child("mName").getValue().toString());
-                        }catch (NullPointerException e){
-                            Toast.makeText(MyInfoActivity.this,"Cannot Display info",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-
-                    }
-                });
-                StorageReference imageReference = storage.getReference().child(DataSenderToServer.IMAGE_REFERENCE_TITLE + "/" + uid);
-
-                Glide.with(this).using(new FirebaseImageLoader()).load(imageReference).into(profileImageView);
+                try {
+                    userNameTextView.setText(dataSnapshot.child("mName").getValue().toString());
+                    profileTextView.setText(dataSnapshot.child("mProfileText").getValue().toString());
+                }catch (NullPointerException e){
+                    Toast.makeText(MyInfoActivity.this,"Cannot Display info",Toast.LENGTH_SHORT).show();
+                }
             }
-        }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+        StorageReference imageReference = storage.getReference().child(DataSenderToServer.IMAGE_REFERENCE_TITLE).child(uid).child(DataSenderToServer.IMAGE_REFERENCE_PROFILE);
+        Glide.with(this).using(new FirebaseImageLoader()).load(imageReference).into(profileImageView);
+
+        imageReference = storage.getReference().child(DataSenderToServer.IMAGE_REFERENCE_TITLE).child(uid).child(DataSenderToServer.IMAGE_REFERENCE_BACKGROUND);
+        Glide.with(this).using(new FirebaseImageLoader()).load(imageReference).into(backgroundImageView);
     }
 }

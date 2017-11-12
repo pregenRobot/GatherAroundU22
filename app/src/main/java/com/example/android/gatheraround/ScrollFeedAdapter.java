@@ -7,12 +7,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.android.gatheraround.custom_classes.Events;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 

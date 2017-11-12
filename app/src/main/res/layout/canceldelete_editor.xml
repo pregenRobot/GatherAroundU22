@@ -3,6 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="300dp">
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -14,6 +15,7 @@
         android:textSize="24sp"
         android:padding="18dp"
         />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -28,6 +30,7 @@
         android:textStyle="bold"
         android:padding="18dp"
         />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -42,6 +45,7 @@
         android:textStyle="bold"
         android:padding="18dp"
         />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -56,6 +60,5 @@
         android:textStyle="bold"
         android:padding="18dp"
         />
-
 
 </LinearLayout>

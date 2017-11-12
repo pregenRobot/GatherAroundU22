@@ -1,6 +1,5 @@
 package com.example.android.gatheraround;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -16,7 +15,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 
@@ -24,7 +22,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +31,6 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -56,15 +52,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.Algorithm;
 import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm;
-import com.example.android.gatheraround.Calculations;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 
 /**
  * Created by tamimazmain on 2017/11/01.
@@ -72,8 +62,6 @@ import java.util.Collection;
 
 public class MapFragmenttab extends Fragment {
     View rootView;
-
-
 
     MapView mMapView;
     public static GoogleMap mMap;
@@ -83,7 +71,6 @@ public class MapFragmenttab extends Fragment {
     private Algorithm<EventMarker> clusterManagerAlgorithm;
     public static ArrayList<Events> receivedEvents;
     Calculations calculations = new Calculations();
-
 
     DatabaseHelper eventsDBHelper;
     float down = 0;
@@ -106,6 +93,10 @@ public class MapFragmenttab extends Fragment {
 
     Events thisevent;
 
+    public void MapFragmenttab(){
+        //This is necessary, man, seriously.
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.tabmapfragment, container, false);
@@ -113,8 +104,6 @@ public class MapFragmenttab extends Fragment {
 
         bottomSheet = getActivity().findViewById(R.id.mapfragbottomsheet);
         maincontent = getActivity().findViewById(R.id.container);
-
-
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         bottomSheetBehavior.setHideable(true);
@@ -127,7 +116,6 @@ public class MapFragmenttab extends Fragment {
         eventLocationbot = (TextView) getActivity().findViewById(R.id.eventLocationMark);
         eventSummarybot = (TextView) getActivity().findViewById(R.id.summaryTextBrowser);
         eventfollowersbot = (TextView) getActivity().findViewById(R.id.eventParticipantsMark);
-
 
         eventsDBHelper = new DatabaseHelper(getContext());
 
@@ -263,8 +251,6 @@ public class MapFragmenttab extends Fragment {
                 bottomSheetBehavior.setPeekHeight(peekheight);
                 width = mapfeed.scanButton.getWidth();
                 height = mapfeed.scanButton.getHeight();
-
-
 
                 bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
                     @Override
@@ -772,8 +758,6 @@ public class MapFragmenttab extends Fragment {
             }
         });
     }
-
-
 
     private void setList(ArrayList<Events> events){
 

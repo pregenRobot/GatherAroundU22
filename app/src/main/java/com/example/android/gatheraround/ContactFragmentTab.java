@@ -68,7 +68,7 @@ public class ContactFragmentTab extends Fragment {
                         }
                     });
 
-            arrayList.add(new UserProfileForFragment(profile.getUid(), profile.getName(), bitmap));
+            arrayList.add(new UserProfileForFragment(profile.getUid(), profile.getName(), bitmap, profile.getProfileText()));
         }
 
         final RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.contactRecyclerView);
