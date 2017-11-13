@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/event_edittext"
+    android:orientation="vertical"
+    >
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:scrollbars="vertical"
+        android:background="@drawable/event_edittext2"
+        android:padding="18dp"
+        android:layout_margin="12dp"
+        android:hint="Message"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:id="@+id/messagecapsule"
+        />
+    <TextView
+        android:id="@+id/capsuletimesetter"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:gravity="center"
+        android:padding="@dimen/cardmargin"
+        android:text="Set a time limit"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:text="Send"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:id="@+id/sendcapsule"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:text="Cancel"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:id="@+id/cancelcapsule"
+            />
+    </LinearLayout>
+
+</LinearLayout>
