@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="300dp"
+    android:orientation="vertical"
+    android:background="@color/cardbackground2"
+    >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="What's on your mind?"
+        android:textSize="18sp"
+        android:background="@color/cardbackground"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Share your thoughts"
+        android:textSize="18sp"
+        android:background="@color/cardbackground2"
+        android:id="@+id/postcreator"
+
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Place a Capsule"
+        android:textSize="18sp"
+        android:background="@color/cardbackground2"
+        android:id="@+id/capsulecreator"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Share an event"
+        android:textSize="18sp"
+        android:background="@color/cardbackground2"
+        android:id="@+id/eventcreator"
+
+        />
+
+</LinearLayout>
