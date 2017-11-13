@@ -7,6 +7,22 @@
     >
 
     <EditText
+        android:id="@+id/event_location__name_edit"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="8dp"
+        android:layout_weight="1"
+        android:background="@drawable/event_edittext2"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:hint="@string/enter_location_name"
+        android:inputType="textCapWords"
+        android:padding="@dimen/cardmargin"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        />
+
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:id="@+id/postedittext"

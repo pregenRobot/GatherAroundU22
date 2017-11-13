@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.example.android.gatheraround.custom_classes.EventDate;
 
+import java.util.Calendar;
+
 
 /**
  * Created by tamimazmain on 2017/08/15.
@@ -153,4 +155,12 @@ class Calculations {
         return result;
     }
 
+    public EventDate getTime(){
+
+        Calendar calendar = Calendar.getInstance();
+
+        EventDate time = new EventDate(String.valueOf(calendar.get(Calendar.YEAR)), String.valueOf(calendar.get(Calendar.MONTH)), String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), String.valueOf(calendar.get(Calendar.HOUR)), String.valueOf(calendar.get(Calendar.MINUTE)), EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME);
+
+        return time;
+    }
 }
