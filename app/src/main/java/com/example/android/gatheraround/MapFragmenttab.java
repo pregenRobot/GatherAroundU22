@@ -325,10 +325,23 @@ public class MapFragmenttab extends Fragment {
                         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                         View selector = getActivity().getLayoutInflater().inflate(R.layout.chooser,null);
                         final Button selectevent = selector.findViewById(R.id.eventcreator);
+                        final Button selectpost = selector.findViewById(R.id.postcreator);
                         builder.setView(selector);
                         final AlertDialog build = builder.create();
                         build.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         build.show();
+
+                        selectpost.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+                                View mView = getActivity().getLayoutInflater().inflate(R.layout.addpost_dialog,null);
+                                mBuilder.setView(mView);
+                                final AlertDialog dialog = mBuilder.create();
+                                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                dialog.show();
+                            }
+                        });
 
                         selectevent.setOnClickListener(new View.OnClickListener() {
                             @Override
