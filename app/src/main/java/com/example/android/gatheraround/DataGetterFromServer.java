@@ -6,6 +6,7 @@ import android.util.Log;
 import com.example.android.gatheraround.custom_classes.EventDate;
 import com.example.android.gatheraround.custom_classes.EventMarker;
 import com.example.android.gatheraround.custom_classes.Events;
+import com.example.android.gatheraround.custom_classes.Post;
 import com.example.android.gatheraround.custom_classes.UserProfile;
 import com.example.android.gatheraround.data.DatabaseHelper;
 import com.firebase.client.DataSnapshot;
@@ -46,6 +47,50 @@ public class DataGetterFromServer {
         });
 
         return new UserProfile(uid, "Not public", name, profile);
+    }
+
+    public ArrayList<Post> getAllPosts(){
+
+        final ArrayList<Post> postsList = new ArrayList<>();
+
+        Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_POST_URL);
+        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+
+                    String uid = snapshot.child("posterUid").getValue().toString();
+                    String postContent = snapshot.child("postContent").getValue().toString();
+
+                    String year = snapshot.child("postDate").child("mYear").getValue().toString();
+                    String month = snapshot.child("postDate").child("mMonth").getValue().toString();
+                    String day = snapshot.child("postDate").child("mDay").getValue().toString();
+                    String hour = snapshot.child("postDate").child("mHour").getValue().toString();
+                    String minute = snapshot.child("postDate").child("mMinute").getValue().toString();
+                    EventDate date = new EventDate(year, month, day, hour, minute, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME);
+
+                    double latitude = (double)snapshot.child("location").child("latitude").getValue();
+                    double longitude = (double)snapshot.child("location").child("longitude").getValue();
+                    LatLng location = new LatLng(latitude,longitude);
+
+                    String locationName = snapshot.child("locationName").getValue().toString();
+
+                    String postId = snapshot.child("postId").getValue().toString();
+
+                    Post individualPost = new Post(uid, postContent, date, location, locationName, postId);
+
+                    postsList.add(individualPost);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+        return postsList;
     }
 
 //    public ArrayList<EventMarker> getEventsList(){
