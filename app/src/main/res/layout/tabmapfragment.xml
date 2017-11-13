@@ -11,6 +11,12 @@
     android:paddingTop="0dp"
     tools:context=".mapfeed"
     >
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="flip"
+        android:id="@+id/flipfront"
+        />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -23,27 +29,6 @@
             android:layout_height="match_parent"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="flip"
-            android:id="@+id/flipfront"
-            />
-        <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:src="@drawable/searchbutton"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_alignParentStart="true"-->
-        <!--android:layout_marginTop="12dp"-->
-        <!--android:layout_marginStart="12dp"-->
-        <!--android:id="@+id/searchMain1"-->
-        <!--android:clickable="true"-->
-        <!--app:backgroundTint="@color/cardbackground2"-->
-        <!--app:fabSize="normal"-->
-        <!--app:borderWidth="-120000dp"-->
-
-
 
     </RelativeLayout>
 
