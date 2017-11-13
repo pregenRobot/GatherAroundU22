@@ -1,12 +1,20 @@
 package com.example.android.gatheraround;
 
 import android.content.Context;
+import android.util.Log;
 
+import com.example.android.gatheraround.custom_classes.EventDate;
+import com.example.android.gatheraround.custom_classes.EventMarker;
+import com.example.android.gatheraround.custom_classes.Events;
 import com.example.android.gatheraround.custom_classes.UserProfile;
+import com.example.android.gatheraround.data.DatabaseHelper;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
 
 /**
  * Created by chiharu_miyoshi on 2017/11/13.
@@ -15,6 +23,11 @@ import com.firebase.client.ValueEventListener;
 public class DataGetterFromServer {
 
     String name, profile;
+
+    ArrayList<String> idsOnLocal, deletedIds;
+    ArrayList<EventMarker> clusterItemArray;
+
+    DatabaseHelper databaseHelper;
 
     public UserProfile getProfileFromUid(String uid){
 
@@ -34,4 +47,74 @@ public class DataGetterFromServer {
 
         return new UserProfile(uid, "Not public", name, profile);
     }
+
+//    public ArrayList<EventMarker> getEventsList(){
+//
+//        final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_EVENT_URL);
+//        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                clusterItemArray = new ArrayList<>();
+//
+//                idsOnLocal = new ArrayList<>();
+//                idsOnLocal = databaseHelper.getAllIds();
+//
+//                ArrayList<String> idsOnServer = new ArrayList<>();
+//
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+//
+//                    String year = snapshot.child("date/mYear").getValue().toString();
+//                    String month = snapshot.child("date/mMonth").getValue().toString();
+//                    String day = snapshot.child("date/mDay").getValue().toString();
+//                    String hour = snapshot.child("date/mHour").getValue().toString();
+//                    String minute = snapshot.child("date/mMinute").getValue().toString();
+//
+//                    String year2 = snapshot.child("date/mYear2").getValue().toString();
+//                    String month2 = snapshot.child("date/mMonth2").getValue().toString();
+//                    String day2 = snapshot.child("date/mDay2").getValue().toString();
+//                    String hour2 = snapshot.child("date/mHour2").getValue().toString();
+//                    String minute2 = snapshot.child("date/mMinute2").getValue().toString();
+//
+//                    EventDate date = new EventDate(year, month, day, hour, minute, year2, month2, day2, hour2, minute2);
+//
+//                    String event_name = snapshot.child("name").getValue().toString();
+//                    int participants = Integer.parseInt(snapshot.child("participants").getValue().toString());
+//                    double longitude = (double)snapshot.child("location/longitude").getValue();
+//                    double latitude = (double)snapshot.child("location/latitude").getValue();
+//                    String locationName = snapshot.child("locationName").getValue().toString();
+//                    String summary = snapshot.child("eventSummary").getValue().toString();
+//                    String category = snapshot.child("category").getValue().toString();
+//                    String globalId = snapshot.child("key").getValue().toString();
+//
+//                    idsOnServer.add(globalId);
+//
+//                    LatLng location = new LatLng(latitude,longitude);
+//
+//                    Events newEvents = new Events(date, event_name, participants, location, locationName, summary, category, globalId, true);
+//                }
+//
+//                Log.i("idsOnServer", "count: " + idsOnServer.size());
+//
+//                deletedIds = new ArrayList<>();
+//
+//                int checkNumber = idsOnLocal.size();
+//                for (int a = 0; a < checkNumber; a++){
+//                    int index = idsOnServer.indexOf(idsOnLocal.get(a));
+//                    Log.i("idsSearch", "searched local id: " + idsOnLocal.get(a) + ", result: " + index);
+//                    if (index == -1){
+//                        deletedIds.add(idsOnLocal.get(a));
+//                        databaseHelper.updateDoesExitsOnServer(idsOnLocal.get(a), false);
+//                    }
+//                }
+//                Log.i("Checked deleted ids", "Deleted ids count: " + deletedIds.size());
+//            }
+//            @Override
+//            public void onCancelled(FirebaseError firebaseError) {
+//
+//            }
+//        });
+//
+//        return clusterItemArray;
+//    }
 }

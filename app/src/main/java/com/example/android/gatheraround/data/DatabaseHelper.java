@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.example.android.gatheraround.DataSenderToServer;
 import com.example.android.gatheraround.custom_classes.EventDate;
+import com.example.android.gatheraround.custom_classes.Post;
 import com.example.android.gatheraround.custom_classes.UserProfile;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
@@ -22,9 +23,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private Context context;
 
     private static final String DATABASE_NAME = "eventList.db";
+
     public static final String TABLE_NAME = "event_table_2";
-    public static final String COL_LOCALID = "_id";
     // id for identifying within database
+    public static final String COL_LOCALID = "_id";
     public static final String COL_NAME = "EVENTNAME";
     public static final String COL_DATE = "DATE";
     private static final String COL_PARTICIPANTS = "PARTICIPANTS";
@@ -32,13 +34,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_LOCATIONNAME = "LOCATIONNAME";
     public static final String COL_SUMMARY = "SUMMARY";
     public static final String COL_CATEGORY = "CATEGORY";
-    public static final String COL_GLOBALID = "GLOBALID";
     // id for identifying on the server
+    public static final String COL_GLOBALID = "GLOBALID";
 
     public static final String USERS_TABLE_NAME = "users_table";
     public static final String COL_USER_NAME = "USER_NAME";
     public static final String COL_USER_ID = "USER_ID";
     public static final String COL_USER_PROFILE_TEXT = "PROFILE_TEXT";
+
+    public static final String POST_TABLE_NAME = "POST_TABLE";
+    public static final String COL_POST_POSTER = "POSTER";
+    public static final String COL_POST_CONTENT = "CONTENT";
+    public static final String COL_POST_DATE = "DATE";
+    public static final String COL_POST_LOCATION = "LOCATION";
+    public static final String COL_POST_LOCATION_NAME = "LOCATION_NAME";
+    public static final String COL_POST_ID = "POST_ID";
 
     public static final String COL_DOESEXISTSONSERVER = "DOESEXISTSONSERVER";
     public static final int BOOLEAN_TRUE = 0;
@@ -82,6 +92,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String createUsersTableSQL = "CREATE TABLE " + USERS_TABLE_NAME + " (" + COL_USER_ID + " TEXT," + COL_USER_NAME + " TEXT," + COL_USER_PROFILE_TEXT + " TEXT)";
         sqLiteDatabase.execSQL(createUsersTableSQL);
+
+        String createPostTableSQL = "CREATE TABLE " + POST_TABLE_NAME + " (" + COL_POST_POSTER + " TEXT," + COL_POST_CONTENT + " TEXT," + COL_POST_DATE + " TEXT," + COL_POST_LOCATION_NAME + " TEXT," + COL_POST_ID + " TEXT)";
+        sqLiteDatabase.execSQL(createPostTableSQL);
     }
 
     @Override
@@ -96,6 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean addData(String event_name, EventDate date, int participants, LatLng location, String locationName, String summary, String category, boolean doesExistsOnServer){
+
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -299,5 +313,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return  returner;
+    }
+
+    public void addPost(Post post){
+
+        SQLiteDatabase database = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        Gson gson = new Gson();
+
+        String locationGson = gson.toJson(post.getLocation(), LatLng.class);
+
+        String dateGson = gson.toJson(post.getPostDate(), EventDate.class);
+
+        values.put(COL_POST_POSTER, post.getPosterUid());
+        values.put(COL_POST_CONTENT, post.getPostContent());
+        values.put(COL_POST_DATE, dateGson);
+        values.put(COL_POST_LOCATION, locationGson);
+        values.put(COL_POST_LOCATION_NAME, post.getLocationName());
+        values.put(COL_POST_ID, post.getPostId());
+
+        String key = dataSenderToServer.sendNewPost(post);
+
+        values.put(COL_POST_ID, key);
+
+        database.insert(POST_TABLE_NAME, null, values);
     }
 }

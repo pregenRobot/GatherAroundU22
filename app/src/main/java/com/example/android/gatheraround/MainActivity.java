@@ -700,6 +700,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
     public void searchFunctionality(final ArrayList<Events> gotEvents){
+
         searchButton = findViewById(R.id.searchMain);
 
         searchButton.setOnClickListener(new View.OnClickListener() {

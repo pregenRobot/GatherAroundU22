@@ -22,6 +22,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +40,7 @@ import android.widget.Toast;
 import com.example.android.gatheraround.custom_classes.EventDate;
 import com.example.android.gatheraround.custom_classes.EventMarker;
 import com.example.android.gatheraround.custom_classes.Events;
+import com.example.android.gatheraround.custom_classes.Post;
 import com.example.android.gatheraround.data.DatabaseHelper;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -49,6 +51,8 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.Algorithm;
 import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm;
@@ -61,6 +65,7 @@ import java.util.Calendar;
  */
 
 public class MapFragmenttab extends Fragment {
+
     View rootView;
 
     MapView mMapView;
@@ -92,10 +97,6 @@ public class MapFragmenttab extends Fragment {
     int height;
 
     Events thisevent;
-
-    public void MapFragmenttab(){
-        //This is necessary, man, seriously.
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -334,10 +335,49 @@ public class MapFragmenttab extends Fragment {
                         selectpost.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+
+                                build.dismiss();
+
                                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
                                 View mView = getActivity().getLayoutInflater().inflate(R.layout.addpost_dialog,null);
+
+                                final EditText postEditText = mView.findViewById(R.id.postedittext);
+                                final EditText locationNameEditText = mView.findViewById(R.id.event_location__name_edit);
+                                TextView sendButton = mView.findViewById(R.id.send);
+                                TextView cancelButton = mView.findViewById(R.id.cancel);
+
                                 mBuilder.setView(mView);
                                 final AlertDialog dialog = mBuilder.create();
+
+                                sendButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        SpannableStringBuilder builder1 = (SpannableStringBuilder)postEditText.getText();
+                                        String postContent = builder1.toString();
+                                        builder1 = (SpannableStringBuilder)locationNameEditText.getText();
+                                        String locationName = builder1.toString();
+
+                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                                        Calculations calculations = new Calculations();
+
+                                        Post post = new Post(user.getUid(), postContent, calculations.getTime(), latLng, locationName, "temporary");
+
+                                        DatabaseHelper helper = new DatabaseHelper(getActivity());
+
+                                        helper.addPost(post);
+
+                                        dialog.dismiss();
+                                    }
+                                });
+
+                                cancelButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        dialog.dismiss();
+                                    }
+                                });
+
                                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 dialog.show();
                             }
@@ -346,6 +386,9 @@ public class MapFragmenttab extends Fragment {
                         selectevent.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+
+                                build.dismiss();
+
                                 eventDate = new EventDate(EventDate.DEFAULT_TIME,
                                         EventDate.DEFAULT_TIME,
                                         EventDate.DEFAULT_TIME,
@@ -371,6 +414,7 @@ public class MapFragmenttab extends Fragment {
                                 final AlertDialog dialog = mBuilder.create();
                                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 dialog.show();
+
                                 eventTimeEdit.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {

@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.example.android.gatheraround.custom_classes.Events;
+import com.example.android.gatheraround.custom_classes.Post;
 import com.example.android.gatheraround.custom_classes.UserProfile;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -19,6 +20,7 @@ import com.google.firebase.storage.UploadTask;
 public class DataSenderToServer{
 
     public static final String FIREBASE_EVENT_URL = "https://u22-project-gather-around.firebaseio.com/eventPostDetails";
+    public static final String FIREBASE_POST_URL = "https://u22-project-gather-around.firebaseio.com/postDetails";
     public static final String FIREBASE_PROFILE_URL = "https://u22-project-gather-around.firebaseio.com/users";
 
     public static final String USERS_REFERENCE_TITLE = "users";
@@ -73,7 +75,7 @@ public class DataSenderToServer{
 
         //Upload profile
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.child(USERS_REFERENCE_TITLE + "/" + profile.getUid()).setValue(profile);
+        databaseReference.child(USERS_REFERENCE_TITLE).child(profile.getUid()).setValue(profile);
 
         //upload image
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -84,5 +86,17 @@ public class DataSenderToServer{
         //for background
         imageReference = reference.child(IMAGE_REFERENCE_TITLE).child(profile.getUid()).child(IMAGE_REFERENCE_BACKGROUND);
         imageReference.putFile(backgroundImageUri);
+    }
+
+    public String sendNewPost(Post post){
+
+        Firebase firebase = new Firebase(FIREBASE_POST_URL);
+
+        Firebase push = firebase.push();
+        push.setValue(post);
+        String key = push.getKey();
+        firebase.child(key).child("key").setValue(key);
+
+        return key;
     }
 }
