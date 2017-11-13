@@ -218,6 +218,8 @@ public class MapFragmenttab extends Fragment {
                     receivedEvents.add(newEvents);
                 }
 
+                DataGetterFromServer dataGetterFromServer = new DataGetterFromServer(getContext());
+                mClusterManager.addItems(dataGetterFromServer.getAllPosts());
 //                searchFunctionality(receivedEvents);
 
                 clusterItemFunctionality();
@@ -295,6 +297,7 @@ public class MapFragmenttab extends Fragment {
                 internetStatus();
             }
         });
+
 
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -719,9 +722,6 @@ public class MapFragmenttab extends Fragment {
                                 });
                             }
                         });
-
-
-
                     }
                 });
 
@@ -745,10 +745,6 @@ public class MapFragmenttab extends Fragment {
 //        for(Events x: testparcelevents){
 //            Log.v("myparcel",receivedEvents.toString());
 //        }
-
-
-
-
         return rootView;
     }
 

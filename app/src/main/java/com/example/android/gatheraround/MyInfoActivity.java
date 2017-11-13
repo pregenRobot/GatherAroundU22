@@ -74,7 +74,7 @@ public class MyInfoActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     DatabaseHelper helper = new DatabaseHelper(MyInfoActivity.this);
 
-                    DataGetterFromServer getter = new DataGetterFromServer();
+                    DataGetterFromServer getter = new DataGetterFromServer(MyInfoActivity.this);
 
                     boolean doesExist = helper.addNewUserToContactList(getter.getProfileFromUid(userId));
 

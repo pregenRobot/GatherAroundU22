@@ -13,21 +13,20 @@ public class Capsule {
     private LatLng latlng;
     private String information;
     private EventDate eventDate;
+    private String mCapsuleId;
+    private String userId;
 
-    public Capsule(LatLng location, String details){
-        latlng = location;
-        information = details;
-    }
-    public Capsule(LatLng location, String details, EventDate Date){
+    public Capsule(LatLng location, String details, EventDate Date, String uid){
         latlng = location;
         information = details;
         eventDate = Date;
+        userId = uid;
     }
 
     public LatLng getLocation(){
         return latlng;
     }
-    public String getMessage(){
+    public String getInformation(){
         return information;
     }
     public EventDate getDate(){

@@ -29,6 +29,14 @@ public class DataGetterFromServer {
     ArrayList<EventMarker> clusterItemArray;
 
     DatabaseHelper databaseHelper;
+    ArrayList<EventMarker> eventMarkers = new ArrayList<>();
+
+    Context context;
+
+    public DataGetterFromServer(Context mContext){
+        context = mContext;
+    }
+
 
     public UserProfile getProfileFromUid(String uid){
 
@@ -49,7 +57,7 @@ public class DataGetterFromServer {
         return new UserProfile(uid, "Not public", name, profile);
     }
 
-    public ArrayList<Post> getAllPosts(){
+    public ArrayList<EventMarker> getAllPosts(){
 
         final ArrayList<Post> postsList = new ArrayList<>();
 
@@ -80,7 +88,11 @@ public class DataGetterFromServer {
 
                     Post individualPost = new Post(uid, postContent, date, location, locationName, postId);
 
+                    EventMarker eventMarker = new EventMarker(individualPost,context);
+                    eventMarkers.add(eventMarker);
+
                     postsList.add(individualPost);
+
                 }
             }
 
@@ -90,7 +102,7 @@ public class DataGetterFromServer {
             }
         });
 
-        return postsList;
+        return eventMarkers;
     }
 
 //    public ArrayList<EventMarker> getEventsList(){
