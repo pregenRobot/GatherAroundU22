@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,7 @@ public class MyInfoActivity extends AppCompatActivity {
     CircularImageView profileImageView;
     ImageView backgroundImageView;
     FloatingActionButton addToContactButton;
+    Button logoutButton;
 
     boolean isMyProfile;
     String userId;
@@ -56,10 +58,14 @@ public class MyInfoActivity extends AppCompatActivity {
 
         addToContactButton = findViewById(R.id.addToContactButton);
 
+        logoutButton = findViewById(R.id.logoutButton);
+
         isMyProfile = getIntent().getBooleanExtra(isMyProfile_Intent, true);
 
         if (!isMyProfile){
             userId = getIntent().getStringExtra(userId_Intent);
+
+            logoutButton.setVisibility(View.INVISIBLE);
 
             showProfile(userId);
 
@@ -95,6 +101,19 @@ public class MyInfoActivity extends AppCompatActivity {
 
                 showProfile(userId);
             }
+
+            logoutButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FirebaseAuth.getInstance().signOut();
+
+                    Intent intent = new Intent();
+                    intent.setClass(MyInfoActivity.this, LoginActivity.class);
+                    startActivity(intent);
+
+                    MyInfoActivity.this.finish();
+                }
+            });
         }
     }
 
