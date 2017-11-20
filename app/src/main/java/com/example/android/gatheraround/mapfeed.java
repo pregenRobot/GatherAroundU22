@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.gatheraround.custom_classes.Events;
@@ -31,6 +32,8 @@ public class mapfeed extends AppCompatActivity {
     Calculations calculations = new Calculations();
     public static FloatingActionButton follow;
 
+    public static View layoutevent;
+    public static View layoutpost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +86,9 @@ public class mapfeed extends AppCompatActivity {
             }
 
         });
+
+        layoutevent = findViewById(R.id.bottomsheet1);
+        layoutpost = findViewById(R.id.bottomsheet2);
     }
     Events newEvent;
 

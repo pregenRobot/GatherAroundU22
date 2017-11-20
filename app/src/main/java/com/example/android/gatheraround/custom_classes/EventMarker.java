@@ -43,7 +43,7 @@ public class EventMarker implements ClusterItem {
         type = 1;
 
         mMarkerOptions = new MarkerOptions().position(mLocation).title(post.getPostContent())
-                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("post", 75, 75)));
+                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("post2", 75, 75)));
     }
     public EventMarker(Capsule capsule, Context context){
         this.capsule = capsule;
@@ -83,6 +83,12 @@ public class EventMarker implements ClusterItem {
     public Events getTag(){
         Log.v("itemClicked","returning event");
         return events;
+    }
+    public Post getPost(){
+        return post;
+    }
+    public Capsule getCapsule(){
+        return capsule;
     }
 
     public MarkerOptions getMarker() {

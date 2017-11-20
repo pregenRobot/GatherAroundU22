@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -37,6 +38,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.android.gatheraround.custom_classes.Capsule;
 import com.example.android.gatheraround.custom_classes.EventDate;
 import com.example.android.gatheraround.custom_classes.EventMarker;
 import com.example.android.gatheraround.custom_classes.Events;
@@ -89,20 +91,20 @@ public class MapFragmenttab extends Fragment {
     public static TextView eventSummarybot;
     public static TextView eventfollowersbot;
 
+    public static TextView postinfo;
+    public static TextView posttime;
+
     public static View bottomSheet;
 
     public static View maincontent;
 
     int width;
     int height;
-
-    Events thisevent;
+    ArrayList<Capsule> capsules = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.tabmapfragment, container, false);
-
-
         bottomSheet = getActivity().findViewById(R.id.mapfragbottomsheet);
         maincontent = getActivity().findViewById(R.id.container);
 
@@ -117,6 +119,10 @@ public class MapFragmenttab extends Fragment {
         eventLocationbot = (TextView) getActivity().findViewById(R.id.eventLocationMark);
         eventSummarybot = (TextView) getActivity().findViewById(R.id.summaryTextBrowser);
         eventfollowersbot = (TextView) getActivity().findViewById(R.id.eventParticipantsMark);
+
+
+        postinfo = (TextView) getActivity().findViewById(R.id.postinfo);
+        posttime = (TextView) getActivity().findViewById(R.id.posttime);
 
         eventsDBHelper = new DatabaseHelper(getContext());
 
@@ -169,6 +175,56 @@ public class MapFragmenttab extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        final ArrayList<Post> postsList = new ArrayList<>();
+
+
+        Firebase firebase1 = new Firebase(DataSenderToServer.FIREBASE_POST_URL);
+        firebase1.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<EventMarker> eventMarkers = new ArrayList<>();
+                final ArrayList<EventMarker> clusterItemArray = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+
+                    String uid = snapshot.child("posterUid").getValue().toString();
+                    String postContent = snapshot.child("postContent").getValue().toString();
+
+                    String year = snapshot.child("postDate").child("mYear").getValue().toString();
+                    String month = snapshot.child("postDate").child("mMonth").getValue().toString();
+                    String day = snapshot.child("postDate").child("mDay").getValue().toString();
+                    String hour = snapshot.child("postDate").child("mHour").getValue().toString();
+                    String minute = snapshot.child("postDate").child("mMinute").getValue().toString();
+                    EventDate date = new EventDate(year, month, day, hour, minute, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME);
+
+                    double latitude = (double)snapshot.child("location").child("latitude").getValue();
+                    double longitude = (double)snapshot.child("location").child("longitude").getValue();
+                    LatLng location = new LatLng(latitude,longitude);
+
+                    String locationName = snapshot.child("locationName").getValue().toString();
+
+                    String postId = snapshot.child("postId").getValue().toString();
+
+                    Post individualPost = new Post(uid, postContent, date, location, locationName, postId);
+
+                    EventMarker eventMarker = new EventMarker(individualPost,getContext());
+                    mClusterManager.addItem(eventMarker);
+                    eventMarkers.add(eventMarker);
+                    clusterItemArray.add(eventMarker);
+
+                    postsList.add(individualPost);
+                }
+//                searchFunctionality(receivedEvents);
+
+                clusterItemFunctionality();
+                mClusterManager.setRenderer(new OwnIconRendered(getContext(), mMap, mClusterManager));
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
 
         final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_EVENT_URL);
         firebase.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -301,7 +357,7 @@ public class MapFragmenttab extends Fragment {
 
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onMapReady(GoogleMap mMap) {
+            public void onMapReady(final GoogleMap mMap) {
                 MapFragmenttab.this.mMap = mMap;
                 receivedEvents = new ArrayList<Events>();
 
@@ -330,6 +386,7 @@ public class MapFragmenttab extends Fragment {
                         View selector = getActivity().getLayoutInflater().inflate(R.layout.chooser,null);
                         final Button selectevent = selector.findViewById(R.id.eventcreator);
                         final Button selectpost = selector.findViewById(R.id.postcreator);
+                        final Button selectcapsule = selector.findViewById(R.id.capsulecreator);
                         builder.setView(selector);
                         final AlertDialog build = builder.create();
                         build.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -355,22 +412,30 @@ public class MapFragmenttab extends Fragment {
                                 sendButton.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        SpannableStringBuilder builder1 = (SpannableStringBuilder)postEditText.getText();
-                                        String postContent = builder1.toString();
-                                        builder1 = (SpannableStringBuilder)locationNameEditText.getText();
-                                        String locationName = builder1.toString();
 
-                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                        try {
+                                            SpannableStringBuilder builder1 = (SpannableStringBuilder) postEditText.getText();
+                                            String postContent = builder1.toString();
+                                            builder1 = (SpannableStringBuilder) locationNameEditText.getText();
+                                            String locationName = builder1.toString();
 
-                                        Calculations calculations = new Calculations();
+                                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                                        Post post = new Post(user.getUid(), postContent, calculations.getTime(), latLng, locationName, "temporary");
+                                            Calculations calculations = new Calculations();
 
-                                        DatabaseHelper helper = new DatabaseHelper(getActivity());
+                                            Post post = new Post(user.getUid(), postContent, calculations.getTime(), new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude()), locationName, "temporary");
 
-                                        helper.addPost(post);
+                                            DatabaseHelper helper = new DatabaseHelper(getActivity());
 
-                                        dialog.dismiss();
+                                            helper.addPost(post);
+
+                                            dialog.dismiss();
+
+                                            Intent intent = new Intent(getContext(),mapfeed.class);
+                                            startActivity(intent);
+                                        }catch (NullPointerException e){
+                                            Toast.makeText(getContext(),"Turn your locations on",Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 });
 
@@ -382,6 +447,312 @@ public class MapFragmenttab extends Fragment {
                                 });
 
                                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                dialog.show();
+                            }
+                        });
+
+                        selectcapsule.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                build.dismiss();
+
+                                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+                                View mView = getActivity().getLayoutInflater().inflate(R.layout.capsulecreator,null);
+
+                                eventDate = new EventDate(EventDate.DEFAULT_TIME,
+                                        EventDate.DEFAULT_TIME,EventDate.DEFAULT_TIME,EventDate.DEFAULT_TIME,
+                                        EventDate.DEFAULT_TIME,EventDate.DEFAULT_TIME,EventDate.DEFAULT_TIME,
+                                        EventDate.DEFAULT_TIME,EventDate.DEFAULT_TIME,EventDate.DEFAULT_TIME);
+
+                                final EditText capsuleEditText = mView.findViewById(R.id.messagecapsule);
+                                TextView sendButton = mView.findViewById(R.id.sendcapsule);
+                                TextView cancelButton = mView.findViewById(R.id.cancelcapsule);
+                                TextView datepicker = mView.findViewById(R.id.capsuletimesetter);
+
+                                mBuilder.setView(mView);
+                                final AlertDialog dialog = mBuilder.create();
+
+                                datepicker.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        eventDate = new EventDate(EventDate.DEFAULT_TIME,
+                                                EventDate.DEFAULT_TIME,
+                                                EventDate.DEFAULT_TIME,
+                                                EventDate.DEFAULT_TIME,
+                                                EventDate.DEFAULT_TIME,
+                                                EventDate.DEFAULT_TIME,
+                                                EventDate.DEFAULT_TIME,
+                                                EventDate.DEFAULT_TIME,
+                                                EventDate.DEFAULT_TIME,
+                                                EventDate.DEFAULT_TIME);
+
+                                        final AlertDialog.Builder myBuilder = new AlertDialog.Builder(getContext());
+                                        final View timeView = getActivity().getLayoutInflater().inflate(R.layout.datetimepicker_dialog,null);
+                                        myBuilder.setView(timeView);
+                                        final AlertDialog dialog2 = myBuilder.create();
+
+                                        final Switch wholeDaySwitch = timeView.findViewById(R.id.wholeDaySwitch);
+                                        final Switch oneDaySwitch = timeView.findViewById(R.id.oneDaySwitch);
+
+                                        final TextView day1 = timeView.findViewById(R.id.startDate);
+                                        final TextView time1 = timeView.findViewById(R.id.startTime);
+                                        final TextView day2 = timeView.findViewById(R.id.endDate);
+                                        final TextView time2 = timeView.findViewById(R.id.endTime);
+                                        day2.setVisibility(View.GONE);
+                                        time1.setVisibility(View.GONE);
+                                        wholeDaySwitch.setVisibility(View.GONE);
+                                        oneDaySwitch.setVisibility(View.GONE);
+
+                                        final LinearLayout right = timeView.findViewById(R.id.VerticalRight);
+                                        final LinearLayout left = timeView.findViewById(R.id.VerticalLeft);
+
+                                        final Button timeDone = timeView.findViewById(R.id.doneTimeLOL);
+                                        final Button timeCancel = timeView.findViewById(R.id.cancelTimeLOL);
+
+                                        if(wholeDaySwitch != null){
+                                            wholeDaySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                                @Override
+                                                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                                                    if(isChecked&&oneDaySwitch.isChecked()){
+                                                        time1.setVisibility(View.GONE);
+                                                        time2.setVisibility(View.GONE);
+                                                        day2.setVisibility(View.GONE);
+                                                        right.setVisibility(View.GONE);
+                                                        left.setLayoutParams(new AppBarLayout.LayoutParams
+                                                                (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT,1f));
+                                                        eventDate.defaultDay2();
+                                                        eventDate.defaultTime1();
+                                                        eventDate.defaultTime2();
+                                                    }else if(isChecked){
+                                                        time1.setVisibility(View.GONE);
+                                                        time2.setVisibility(View.GONE);
+                                                        left.setLayoutParams(new AppBarLayout.LayoutParams
+                                                                (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT,1f));
+                                                        eventDate.defaultTime1();
+                                                        eventDate.defaultTime2();
+                                                    }else{
+                                                        time1.setVisibility(View.VISIBLE);
+                                                        time2.setVisibility(View.VISIBLE);
+                                                        day1.setVisibility(View.VISIBLE);
+                                                        day2.setVisibility(View.VISIBLE);
+                                                        right.setVisibility(View.VISIBLE);
+                                                        left.setLayoutParams(new AppBarLayout.LayoutParams
+                                                                (0, ViewGroup.LayoutParams.WRAP_CONTENT,1f));
+                                                        time1.setText(R.string.select_start_time);
+                                                        time2.setText(R.string.select_end_time);
+                                                    }
+                                                }
+                                            });
+                                        }
+                                        if(oneDaySwitch != null){
+                                            oneDaySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                                @Override
+                                                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                                                    assert wholeDaySwitch != null;
+                                                    if(isChecked&&wholeDaySwitch.isChecked()){
+                                                        time1.setVisibility(View.GONE);
+                                                        time2.setVisibility(View.GONE);
+                                                        day2.setVisibility(View.GONE);
+                                                        right.setVisibility(View.GONE);
+                                                        left.setLayoutParams(new AppBarLayout.LayoutParams
+                                                                (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT,1f));
+                                                        eventDate.defaultDay2();
+                                                        eventDate.defaultTime2();
+                                                        eventDate.defaultTime1();
+                                                    } else if (isChecked) {
+                                                        day2.setVisibility(View.GONE);
+                                                        time2.setVisibility(View.GONE);
+                                                        eventDate.defaultTime2();
+                                                        eventDate.defaultDay2();
+                                                    }else{
+                                                        time1.setVisibility(View.VISIBLE);
+                                                        time2.setVisibility(View.VISIBLE);
+                                                        day1.setVisibility(View.VISIBLE);
+                                                        day2.setVisibility(View.VISIBLE);
+                                                        right.setVisibility(View.VISIBLE);
+                                                        left.setLayoutParams(new AppBarLayout.LayoutParams
+                                                                (0, ViewGroup.LayoutParams.WRAP_CONTENT,1f));
+                                                        day2.setText(R.string.select_end_date);
+                                                        time2.setText(R.string.select_end_time);
+                                                    }
+                                                }
+                                            });
+                                        }
+                                        time1.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
+                                                    @Override
+                                                    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+
+                                                        String iText;
+                                                        String i1Text;
+                                                        if (i == 0){
+                                                            iText = "00";
+                                                        }else{
+                                                            iText = String.valueOf(i);
+                                                        }
+                                                        if(i1 == 0){
+                                                            i1Text = "00";
+                                                        }else{
+                                                            i1Text = String.valueOf(i1);
+                                                        }
+                                                        eventDate.updateTime1(iText,i1Text);
+                                                        time1.setText(iText + " : " + i1Text);
+                                                    }
+                                                };
+                                                new TimePickerDialog(
+                                                        getContext(),
+                                                        listener,
+                                                        calendar.get(Calendar.HOUR_OF_DAY),
+                                                        calendar.get(Calendar.MINUTE),
+                                                        true).show();
+                                            }
+                                        });
+                                        time2.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
+                                                    @Override
+                                                    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+
+                                                        String iText;
+                                                        String i1Text;
+                                                        if (i == 0){
+                                                            iText = "00";
+                                                        }else{
+                                                            iText = String.valueOf(i);
+                                                        }
+                                                        if(i1 == 0){
+                                                            i1Text = "00";
+                                                        }else{
+                                                            i1Text = String.valueOf(i1);
+                                                        }
+                                                        eventDate.updateTime2(iText,i1Text);
+                                                        time2.setText(iText + " : " + i1Text);
+                                                    }
+                                                };
+                                                new TimePickerDialog(
+                                                        getContext(),
+                                                        listener,
+                                                        calendar.get(Calendar.HOUR_OF_DAY),
+                                                        calendar.get(Calendar.MINUTE),
+                                                        true).show();
+                                            }
+                                        });
+                                        day1.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+
+                                                DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
+                                                    @Override
+                                                    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+
+                                                        i1+= 1;
+                                                        String iText, i1Text, i2Text;
+
+                                                        iText = String.valueOf(i);
+
+                                                        if ((i1 - 10) < 0){
+                                                            i1Text = "0" + (i1);
+                                                        }else{
+                                                            i1Text = String.valueOf(i1);
+                                                        }
+
+                                                        if ((i2 - 10) < 0){
+                                                            i2Text = "0" + i2;
+                                                        }else{
+                                                            i2Text = String.valueOf(i2);
+                                                        }
+
+                                                        eventDate.updateDate1(iText, i1Text, i2Text);
+                                                        day1.setText(iText + " / " + i1Text + " / " + i2Text);
+                                                    }
+                                                };
+                                                new DatePickerDialog(getContext(),listener,
+                                                        calendar.get(Calendar.YEAR),
+                                                        calendar.get(Calendar.MONTH),
+                                                        calendar.get(Calendar.DAY_OF_MONTH)).show();
+                                            }
+                                        });
+                                        day2.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
+                                                    @Override
+                                                    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+
+                                                        i1+=1;
+                                                        String iText, i1Text, i2Text;
+
+                                                        iText = String.valueOf(i);
+
+                                                        if ((i1 - 10) < 0){
+                                                            i1Text = "0" + i1;
+                                                        }else{
+                                                            i1Text = String.valueOf(i1);
+                                                        }
+
+                                                        if ((i2 - 10) < 0){
+                                                            i2Text = "0" + i2;
+                                                        }else{
+                                                            i2Text = String.valueOf(i2);
+                                                        }
+
+                                                        eventDate.updateDate2(iText, i1Text, i2Text);
+                                                        day2.setText(iText + " / " + i1Text + " / " + i2Text);
+                                                    }
+                                                };
+                                                new DatePickerDialog(getContext(),listener,
+                                                        calendar.get(Calendar.YEAR),
+                                                        calendar.get(Calendar.MONTH),
+                                                        calendar.get(Calendar.DAY_OF_MONTH)).show();
+                                            }
+                                        });
+                                        timeDone.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                dialog2.dismiss();
+                                            }
+                                        });
+                                        timeCancel.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                dialog2.dismiss();
+                                                eventDate = new EventDate(
+                                                        EventDate.DEFAULT_TIME,
+                                                        EventDate.DEFAULT_TIME,
+                                                        EventDate.DEFAULT_TIME,
+                                                        EventDate.DEFAULT_TIME,
+                                                        EventDate.DEFAULT_TIME,
+                                                        EventDate.DEFAULT_TIME,
+                                                        EventDate.DEFAULT_TIME,
+                                                        EventDate.DEFAULT_TIME,
+                                                        EventDate.DEFAULT_TIME,
+                                                        EventDate.DEFAULT_TIME);
+                                            }
+                                        });
+
+                                        dialog2.show();
+
+                                    }
+                                });
+
+                                cancelButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                                sendButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        String message = capsuleEditText.getText().toString();
+
+                                        Capsule capsule = new Capsule(latLng,message,eventDate,"temporary");
+                                    }
+                                });
                                 dialog.show();
                             }
                         });
@@ -450,6 +821,10 @@ public class MapFragmenttab extends Fragment {
 
                                         final Button timeDone = timeView.findViewById(R.id.doneTimeLOL);
                                         final Button timeCancel = timeView.findViewById(R.id.cancelTimeLOL);
+                                        day2.setVisibility(View.VISIBLE);
+                                        time1.setVisibility(View.VISIBLE);
+                                        wholeDaySwitch.setVisibility(View.VISIBLE);
+                                        oneDaySwitch.setVisibility(View.VISIBLE);
 
                                         if(wholeDaySwitch != null){
                                             wholeDaySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -745,6 +1120,13 @@ public class MapFragmenttab extends Fragment {
 //        for(Events x: testparcelevents){
 //            Log.v("myparcel",receivedEvents.toString());
 //        }
+
+        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+            @Override
+            public void onMyLocationChange(Location location) {
+                Toast.makeText(getContext(),"You moved: " + location.toString(),Toast.LENGTH_SHORT).show();
+            }
+        });
         return rootView;
     }
 
@@ -780,10 +1162,18 @@ public class MapFragmenttab extends Fragment {
                 new ClusterManager.OnClusterItemClickListener<EventMarker>() {
                     @Override
                     public boolean onClusterItemClick(EventMarker eventMarker) {
-                        Events dealingEvent = eventMarker.getTag();
-//                        dialogCreator(dealingEvent);
-                        bottomSheetCreator(dealingEvent);
-                        Log.v("ItemClickedYo!","ClusterTest");
+
+                        if(eventMarker.getType() == 0){
+                            Events dealingEvent = eventMarker.getTag();
+                            bottomSheetCreator(dealingEvent);
+                            Log.v("ItemClickedYo!","ClusterTest");
+                        }else if(eventMarker.getType() ==1){
+                            Post dealingPost = eventMarker.getPost();
+                            bottomSheetCreator2(dealingPost);
+                        }else if(eventMarker.getType() == 2){
+                            Capsule capsule = eventMarker.getCapsule();
+                        }
+
                         return true;
                     }
                 }
@@ -791,9 +1181,29 @@ public class MapFragmenttab extends Fragment {
         mMap.setOnMarkerClickListener(mClusterManager);
     }
 
+
+    public void bottomSheetCreator2(Post post){
+        final Post nowpost = post;
+        mapfeed.layoutevent.setVisibility(View.GONE);
+        mapfeed.layoutpost.setVisibility(View.VISIBLE);
+
+
+        if(bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN){
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }else if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        }
+
+        posttime.setText("on" + calculations.concatenate(nowpost.getPostDate(),false,false)[0]);
+        postinfo.setText(nowpost.getPostContent());
+
+
+    }
     public void bottomSheetCreator( Events events){
         final Events nowevents = events;
 
+        mapfeed.layoutpost.setVisibility(View.GONE);
+        mapfeed.layoutevent.setVisibility(View.VISIBLE);
 
         if(bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN){
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -846,6 +1256,18 @@ public class MapFragmenttab extends Fragment {
             Toast.makeText(getContext(), R.string.no_internet, Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    public void startProgress() {
+        // do something long
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        };
+        new Thread(runnable).start();
     }
 
 }
