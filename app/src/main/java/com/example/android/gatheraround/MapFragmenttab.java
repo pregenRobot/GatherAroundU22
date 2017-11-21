@@ -1121,12 +1121,12 @@ public class MapFragmenttab extends Fragment {
 //            Log.v("myparcel",receivedEvents.toString());
 //        }
 
-        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-            @Override
-            public void onMyLocationChange(Location location) {
-                Toast.makeText(getContext(),"You moved: " + location.toString(),Toast.LENGTH_SHORT).show();
-            }
-        });
+//        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+//            @Override
+//            public void onMyLocationChange(Location location) {
+//                Toast.makeText(getContext(),"You moved: " + location.toString(),Toast.LENGTH_SHORT).show();
+//            }
+//        });
         return rootView;
     }
 
@@ -1257,17 +1257,6 @@ public class MapFragmenttab extends Fragment {
         }
 
     }
-
-    public void startProgress() {
-        // do something long
-
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        };
-        new Thread(runnable).start();
-    }
+    
 
 }
