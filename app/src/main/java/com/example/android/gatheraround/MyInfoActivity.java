@@ -78,8 +78,10 @@ public class MyInfoActivity extends AppCompatActivity {
 
                     boolean doesExist = helper.addNewUserToContactList(getter.getProfileFromUid(userId));
 
-                    if (!doesExist){
+                    if (doesExist){
                         Toast.makeText(MyInfoActivity.this, getResources().getString(R.string.contactsAlreadyExists), Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(MyInfoActivity.this, getResources().getString(R.string.contactsAddedToList), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -111,7 +113,9 @@ public class MyInfoActivity extends AppCompatActivity {
                     intent.setClass(MyInfoActivity.this, LoginActivity.class);
                     startActivity(intent);
 
-                    MyInfoActivity.this.finish();
+//                    MyInfoActivity.this.finish();
+
+                    android.os.Process.killProcess(android.os.Process.myPid());
                 }
             });
         }

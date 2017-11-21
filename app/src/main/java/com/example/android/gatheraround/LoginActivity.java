@@ -159,6 +159,7 @@ public class LoginActivity extends AppCompatActivity {
                         Intent intent = new Intent();
                         intent.setClass(LoginActivity.this, InitialActivity.class);
                         startActivity(intent);
+                        finish();
                     }else{
                         Toast.makeText(LoginActivity.this, "Seems failed to login. Please try again.", Toast.LENGTH_SHORT).show();
                     }
@@ -182,7 +183,7 @@ public class LoginActivity extends AppCompatActivity {
         builder = (SpannableStringBuilder)signUpProfileEditText.getText();
         final String profileText = builder.toString();
 
-        if (!email.isEmpty() && !password.isEmpty() && !name.isEmpty()) {
+        if (!email.isEmpty() && !password.isEmpty() && !name.isEmpty() && !profileText.isEmpty()) {
             if(!(profileUri == null || backgroundUri == null)){
                 if (password.equals(confirm)) {
                     if (!(password.length() < 6)) {
@@ -203,6 +204,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Intent intent = new Intent();
                                     intent.setClass(LoginActivity.this, InitialActivity.class);
                                     startActivity(intent);
+                                    finish();
                                 } else {
                                     Toast.makeText(LoginActivity.this, "Failed created a new account", Toast.LENGTH_SHORT).show();
 

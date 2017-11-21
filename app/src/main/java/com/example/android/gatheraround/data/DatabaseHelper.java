@@ -260,7 +260,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         boolean doesExist = false;
 
-        for (UserProfile profileFromDatabase : getAllUsers()){
+        for (UserProfile profileFromDatabase : getAllContacts()){
             if (profileFromDatabase.getUid().equals(profile.getUid())){
                 doesExist = true;
             }
@@ -272,14 +272,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             contentValues.put(COL_USER_ID, profile.getUid());
             contentValues.put(COL_USER_NAME, profile.getName());
+            contentValues.put(COL_USER_PROFILE_TEXT, profile.getProfileText());
 
             database.insert(USERS_TABLE_NAME, null, contentValues);
+
+            Toast.makeText(context, "Added new user", Toast.LENGTH_SHORT).show();
         }
 
         return doesExist;
     }
 
-    public ArrayList<UserProfile> getAllUsers(){
+    public ArrayList<UserProfile> getAllContacts(){
 
         ArrayList<UserProfile> result = new ArrayList<>();
 
@@ -287,9 +290,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Cursor cursor = database.query(USERS_TABLE_NAME, new String[]{COL_USER_ID, COL_USER_NAME}, null, null, null, null, null);
 
-        while(cursor.moveToNext()){
-            UserProfile profile = new UserProfile(cursor.getString(cursor.getColumnIndex(COL_USER_ID)),"NotPublic", cursor.getString(cursor.getColumnIndex(COL_USER_NAME)), cursor.getString(cursor.getColumnIndex(COL_USER_PROFILE_TEXT)));
+        while(cursor != null && cursor.moveToNext()){
+
+            String uid = cursor.getString(cursor.getColumnIndex(COL_USER_ID));
+            String name = cursor.getString(cursor.getColumnIndex(COL_USER_NAME));
+            String profileText = "プロフィールなし";
+            try{
+                 profileText = cursor.getString(cursor.getColumnIndex(COL_USER_PROFILE_TEXT));
+            }catch (Exception e){
+                Log.e("ProfileError", e.toString());
+            }
+
+            UserProfile profile = new UserProfile(uid,"NotPublic", name, profileText);
             result.add(profile);
+
+//            try{
+//                UserProfile profile = new UserProfile(cursor.getString(cursor.getColumnIndex(COL_USER_ID)),"NotPublic", cursor.getString(cursor.getColumnIndex(COL_USER_NAME)), cursor.getString(cursor.getColumnIndex(COL_USER_PROFILE_TEXT)));
+//                result.add(profile);
+//            }catch (Exception e){
+//                Log.e("UserProfileError", e.toString());
+//            }
         }
 
         cursor.close();

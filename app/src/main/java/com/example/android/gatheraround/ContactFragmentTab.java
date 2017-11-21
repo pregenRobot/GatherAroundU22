@@ -6,10 +6,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -17,6 +20,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.android.gatheraround.custom_classes.UserProfile;
 import com.example.android.gatheraround.custom_classes.UserProfileForFragment;
 import com.example.android.gatheraround.data.DatabaseHelper;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -38,6 +42,23 @@ public class ContactFragmentTab extends Fragment {
 
         rootView = inflater.inflate(R.layout.contact_recycler,container,false);
 
+        final EditText uidSearchEditText = rootView.findViewById(R.id.uidSearchEditText);
+        Button searchButton = rootView.findViewById(R.id.searchButton);
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SpannableStringBuilder builder = (SpannableStringBuilder)uidSearchEditText.getText();
+                String uid = builder.toString();
+
+                Intent intent = new Intent();
+                intent.setClass(getContext(), MyInfoActivity.class);
+                intent.putExtra(MyInfoActivity.userId_Intent, uid);
+                intent.putExtra(MyInfoActivity.isMyProfile_Intent, false);
+                startActivity(intent);
+            }
+        });
+
         Button flyToMyProfileButton = rootView.findViewById(R.id.flytomyprofile);
         final Intent intent = new Intent(getContext(),MyInfoActivity.class);
 
@@ -50,15 +71,19 @@ public class ContactFragmentTab extends Fragment {
         });
 
         DatabaseHelper helper = new DatabaseHelper(getActivity());
-        ArrayList<UserProfile> profiles = helper.getAllUsers();
+        ArrayList<UserProfile> profiles = helper.getAllContacts();
 
-        ArrayList<UserProfileForFragment> arrayList = new ArrayList<>();
+        Toast.makeText(getActivity(), "Temp. Message: There are " + profiles.size() + " users in contact", Toast.LENGTH_SHORT).show();
+
+        ArrayList<UserProfileForFragment> contactContents = new ArrayList<>();
+
         for (UserProfile profile : profiles){
 
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference reference = storage.getReference().child(DataSenderToServer.IMAGE_REFERENCE_TITLE + "/" + profile.getUid());
 
             Glide.with(getActivity())
+                    .using(new FirebaseImageLoader())
                     .load(reference)
                     .asBitmap()
                     .into(new SimpleTarget<Bitmap>() {
@@ -68,14 +93,17 @@ public class ContactFragmentTab extends Fragment {
                         }
                     });
 
-            arrayList.add(new UserProfileForFragment(profile.getUid(), profile.getName(), bitmap, profile.getProfileText()));
+            contactContents.add(new UserProfileForFragment(profile.getUid(), profile.getName(), bitmap, profile.getProfileText()));
         }
 
+        Toast.makeText(getActivity(), "Tem. Message: Showing " + contactContents.size() + " contacts", Toast.LENGTH_SHORT).show();
+
         final RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.contactRecyclerView);
-        recyclerView.setAdapter(new ContactFragmentAdapter(arrayList, getActivity()));
+        recyclerView.setAdapter(new ContactFragmentAdapter(contactContents, getActivity()));
 
         return rootView;
     }
+
     public void goToMyInfo(String uid){
         final Intent intent = new Intent();
         intent.setClass(getActivity(), MyInfoActivity.class);
