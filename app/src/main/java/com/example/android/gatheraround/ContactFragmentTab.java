@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
@@ -98,8 +99,14 @@ public class ContactFragmentTab extends Fragment {
 
         Toast.makeText(getActivity(), "Tem. Message: Showing " + contactContents.size() + " contacts", Toast.LENGTH_SHORT).show();
 
+
         final RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.contactRecyclerView);
-        recyclerView.setAdapter(new ContactFragmentAdapter(contactContents, getActivity()));
+        ContactFragmentAdapter contactFragmentAdapter = new ContactFragmentAdapter(contactContents,getContext());
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(contactFragmentAdapter);
+
 
         return rootView;
     }

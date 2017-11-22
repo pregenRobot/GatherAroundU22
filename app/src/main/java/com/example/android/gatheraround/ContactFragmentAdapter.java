@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -33,7 +35,7 @@ public class ContactFragmentAdapter extends RecyclerView.Adapter<ContactFragment
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView userNameTextView;
-        public CircleImageView imageView;
+        public ImageView imageView;
         public CardView cardView;
 
         public MyViewHolder(View view){
@@ -47,6 +49,7 @@ public class ContactFragmentAdapter extends RecyclerView.Adapter<ContactFragment
     public ContactFragmentAdapter(List<UserProfileForFragment> list, Context context){
         this.profileList = list;
         this.mContext = context;
+        Log.v("Contact Adapter","Creating Constructor");
     }
 
     @Override
@@ -77,6 +80,9 @@ public class ContactFragmentAdapter extends RecyclerView.Adapter<ContactFragment
 
     @Override
     public int getItemCount(){
+
+        Log.v("ContactAdapter","" + profileList.size() + "");
+
         return profileList.size();
     }
 }

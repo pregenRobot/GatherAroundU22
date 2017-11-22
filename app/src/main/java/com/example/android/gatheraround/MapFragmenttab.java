@@ -3,16 +3,20 @@ package com.example.android.gatheraround;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
@@ -48,17 +52,23 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.Algorithm;
 import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -100,7 +110,10 @@ public class MapFragmenttab extends Fragment {
 
     int width;
     int height;
-    ArrayList<Capsule> capsules = new ArrayList<>();
+    public static ArrayList<Capsule> capsules = new ArrayList<>();
+
+    private FusedLocationProviderClient mFusedLocationClient;
+    LocationManager mLocationManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -179,6 +192,7 @@ public class MapFragmenttab extends Fragment {
         final ArrayList<Post> postsList = new ArrayList<>();
 
 
+
         Firebase firebase1 = new Firebase(DataSenderToServer.FIREBASE_POST_URL);
         firebase1.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -214,7 +228,7 @@ public class MapFragmenttab extends Fragment {
 
                     postsList.add(individualPost);
                 }
-//                searchFunctionality(receivedEvents);
+//                searchFunc
 
                 clusterItemFunctionality();
                 mClusterManager.setRenderer(new OwnIconRendered(getContext(), mMap, mClusterManager));
@@ -306,7 +320,9 @@ public class MapFragmenttab extends Fragment {
                 int peekheight = evName.getHeight() + linlear.getHeight() + evLoc.getHeight();
                 Log.v("Bottomsheet ",peekheight+"");
 
-                bottomSheet.getLayoutParams().height = maincontent.getHeight();
+                bottomSheet.getLayoutParams().height = maincontent.getHeight()+0;
+                Log.v("Bottomsheet params:",bottomSheet.getLayoutParams().height+"");
+                Log.v("Container params:",bottomSheet.getLayoutParams().height+"");
                 bottomSheetBehavior.setPeekHeight(peekheight);
                 width = mapfeed.scanButton.getWidth();
                 height = mapfeed.scanButton.getHeight();
@@ -346,7 +362,6 @@ public class MapFragmenttab extends Fragment {
                         }
                     }
                 });
-
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -392,6 +407,7 @@ public class MapFragmenttab extends Fragment {
                         build.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         build.show();
 
+                        //Select Post
                         selectpost.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -757,6 +773,7 @@ public class MapFragmenttab extends Fragment {
                             }
                         });
 
+                        //Select Event
                         selectevent.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -1121,12 +1138,11 @@ public class MapFragmenttab extends Fragment {
 //            Log.v("myparcel",receivedEvents.toString());
 //        }
 
-//        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-//            @Override
-//            public void onMyLocationChange(Location location) {
-//                Toast.makeText(getContext(),"You moved: " + location.toString(),Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        mLocationManager=(LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER,
+                2000,
+                10, locationListenerGPS);
+
         return rootView;
     }
 
@@ -1136,13 +1152,16 @@ public class MapFragmenttab extends Fragment {
         mMapView.onResume();
 
 
-
     }
 
     @Override
     public void onPause() {
         super.onPause();
         mMapView.onPause();
+
+        mLocationManager.removeUpdates(locationListenerGPS);
+
+        mLocationManager= null;
     }
 
     @Override
@@ -1180,6 +1199,47 @@ public class MapFragmenttab extends Fragment {
         );
         mMap.setOnMarkerClickListener(mClusterManager);
     }
+
+    LocationListener locationListenerGPS=new LocationListener() {
+        @Override
+        public void onLocationChanged(android.location.Location location) {
+            double latitude=location.getLatitude();
+            double longitude=location.getLongitude();
+            String msg=" Tamim New Latitude: "+latitude + "New Longitude: "+longitude;
+            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+
+            final ArrayList<LatLng> latLngs = new ArrayList<>();
+
+            for(Capsule capsule:MapFragmenttab.capsules){
+                latLngs.add(capsule.getLocation());
+            }
+            latLngs.add(new LatLng(35.65440,139.72269));
+
+            Log.v("You","Activated Capsule");
+            if (location != null) for (LatLng lng : latLngs) {
+                if (calculations.checkcloseness(lng,new LatLng(latitude,longitude))==1) {
+                    Toast.makeText(getContext(), "Close!", Toast.LENGTH_SHORT).show();
+                }else if (calculations.checkcloseness(lng,new LatLng(latitude,longitude))==2) {
+                    Toast.makeText(getContext(), "Accurate!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
 
 
     public void bottomSheetCreator2(Post post){
@@ -1257,6 +1317,39 @@ public class MapFragmenttab extends Fragment {
         }
 
     }
-    
+
+//    private void isLocationEnabled() {
+//
+//        if(!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+//            AlertDialog.Builder alertDialog=new AlertDialog.Builder(getContext());
+//            alertDialog.setTitle("Enable Location");
+//            alertDialog.setMessage("Your locations setting is not enabled. Please enabled it in settings menu.");
+//            alertDialog.setPositiveButton("Location Settings", new DialogInterface.OnClickListener(){
+//                public void onClick(DialogInterface dialog, int which){
+//                    Intent intent=new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                    startActivity(intent);
+//                }
+//            });
+//            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+//                public void onClick(DialogInterface dialog, int which){
+//                    dialog.cancel();
+//                }
+//            });
+//            AlertDialog alert=alertDialog.create();
+//            alert.show();
+//        }
+//        else{
+//            AlertDialog.Builder alertDialog=new AlertDialog.Builder(getContext());
+//            alertDialog.setTitle("Confirm Location");
+//            alertDialog.setMessage("Your Location is enabled, please enjoy");
+//            alertDialog.setNegativeButton("Back to interface",new DialogInterface.OnClickListener(){
+//                public void onClick(DialogInterface dialog, int which){
+//                    dialog.cancel();
+//                }
+//            });
+//            AlertDialog alert=alertDialog.create();
+//            alert.show();
+//        }
+//    }
 
 }

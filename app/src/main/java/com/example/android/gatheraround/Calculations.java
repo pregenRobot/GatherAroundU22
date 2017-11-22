@@ -3,6 +3,7 @@ package com.example.android.gatheraround;
 import android.util.Log;
 
 import com.example.android.gatheraround.custom_classes.EventDate;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Calendar;
 
@@ -12,6 +13,20 @@ import java.util.Calendar;
  */
 
 class Calculations {
+
+    public int checkcloseness(LatLng mylocation,LatLng testlocation){
+        int returner = 0;
+        if((mylocation.latitude - testlocation.latitude)<0.002||(mylocation.latitude - testlocation.latitude)>-0.002){
+            if((mylocation.longitude - testlocation.longitude)<0.002||(mylocation.longitude - testlocation.longitude)>-0.002){
+                returner = 2;
+                return returner;
+            }
+            returner = 1;
+        }else if((mylocation.longitude - testlocation.longitude)<0.002||(mylocation.longitude - testlocation.longitude)>-0.002){
+            returner = 1;
+        }
+        return returner;
+    }
 
     String[] concatenate(EventDate testEvent, boolean isFull, boolean withTilde){
         String[] result= new String[2];

@@ -42,6 +42,8 @@ public class FeedFragmentTab extends Fragment {
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.tabfeedfragment,container,false);
 
+
+
         eventsDBHelper = new DatabaseHelper(getContext());
 
         eventCursor = eventsDBHelper.getAllEvents();
