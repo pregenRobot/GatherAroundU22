@@ -12,7 +12,7 @@ import java.util.Calendar;
  * Created by tamimazmain on 2017/08/15.
  */
 
-class Calculations {
+public class Calculations {
 
     public int checkcloseness(LatLng mylocation,LatLng testlocation){
         int returner = 0;
@@ -28,7 +28,7 @@ class Calculations {
         return returner;
     }
 
-    String[] concatenate(EventDate testEvent, boolean isFull, boolean withTilde){
+    public String[] concatenate(EventDate testEvent, boolean isFull, boolean withTilde){
         String[] result= new String[2];
 
         if(withTilde){

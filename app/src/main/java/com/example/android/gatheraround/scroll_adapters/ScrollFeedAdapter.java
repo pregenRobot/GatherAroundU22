@@ -1,4 +1,4 @@
-package com.example.android.gatheraround;
+package com.example.android.gatheraround.scroll_adapters;
 
 import android.content.Context;
 import android.support.design.widget.BottomSheetBehavior;
@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.android.gatheraround.Calculations;
+import com.example.android.gatheraround.fragments.MapFragmenttab;
+import com.example.android.gatheraround.R;
 import com.example.android.gatheraround.custom_classes.Events;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.example.android.gatheraround;
+package com.example.android.gatheraround.scroll_adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,9 +28,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.gatheraround.Calculations;
+import com.example.android.gatheraround.DataSenderToServer;
+import com.example.android.gatheraround.fragments.MapFragmenttab;
+import com.example.android.gatheraround.R;
 import com.example.android.gatheraround.custom_classes.Events;
 import com.example.android.gatheraround.data.DatabaseHelper;
 import com.example.android.gatheraround.data.MyEventsDatabaseHelper;
+import com.example.android.gatheraround.activities.mapfeed;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -200,8 +205,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
                             dataSenderToServer.eraseEntry(events.getGlobalId());
 
                         }else{
+                            int CheckOutID = dbHelper.checkoutID(events.getGlobalId());
                             db.delete
-                                    (DatabaseHelper.TABLE_NAME, DatabaseHelper.COL_GLOBALID + " = " + events.getGlobalId(), null);
+                                    (DatabaseHelper.TABLE_NAME, DatabaseHelper.COL_LOCALID + " = " + CheckOutID, null);
                         }
 
                         dialog.dismiss();

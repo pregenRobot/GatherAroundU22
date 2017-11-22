@@ -1,4 +1,4 @@
-package com.example.android.gatheraround;
+package com.example.android.gatheraround.activities;
 
 import android.content.Intent;
 import android.graphics.Point;
@@ -14,6 +14,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.android.gatheraround.DataGetterFromServer;
+import com.example.android.gatheraround.DataSenderToServer;
+import com.example.android.gatheraround.R;
 import com.example.android.gatheraround.data.DatabaseHelper;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;

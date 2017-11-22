@@ -1,12 +1,10 @@
-package com.example.android.gatheraround;
+package com.example.android.gatheraround.fragments;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +12,12 @@ import android.view.ViewGroup;
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
+import com.example.android.gatheraround.Calculations;
+import com.example.android.gatheraround.R;
 import com.example.android.gatheraround.custom_classes.EventDate;
 import com.example.android.gatheraround.custom_classes.Events;
 import com.example.android.gatheraround.data.DatabaseHelper;
+import com.example.android.gatheraround.scroll_adapters.FeedAdapter;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 

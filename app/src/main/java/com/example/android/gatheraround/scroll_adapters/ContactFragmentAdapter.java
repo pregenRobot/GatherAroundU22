@@ -1,8 +1,6 @@
-package com.example.android.gatheraround;
+package com.example.android.gatheraround.scroll_adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,16 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.example.android.gatheraround.fragments.ContactFragmentTab;
+import com.example.android.gatheraround.R;
 import com.example.android.gatheraround.custom_classes.UserProfileForFragment;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by chiharu_miyoshi on 2017/11/11.

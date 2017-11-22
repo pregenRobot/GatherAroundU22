@@ -1,4 +1,4 @@
-package com.example.android.gatheraround;
+package com.example.android.gatheraround.fragments;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +19,13 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.example.android.gatheraround.DataSenderToServer;
+import com.example.android.gatheraround.activities.MyInfoActivity;
+import com.example.android.gatheraround.R;
 import com.example.android.gatheraround.custom_classes.UserProfile;
 import com.example.android.gatheraround.custom_classes.UserProfileForFragment;
 import com.example.android.gatheraround.data.DatabaseHelper;
+import com.example.android.gatheraround.scroll_adapters.ContactFragmentAdapter;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -73,6 +78,10 @@ public class ContactFragmentTab extends Fragment {
 
         DatabaseHelper helper = new DatabaseHelper(getActivity());
         ArrayList<UserProfile> profiles = helper.getAllContacts();
+
+        for(UserProfile profile:profiles){
+            Log.v("Youhavenofriends",profile.toString());
+        }
 
         Toast.makeText(getActivity(), "Temp. Message: There are " + profiles.size() + " users in contact", Toast.LENGTH_SHORT).show();
 
