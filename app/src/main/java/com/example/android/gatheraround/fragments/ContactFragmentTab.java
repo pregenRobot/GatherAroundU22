@@ -111,6 +111,7 @@ public class ContactFragmentTab extends Fragment {
             StorageReference imageReference = storage.getReference().child(
                     DataSenderToServer.IMAGE_REFERENCE_TITLE).child(profile.getUid()).child(DataSenderToServer.IMAGE_REFERENCE_PROFILE);
 
+            //Test
 
             Glide.with(getActivity())
                     .using(new FirebaseImageLoader())
