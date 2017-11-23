@@ -35,7 +35,7 @@ public class DataSenderToServer{
         Firebase push = firebase.push();
         push.setValue(newEvent);
         String key = push.getKey();
-        firebase.child(key).child("postId").setValue(key);
+        firebase.child(key).child("key").setValue(key);
 
         return key;
     }

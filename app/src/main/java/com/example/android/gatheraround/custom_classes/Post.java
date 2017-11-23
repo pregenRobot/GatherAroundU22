@@ -14,9 +14,9 @@ public class Post {
     LatLng mLocation;
     String mLocationName;
     String mPostId;
-    //uses 1st date of EventDate for post date
+    int followers;
 
-    public Post(String posterUid, String postContent, EventDate postDate, LatLng location, String locationName, String postId){
+    public Post(String posterUid, String postContent, EventDate postDate, LatLng location, String locationName, String postId) {
         mPosterUid = posterUid;
         mPostContent = postContent;
         mPostDate = postDate;
@@ -24,6 +24,7 @@ public class Post {
         mLocationName = locationName;
         mPostId = postId;
     }
+
 
     public String getPosterUid(){
         return mPosterUid;

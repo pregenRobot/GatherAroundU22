@@ -41,10 +41,12 @@ public class ContactFragmentTab extends Fragment {
     View rootView;
 
     Bitmap bitmap;
+    ArrayList<UserProfileForFragment> contactContents;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        contactContents = new ArrayList<>();
 
         rootView = inflater.inflate(R.layout.contact_recycler,container,false);
 
@@ -85,36 +87,49 @@ public class ContactFragmentTab extends Fragment {
 
         Toast.makeText(getActivity(), "Temp. Message: There are " + profiles.size() + " users in contact", Toast.LENGTH_SHORT).show();
 
-        ArrayList<UserProfileForFragment> contactContents = new ArrayList<>();
 
-        for (UserProfile profile : profiles){
+
+        for (final UserProfile profile : profiles){
 
             FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference reference = storage.getReference().child(DataSenderToServer.IMAGE_REFERENCE_TITLE + "/" + profile.getUid());
+//            StorageReference reference = storage.getReference().child(DataSenderToServer.IMAGE_REFERENCE_TITLE + "/" + profile.getUid());
+
+
+            final RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.contactRecyclerView);
+            final ContactFragmentAdapter contactFragmentAdapter = new ContactFragmentAdapter(contactContents,getContext());
+
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setAdapter(contactFragmentAdapter);
+
+            StorageReference imageReference = storage.getReference().child(
+                    DataSenderToServer.IMAGE_REFERENCE_TITLE).child(profile.getUid()).child(DataSenderToServer.IMAGE_REFERENCE_PROFILE);
 
             Glide.with(getActivity())
                     .using(new FirebaseImageLoader())
-                    .load(reference)
+                    .load(imageReference)
                     .asBitmap()
                     .into(new SimpleTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+
+                            Log.v("Glider1","imageReady");
                             bitmap = resource;
+                            contactContents.add(new UserProfileForFragment(profile.getUid(), profile.getName(), bitmap, profile.getProfileText()));
+                            contactFragmentAdapter.notifyDataSetChanged();
+
                         }
                     });
 
-            contactContents.add(new UserProfileForFragment(profile.getUid(), profile.getName(), bitmap, profile.getProfileText()));
+            contactFragmentAdapter.notifyDataSetChanged();
+
+
         }
 
         Toast.makeText(getActivity(), "Tem. Message: Showing " + contactContents.size() + " contacts", Toast.LENGTH_SHORT).show();
 
 
-        final RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.contactRecyclerView);
-        ContactFragmentAdapter contactFragmentAdapter = new ContactFragmentAdapter(contactContents,getContext());
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(contactFragmentAdapter);
 
 
         return rootView;

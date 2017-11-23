@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.example.android.gatheraround.DataGetterFromServer;
 import com.example.android.gatheraround.DataSenderToServer;
 import com.example.android.gatheraround.R;
+import com.example.android.gatheraround.custom_classes.UserProfile;
 import com.example.android.gatheraround.data.DatabaseHelper;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -75,17 +76,35 @@ public class MyInfoActivity extends AppCompatActivity {
             addToContactButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    DatabaseHelper helper = new DatabaseHelper(MyInfoActivity.this);
+                    final DatabaseHelper helper = new DatabaseHelper(MyInfoActivity.this);
 
-                    DataGetterFromServer getter = new DataGetterFromServer(MyInfoActivity.this);
 
-                    boolean doesExist = helper.addNewUserToContactList(getter.getProfileFromUid(userId));
+                    Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_PROFILE_URL).child(userId);
+                    firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+                        String name;
+                        String profile;
 
-                    if (doesExist){
-                        Toast.makeText(MyInfoActivity.this, getResources().getString(R.string.contactsAlreadyExists), Toast.LENGTH_SHORT).show();
-                    }else{
-                        Toast.makeText(MyInfoActivity.this, getResources().getString(R.string.contactsAddedToList), Toast.LENGTH_SHORT).show();
-                    }
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            name = dataSnapshot.child(UserProfile.TITLE_NAME).getValue().toString();
+                            profile = dataSnapshot.child(UserProfile.TITLE_PROFILE).getValue().toString();
+
+                            UserProfile userProfile = new UserProfile(userId,"notPublic",name,profile);
+                            boolean doesExist = helper.addNewUserToContactList(userProfile);
+                            if (doesExist){
+                                Toast.makeText(MyInfoActivity.this, getResources().getString(R.string.contactsAlreadyExists), Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(MyInfoActivity.this, getResources().getString(R.string.contactsAddedToList), Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+
+                        }
+                    });
+
                 }
             });
         }else{

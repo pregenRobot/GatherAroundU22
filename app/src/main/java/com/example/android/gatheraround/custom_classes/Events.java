@@ -21,6 +21,7 @@ public class Events implements Parcelable{
     private String mGlobalId;
     private boolean mDoesExistsOnServer;
 
+
     public static String CATEGORY_INDIVIDUAL = "INDIVIDUAL";
     public static String CATEGORY_NPO = "NPO";
     public static String CATEGORY_CORPORATE = "CORPORATE";
