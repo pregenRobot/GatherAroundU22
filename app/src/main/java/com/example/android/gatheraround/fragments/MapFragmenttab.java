@@ -214,18 +214,15 @@ public class MapFragmenttab extends Fragment {
 
                     double latitude = (double)snapshot.child("location").child("latitude").getValue();
                     double longitude = (double)snapshot.child("location").child("longitude").getValue();
+
+
                     LatLng location = new LatLng(latitude,longitude);
-
                     String locationName = snapshot.child("locationName").getValue().toString();
-
                     String postId = snapshot.child("postId").getValue().toString();
-
                     Post individualPost = new Post(uid, postContent, date, location, locationName, postId);
 
                     EventMarker eventMarker = new EventMarker(individualPost,getContext());
                     mClusterManager.addItem(eventMarker);
-                    eventMarkers.add(eventMarker);
-                    clusterItemArray.add(eventMarker);
 
                     postsList.add(individualPost);
                 }
@@ -286,7 +283,6 @@ public class MapFragmenttab extends Fragment {
 
                     EventMarker eventMarker = new EventMarker(newEvents,getContext());
                     mClusterManager.addItem(eventMarker);
-                    clusterItemArray.add(eventMarker);
                     receivedEvents.add(newEvents);
                 }
 
@@ -378,29 +374,37 @@ public class MapFragmenttab extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
 
-                    String startYear = snapshot.child("mYear").getValue().toString();
-                    String startMonth = snapshot.child("mMonth").getValue().toString();
-                    String startDay = snapshot.child("mDay").getValue().toString();
-                    String dueHour = snapshot.child("mHour").getValue().toString();
-                    String dueMinute = snapshot.child("mMinute").getValue().toString();
+                    String startYear = snapshot.child("date").child("mYear").getValue().toString();
+                    String startMonth = snapshot.child("date").child("mMonth").getValue().toString();
+                    String startDay = snapshot.child("date").child("mDay").getValue().toString();
+                    String dueHour = snapshot.child("date").child("mHour").getValue().toString();
+                    String dueMinute = snapshot.child("date").child("mMinute").getValue().toString();
 
                     String key = snapshot.child("key").getValue().toString();
-
-                    long latitude = (long)snapshot.child("latitude").getValue();
-                    long longitude = (long)snapshot.child("longitude").getValue();
+                    double latitude = (double)snapshot.child("location").child("latitude").getValue();
+                    double longitude = (double)snapshot.child("location").child("longitude").getValue();
 
                     String message = snapshot.child("message").getValue().toString();
-
                     LatLng location = new LatLng(latitude, longitude);
 
                     EventDate date = new EventDate(startYear, startMonth, startDay, dueHour, dueMinute, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME);
 
                     Capsule capsule = new Capsule(location, message, date, key);
+
+                    EventMarker eventMarker = new EventMarker(capsule,getContext());
+
+                    Log.v("CapsuleMarker",eventMarker.getCapsule().toString());
+                    mClusterManager.addItem(eventMarker);
+                    capsules.add(capsule);
                 }
+
+                clusterItemFunctionality();
+                mClusterManager.setRenderer(new OwnIconRendered(getContext(), mMap, mClusterManager));
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
+                internetStatus();
 
             }
         });
@@ -502,10 +506,10 @@ public class MapFragmenttab extends Fragment {
                             }
                         });
 
+                        //Select Capsule
                         selectcapsule.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-
                                 build.dismiss();
 
                                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());

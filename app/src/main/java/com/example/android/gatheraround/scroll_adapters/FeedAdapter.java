@@ -325,7 +325,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.MyViewHolder>{
         File direct = new File(Environment.getExternalStorageDirectory() + "/GatherAround");
 
         if (!direct.exists()) {
-            File wallpaperDirectory = new File("/storage/emulated/0/Pictures/GatherAround/");
+            File wallpaperDirectory = new File("/storage/emulated/0/DCIM/GatherAround/");
             wallpaperDirectory.mkdirs();
         }
 

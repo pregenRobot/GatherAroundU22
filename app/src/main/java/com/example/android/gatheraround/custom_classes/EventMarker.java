@@ -42,13 +42,15 @@ public class EventMarker implements ClusterItem {
         mContext = context;
         type = 1;
 
-        mMarkerOptions = new MarkerOptions().position(mLocation).title(post.getPostContent())
+        mMarkerOptions = new MarkerOptions().position(mLocation)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("post2", 75, 75)));
     }
     public EventMarker(Capsule capsule, Context context){
         this.capsule = capsule;
         mContext = context;
-        mMarkerOptions = new MarkerOptions().position(mLocation).title(events.getName())
+        mLocation = capsule.getLocation();
+        Log.v("CapsuleLocation",mLocation.toString());
+        mMarkerOptions = new MarkerOptions().position(mLocation)
                 .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("capsule", 75, 75)));
         type = 2;
     }
@@ -60,15 +62,15 @@ public class EventMarker implements ClusterItem {
         mContext = context;
         switch (event.getCategory()){
             case "INDIVIDUAL":
-                mMarkerOptions = new MarkerOptions().position(mLocation).title(events.getName())
+                mMarkerOptions = new MarkerOptions().position(mLocation)
                     .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("individual", 75, 75)));
                 break;
             case "NPO":
-                mMarkerOptions = new MarkerOptions().position(mLocation).title(events.getName())
+                mMarkerOptions = new MarkerOptions().position(mLocation)
                         .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("npo", 75, 75)));
                 break;
             case "CORPORATE":
-                mMarkerOptions = new MarkerOptions().position(mLocation).title(events.getName())
+                mMarkerOptions = new MarkerOptions().position(mLocation)
                         .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons("corporate", 75, 75)));
                 break;
 
