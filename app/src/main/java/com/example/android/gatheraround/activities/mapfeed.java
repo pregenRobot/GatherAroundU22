@@ -11,7 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.android.gatheraround.Calculations;
+import com.example.android.gatheraround.processes.Calculations;
 import com.example.android.gatheraround.R;
 import com.example.android.gatheraround.SectionsPageAdapter;
 import com.example.android.gatheraround.custom_classes.Events;

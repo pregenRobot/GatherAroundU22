@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
-import com.example.android.gatheraround.Calculations;
+import com.example.android.gatheraround.processes.Calculations;
 import com.example.android.gatheraround.R;
 import com.example.android.gatheraround.custom_classes.EventDate;
 import com.example.android.gatheraround.custom_classes.Events;

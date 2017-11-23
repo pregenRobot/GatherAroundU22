@@ -1,6 +1,7 @@
 package com.example.android.gatheraround.scroll_adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.gatheraround.activities.MyInfoActivity;
 import com.example.android.gatheraround.fragments.ContactFragmentTab;
 import com.example.android.gatheraround.R;
 import com.example.android.gatheraround.custom_classes.UserProfileForFragment;
@@ -69,9 +71,16 @@ public class ContactFragmentAdapter extends RecyclerView.Adapter<ContactFragment
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                contactFragmentTab.goToMyInfo(profile.getUid());
+                goToMyInfo(profile.getUid());
+
             }
         });
+    }
+    public void goToMyInfo(String uid){
+        final Intent intent = new Intent(mContext, MyInfoActivity.class);
+        intent.putExtra(MyInfoActivity.isMyProfile_Intent, false);
+        intent.putExtra(MyInfoActivity.userId_Intent, uid);
+        mContext.startActivity(intent);
     }
 
     @Override

@@ -52,6 +52,8 @@ import com.example.android.gatheraround.custom_classes.EventDate;
 import com.example.android.gatheraround.custom_classes.EventMarker;
 import com.example.android.gatheraround.custom_classes.Events;
 import com.example.android.gatheraround.data.DatabaseHelper;
+import com.example.android.gatheraround.processes.Calculations;
+import com.example.android.gatheraround.processes.OwnIconRendered;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;

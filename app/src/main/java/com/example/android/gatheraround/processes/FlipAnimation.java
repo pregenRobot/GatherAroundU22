@@ -1,4 +1,4 @@
-package com.example.android.gatheraround;
+package com.example.android.gatheraround.processes;
 
 import android.graphics.Camera;
 import android.graphics.Matrix;

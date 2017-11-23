@@ -39,11 +39,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.android.gatheraround.Calculations;
+import com.example.android.gatheraround.processes.Calculations;
 import com.example.android.gatheraround.DataGetterFromServer;
 import com.example.android.gatheraround.DataSenderToServer;
-import com.example.android.gatheraround.FlipAnimation;
-import com.example.android.gatheraround.OwnIconRendered;
+import com.example.android.gatheraround.processes.FlipAnimation;
+import com.example.android.gatheraround.processes.OwnIconRendered;
 import com.example.android.gatheraround.R;
 import com.example.android.gatheraround.custom_classes.Capsule;
 import com.example.android.gatheraround.custom_classes.EventDate;
@@ -451,6 +451,7 @@ public class MapFragmenttab extends Fragment {
                             @Override
                             public void onClick(View view) {
 
+
                                 build.dismiss();
 
                                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
@@ -514,6 +515,7 @@ public class MapFragmenttab extends Fragment {
 
                                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
                                 View mView = getActivity().getLayoutInflater().inflate(R.layout.capsulecreator,null);
+                                mView.setBackgroundColor(Color.TRANSPARENT);
 
                                 eventDate = new EventDate(EventDate.DEFAULT_TIME,
                                         EventDate.DEFAULT_TIME,EventDate.DEFAULT_TIME,EventDate.DEFAULT_TIME,

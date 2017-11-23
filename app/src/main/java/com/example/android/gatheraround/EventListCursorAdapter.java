@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.example.android.gatheraround.custom_classes.EventDate;
 import com.example.android.gatheraround.data.DatabaseHelper;
 import com.example.android.gatheraround.data.MyEventsDatabaseHelper;
+import com.example.android.gatheraround.processes.Calculations;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;

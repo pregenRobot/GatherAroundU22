@@ -1,8 +1,9 @@
-package com.example.android.gatheraround;
+package com.example.android.gatheraround.processes;
 
 import android.content.Context;
 import android.graphics.Color;
 
+import com.example.android.gatheraround.R;
 import com.example.android.gatheraround.custom_classes.EventMarker;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.MarkerOptions;

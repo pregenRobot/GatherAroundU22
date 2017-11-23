@@ -2,9 +2,12 @@ package com.example.android.gatheraround.fragments;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
@@ -17,7 +20,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.android.gatheraround.DataSenderToServer;
 import com.example.android.gatheraround.activities.MyInfoActivity;
@@ -29,8 +34,10 @@ import com.example.android.gatheraround.scroll_adapters.ContactFragmentAdapter;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
 
 /**
  * Created by tamimazmain on 2017/11/11.
@@ -74,7 +81,6 @@ public class ContactFragmentTab extends Fragment {
             @Override
             public void onClick(View view) {
                 startActivity(intent);
-
             }
         });
 
@@ -105,11 +111,13 @@ public class ContactFragmentTab extends Fragment {
             StorageReference imageReference = storage.getReference().child(
                     DataSenderToServer.IMAGE_REFERENCE_TITLE).child(profile.getUid()).child(DataSenderToServer.IMAGE_REFERENCE_PROFILE);
 
+
             Glide.with(getActivity())
                     .using(new FirebaseImageLoader())
                     .load(imageReference)
                     .asBitmap()
                     .into(new SimpleTarget<Bitmap>() {
+
                         @Override
                         public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
 
@@ -122,26 +130,12 @@ public class ContactFragmentTab extends Fragment {
                     });
 
             contactFragmentAdapter.notifyDataSetChanged();
-
-
         }
 
         Toast.makeText(getActivity(), "Tem. Message: Showing " + contactContents.size() + " contacts", Toast.LENGTH_SHORT).show();
-
-
-
-
-
         return rootView;
     }
 
-    public void goToMyInfo(String uid){
-        final Intent intent = new Intent();
-        intent.setClass(getActivity(), MyInfoActivity.class);
-        intent.putExtra(MyInfoActivity.isMyProfile_Intent, false);
-        intent.putExtra(MyInfoActivity.userId_Intent, uid);
-        startActivity(intent);
-    }
 
     @Override
     public void onDestroy() {

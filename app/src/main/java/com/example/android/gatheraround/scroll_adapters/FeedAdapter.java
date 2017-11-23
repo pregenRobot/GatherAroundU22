@@ -28,7 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.gatheraround.Calculations;
+import com.example.android.gatheraround.processes.Calculations;
 import com.example.android.gatheraround.DataSenderToServer;
 import com.example.android.gatheraround.fragments.MapFragmenttab;
 import com.example.android.gatheraround.R;

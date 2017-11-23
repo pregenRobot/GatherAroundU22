@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.android.gatheraround.DataSenderToServer;
-import com.example.android.gatheraround.FlipAnimation;
+import com.example.android.gatheraround.processes.FlipAnimation;
 import com.example.android.gatheraround.R;
 import com.example.android.gatheraround.custom_classes.UserProfile;
 import com.google.android.gms.tasks.OnCompleteListener;

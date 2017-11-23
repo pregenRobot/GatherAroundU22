@@ -9,13 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.android.gatheraround.Calculations;
+import com.example.android.gatheraround.processes.Calculations;
 import com.example.android.gatheraround.custom_classes.Post;
 import com.example.android.gatheraround.fragments.MapFragmenttab;
 import com.example.android.gatheraround.R;
 import com.example.android.gatheraround.custom_classes.Events;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
