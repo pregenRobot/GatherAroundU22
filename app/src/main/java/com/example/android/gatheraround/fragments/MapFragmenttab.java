@@ -192,8 +192,6 @@ public class MapFragmenttab extends Fragment {
         //post
         final ArrayList<Post> postsList = new ArrayList<>();
 
-
-
         Firebase firebase1 = new Firebase(DataSenderToServer.FIREBASE_POST_URL);
         firebase1.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -204,6 +202,7 @@ public class MapFragmenttab extends Fragment {
 
                     String uid = snapshot.child("posterUid").getValue().toString();
                     String postContent = snapshot.child("postContent").getValue().toString();
+                    int likes = (int)snapshot.child("mLikes").getValue();
 
                     String year = snapshot.child("postDate").child("mYear").getValue().toString();
                     String month = snapshot.child("postDate").child("mMonth").getValue().toString();
@@ -220,7 +219,7 @@ public class MapFragmenttab extends Fragment {
 
                     String postId = snapshot.child("postId").getValue().toString();
 
-                    Post individualPost = new Post(uid, postContent, date, location, locationName, postId);
+                    Post individualPost = new Post(uid, postContent, date, location, locationName, postId, likes);
 
                     EventMarker eventMarker = new EventMarker(individualPost,getContext());
                     mClusterManager.addItem(eventMarker);
@@ -474,7 +473,7 @@ public class MapFragmenttab extends Fragment {
 
                                             Calculations calculations = new Calculations();
 
-                                            Post post = new Post(user.getUid(), postContent, calculations.getTime(), new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude()), locationName, "temporary");
+                                            Post post = new Post(user.getUid(), postContent, calculations.getTime(), new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude()), locationName, "temporary", 0);
 
                                             DatabaseHelper helper = new DatabaseHelper(getActivity());
 
