@@ -811,6 +811,7 @@ public class MapFragmenttab extends Fragment {
                                 dialog.show();
                             }
                         });
+                        //Test
 
                         //Select Event
                         selectevent.setOnClickListener(new View.OnClickListener() {
