@@ -14,7 +14,7 @@ public class Post {
     LatLng mLocation;
     String mLocationName;
     String mPostId;
-    int followers;
+    int mLikes;
 
     public Post(String posterUid, String postContent, EventDate postDate, LatLng location, String locationName, String postId) {
         mPosterUid = posterUid;
@@ -23,6 +23,16 @@ public class Post {
         mLocation = location;
         mLocationName = locationName;
         mPostId = postId;
+    }
+
+    public Post(String posterUid, String postContent, EventDate postDate, LatLng location, String locationName, String postId, int likes) {
+        mPosterUid = posterUid;
+        mPostContent = postContent;
+        mPostDate = postDate;
+        mLocation = location;
+        mLocationName = locationName;
+        mPostId = postId;
+        mLikes = likes;
     }
 
 
