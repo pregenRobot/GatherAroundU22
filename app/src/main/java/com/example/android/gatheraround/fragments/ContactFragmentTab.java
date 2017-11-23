@@ -68,13 +68,12 @@ public class ContactFragmentTab extends Fragment {
         });
 
         Button flyToMyProfileButton = rootView.findViewById(R.id.flytomyprofile);
-        final Intent intent = new Intent(getContext(),MyInfoActivity.class);
 
         flyToMyProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final Intent intent = new Intent(getContext(),MyInfoActivity.class);
                 startActivity(intent);
-
             }
         });
 
@@ -86,8 +85,6 @@ public class ContactFragmentTab extends Fragment {
         }
 
         Toast.makeText(getActivity(), "Temp. Message: There are " + profiles.size() + " users in contact", Toast.LENGTH_SHORT).show();
-
-
 
         for (final UserProfile profile : profiles){
 
@@ -138,7 +135,6 @@ public class ContactFragmentTab extends Fragment {
     public void goToMyInfo(String uid){
         final Intent intent = new Intent();
         intent.setClass(getActivity(), MyInfoActivity.class);
-        intent.putExtra(MyInfoActivity.isMyProfile_Intent, false);
         intent.putExtra(MyInfoActivity.userId_Intent, uid);
         startActivity(intent);
     }

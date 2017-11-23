@@ -117,6 +117,9 @@ public class MapFragmenttab extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
         rootView = inflater.inflate(R.layout.tabmapfragment, container, false);
         bottomSheet = getActivity().findViewById(R.id.mapfragbottomsheet);
         maincontent = getActivity().findViewById(R.id.container);
@@ -132,7 +135,6 @@ public class MapFragmenttab extends Fragment {
         eventLocationbot = (TextView) getActivity().findViewById(R.id.eventLocationMark);
         eventSummarybot = (TextView) getActivity().findViewById(R.id.summaryTextBrowser);
         eventfollowersbot = (TextView) getActivity().findViewById(R.id.eventParticipantsMark);
-
 
         postinfo = (TextView) getActivity().findViewById(R.id.postinfo);
         posttime = (TextView) getActivity().findViewById(R.id.posttime);
@@ -204,6 +206,7 @@ public class MapFragmenttab extends Fragment {
 
                     String uid = snapshot.child("posterUid").getValue().toString();
                     String postContent = snapshot.child("postContent").getValue().toString();
+                    int likes = ((Long)snapshot.child("mLikes").getValue()).intValue();
 
                     String year = snapshot.child("postDate").child("mYear").getValue().toString();
                     String month = snapshot.child("postDate").child("mMonth").getValue().toString();
@@ -219,7 +222,7 @@ public class MapFragmenttab extends Fragment {
                     LatLng location = new LatLng(latitude,longitude);
                     String locationName = snapshot.child("locationName").getValue().toString();
                     String postId = snapshot.child("postId").getValue().toString();
-                    Post individualPost = new Post(uid, postContent, date, location, locationName, postId);
+                    Post individualPost = new Post(uid, postContent, date, location, locationName, postId, likes);
 
                     EventMarker eventMarker = new EventMarker(individualPost,getContext());
                     mClusterManager.addItem(eventMarker);
@@ -384,12 +387,12 @@ public class MapFragmenttab extends Fragment {
                     double latitude = (double)snapshot.child("location").child("latitude").getValue();
                     double longitude = (double)snapshot.child("location").child("longitude").getValue();
 
-                    String message = snapshot.child("message").getValue().toString();
+                    String message = snapshot.child("information").getValue().toString();
                     LatLng location = new LatLng(latitude, longitude);
 
                     EventDate date = new EventDate(startYear, startMonth, startDay, dueHour, dueMinute, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME);
 
-                    Capsule capsule = new Capsule(location, message, date, key);
+                    Capsule capsule = new Capsule(location, message, date, user.getUid(), key);
 
                     EventMarker eventMarker = new EventMarker(capsule,getContext());
 
@@ -474,11 +477,9 @@ public class MapFragmenttab extends Fragment {
                                             builder1 = (SpannableStringBuilder) locationNameEditText.getText();
                                             String locationName = builder1.toString();
 
-                                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
                                             Calculations calculations = new Calculations();
 
-                                            Post post = new Post(user.getUid(), postContent, calculations.getTime(), new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude()), locationName, "temporary");
+                                            Post post = new Post(user.getUid(), postContent, calculations.getTime(), new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude()), locationName, "temporary", 0);
 
                                             DatabaseHelper helper = new DatabaseHelper(getActivity());
 
@@ -805,7 +806,16 @@ public class MapFragmenttab extends Fragment {
                                     public void onClick(View view) {
                                         String message = capsuleEditText.getText().toString();
 
-                                        Capsule capsule = new Capsule(latLng,message,eventDate,"temporary");
+                                        Capsule capsule = new Capsule(latLng, message, eventDate, user.getUid(), "temporary");
+
+                                        // TODO: 2017/11/23 write capsule function
+
+                                        DataSenderToServer senderToServer = new DataSenderToServer();
+                                        senderToServer.sendNewCapsule(capsule);
+
+                                        dialog.dismiss();
+                                        Intent intent = new Intent(getContext(),mapfeed.class);
+                                        startActivity(intent);
                                     }
                                 });
                                 dialog.show();

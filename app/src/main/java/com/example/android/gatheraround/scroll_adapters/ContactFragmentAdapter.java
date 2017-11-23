@@ -69,6 +69,9 @@ public class ContactFragmentAdapter extends RecyclerView.Adapter<ContactFragment
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                Log.i("Uid", "uid: " + profile.getUid());
+
                 contactFragmentTab.goToMyInfo(profile.getUid());
             }
         });

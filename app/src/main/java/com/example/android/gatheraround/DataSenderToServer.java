@@ -3,6 +3,7 @@ package com.example.android.gatheraround;
 import android.net.Uri;
 import android.util.Log;
 
+import com.example.android.gatheraround.custom_classes.Capsule;
 import com.example.android.gatheraround.custom_classes.Events;
 import com.example.android.gatheraround.custom_classes.Post;
 import com.example.android.gatheraround.custom_classes.UserProfile;
@@ -95,6 +96,18 @@ public class DataSenderToServer{
 
         Firebase push = firebase.push();
         push.setValue(post);
+        String key = push.getKey();
+        firebase.child(key).child("key").setValue(key);
+
+        return key;
+    }
+
+    public String sendNewCapsule(Capsule capsule){
+
+        Firebase firebase = new Firebase(FIREBASE_CAPSULE_URL);
+
+        Firebase push = firebase.push();
+        push.setValue(capsule);
         String key = push.getKey();
         firebase.child(key).child("key").setValue(key);
 

@@ -47,7 +47,7 @@ public class MyInfoActivity extends AppCompatActivity {
 
     FirebaseStorage storage = FirebaseStorage.getInstance();
 
-    //when start from other Activity, put value to an intent, isMyProfile.
+    //when start from other Activity, put value to an intent, isMyProfile and uid.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,82 +64,85 @@ public class MyInfoActivity extends AppCompatActivity {
 
         logoutButton = findViewById(R.id.logoutButton);
 
+        userId = getIntent().getStringExtra(userId_Intent);
+
         isMyProfile = getIntent().getBooleanExtra(isMyProfile_Intent, true);
 
-        if (!isMyProfile){
-            userId = getIntent().getStringExtra(userId_Intent);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-            logoutButton.setVisibility(View.INVISIBLE);
+        if(user == null){
+
+            Toast.makeText(MyInfoActivity.this, "Not signed in.", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent();
+            intent.setClass(MyInfoActivity.this, LoginActivity.class);
+            startActivity(intent);
+        } else {
+
+            String myUid = user.getUid();
+
+            if (isMyProfile){
+                addToContactButton.setVisibility(View.INVISIBLE);
+                userId = myUid;
+            } else {
+                logoutButton.setVisibility(View.INVISIBLE);
+            }
 
             showProfile(userId);
 
-            addToContactButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final DatabaseHelper helper = new DatabaseHelper(MyInfoActivity.this);
+            if (isMyProfile){
 
+                logoutButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        FirebaseAuth.getInstance().signOut();
 
-                    Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_PROFILE_URL).child(userId);
-                    firebase.addListenerForSingleValueEvent(new ValueEventListener() {
-                        String name;
-                        String profile;
-
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            name = dataSnapshot.child(UserProfile.TITLE_NAME).getValue().toString();
-                            profile = dataSnapshot.child(UserProfile.TITLE_PROFILE).getValue().toString();
-
-                            UserProfile userProfile = new UserProfile(userId,"notPublic",name,profile);
-                            boolean doesExist = helper.addNewUserToContactList(userProfile);
-                            if (doesExist){
-                                Toast.makeText(MyInfoActivity.this, getResources().getString(R.string.contactsAlreadyExists), Toast.LENGTH_SHORT).show();
-                            }else{
-                                Toast.makeText(MyInfoActivity.this, getResources().getString(R.string.contactsAddedToList), Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-
-                        @Override
-                        public void onCancelled(FirebaseError firebaseError) {
-
-                        }
-                    });
-
-                }
-            });
-        }else{
-
-            addToContactButton.setVisibility(View.INVISIBLE);
-
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if(user == null){
-
-                Toast.makeText(MyInfoActivity.this, "Not signed in.", Toast.LENGTH_SHORT).show();
-
-                Intent intent = new Intent();
-                intent.setClass(MyInfoActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }else{
-
-                userId = user.getUid();
-
-                showProfile(userId);
-            }
-
-            logoutButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    FirebaseAuth.getInstance().signOut();
-
-                    Intent intent = new Intent();
-                    intent.setClass(MyInfoActivity.this, LoginActivity.class);
-                    startActivity(intent);
+                        Intent intent = new Intent();
+                        intent.setClass(MyInfoActivity.this, LoginActivity.class);
+                        startActivity(intent);
 
 //                    MyInfoActivity.this.finish();
 
-                    android.os.Process.killProcess(android.os.Process.myPid());
-                }
-            });
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                    }
+                });
+            } else {
+
+                addToContactButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final DatabaseHelper helper = new DatabaseHelper(MyInfoActivity.this);
+
+
+                        Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_PROFILE_URL).child(userId);
+                        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+                            String name;
+                            String profile;
+
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                name = dataSnapshot.child(UserProfile.TITLE_NAME).getValue().toString();
+                                profile = dataSnapshot.child(UserProfile.TITLE_PROFILE).getValue().toString();
+
+                                UserProfile userProfile = new UserProfile(userId,"notPublic",name,profile);
+                                boolean doesExist = helper.addNewUserToContactList(userProfile);
+                                if (doesExist){
+                                    Toast.makeText(MyInfoActivity.this, getResources().getString(R.string.contactsAlreadyExists), Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Toast.makeText(MyInfoActivity.this, getResources().getString(R.string.contactsAddedToList), Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(FirebaseError firebaseError) {
+
+                            }
+                        });
+
+                    }
+                });
+            }
         }
     }
 

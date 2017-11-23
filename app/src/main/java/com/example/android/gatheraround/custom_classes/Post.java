@@ -16,14 +16,15 @@ public class Post {
     String mPostId;
     int mLikes;
 
-    public Post(String posterUid, String postContent, EventDate postDate, LatLng location, String locationName, String postId) {
-        mPosterUid = posterUid;
-        mPostContent = postContent;
-        mPostDate = postDate;
-        mLocation = location;
-        mLocationName = locationName;
-        mPostId = postId;
-    }
+    // TODO: 2017/11/23 終わったら消す
+//    public Post(String posterUid, String postContent, EventDate postDate, LatLng location, String locationName, String postId) {
+//        mPosterUid = posterUid;
+//        mPostContent = postContent;
+//        mPostDate = postDate;
+//        mLocation = location;
+//        mLocationName = locationName;
+//        mPostId = postId;
+//    }
 
     public Post(String posterUid, String postContent, EventDate postDate, LatLng location, String locationName, String postId, int likes) {
         mPosterUid = posterUid;
