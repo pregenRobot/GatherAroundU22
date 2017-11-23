@@ -38,4 +38,8 @@ public class UserProfile {
     public String getProfileText(){
         return mProfileText;
     }
+
+    public String toString(){
+        return mUid + " " + mEmail + " " + mName + " " + mProfileText;
+    }
 }

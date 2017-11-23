@@ -1,14 +1,12 @@
-package com.example.android.gatheraround;
+package com.example.android.gatheraround.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -16,7 +14,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
@@ -42,33 +39,36 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.android.gatheraround.Calculations;
+import com.example.android.gatheraround.DataGetterFromServer;
+import com.example.android.gatheraround.DataSenderToServer;
+import com.example.android.gatheraround.FlipAnimation;
+import com.example.android.gatheraround.OwnIconRendered;
+import com.example.android.gatheraround.R;
 import com.example.android.gatheraround.custom_classes.Capsule;
 import com.example.android.gatheraround.custom_classes.EventDate;
 import com.example.android.gatheraround.custom_classes.EventMarker;
 import com.example.android.gatheraround.custom_classes.Events;
 import com.example.android.gatheraround.custom_classes.Post;
 import com.example.android.gatheraround.data.DatabaseHelper;
+import com.example.android.gatheraround.activities.mapfeed;
+import com.example.android.gatheraround.scroll_adapters.ScrollFeedAdapter;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.Algorithm;
 import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -192,6 +192,8 @@ public class MapFragmenttab extends Fragment {
         //post
         final ArrayList<Post> postsList = new ArrayList<>();
 
+
+
         Firebase firebase1 = new Firebase(DataSenderToServer.FIREBASE_POST_URL);
         firebase1.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -227,7 +229,6 @@ public class MapFragmenttab extends Fragment {
 
                     postsList.add(individualPost);
                 }
-//                searchFunc
 
                 clusterItemFunctionality();
                 mClusterManager.setRenderer(new OwnIconRendered(getContext(), mMap, mClusterManager));
@@ -235,9 +236,10 @@ public class MapFragmenttab extends Fragment {
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-
+                internetStatus();
             }
         });
+
 
         //event
         final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_EVENT_URL);
@@ -317,10 +319,10 @@ public class MapFragmenttab extends Fragment {
                 LinearLayout linlear = getActivity().findViewById(R.id.bottomsheeteventdate);
                 TextView evLoc = getActivity().findViewById(R.id.eventLocationMark);
 
-                int peekheight = evName.getHeight() + linlear.getHeight() + evLoc.getHeight();
+                int peekheight = evName.getHeight() + linlear.getHeight() + evLoc.getHeight()+ evLoc.getPaddingBottom();
                 Log.v("Bottomsheet ",peekheight+"");
 
-                bottomSheet.getLayoutParams().height = maincontent.getHeight()+0;
+                bottomSheet.getLayoutParams().height = maincontent.getHeight();
                 Log.v("Bottomsheet params:",bottomSheet.getLayoutParams().height+"");
                 Log.v("Container params:",bottomSheet.getLayoutParams().height+"");
                 bottomSheetBehavior.setPeekHeight(peekheight);
@@ -1183,8 +1185,6 @@ public class MapFragmenttab extends Fragment {
     public void onResume() {
         super.onResume();
         mMapView.onResume();
-
-
     }
 
     @Override
@@ -1192,9 +1192,14 @@ public class MapFragmenttab extends Fragment {
         super.onPause();
         mMapView.onPause();
 
+        try {
+
         mLocationManager.removeUpdates(locationListenerGPS);
 
-        mLocationManager= null;
+            mLocationManager = null;
+        }catch (NullPointerException e){
+
+        }
     }
 
     @Override

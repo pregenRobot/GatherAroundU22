@@ -21,6 +21,8 @@ public class DataSenderToServer{
 
     public static final String FIREBASE_EVENT_URL = "https://u22-project-gather-around.firebaseio.com/eventPostDetails";
     public static final String FIREBASE_POST_URL = "https://u22-project-gather-around.firebaseio.com/postDetails";
+    public static final String FIREBASE_CAPSULE_URL = "https://u22-project-gather-around.firebaseio.com/capsuleDetails";
+
     public static final String FIREBASE_PROFILE_URL = "https://u22-project-gather-around.firebaseio.com/users";
     public static final String FIREBASE_CAPSULE_URL = "https://u22-project-gather-around.firebaseio.com/capsule";
 
@@ -35,12 +37,12 @@ public class DataSenderToServer{
         Firebase push = firebase.push();
         push.setValue(newEvent);
         String key = push.getKey();
-        firebase.child(key).child("postId").setValue(key);
+        firebase.child(key).child("key").setValue(key);
 
         return key;
     }
 
-    void eraseEntry(String key){
+    public void eraseEntry(String key){
 
         Firebase firebase = new Firebase(FIREBASE_EVENT_URL + "/" + key);
         firebase.removeValue();

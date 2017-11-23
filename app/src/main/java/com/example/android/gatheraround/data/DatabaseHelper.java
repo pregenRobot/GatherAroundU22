@@ -260,11 +260,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         boolean doesExist = false;
 
-        for (UserProfile profileFromDatabase : getAllContacts()){
-            if (profileFromDatabase.getUid().equals(profile.getUid())){
+        for (UserProfile profileFromDatabase : getAllContacts()) {
+            if (profileFromDatabase.getUid().equals(profile.getUid())) {
                 doesExist = true;
             }
         }
+        Log.v("Adding user",profile.toString());
 
         if (!doesExist){
             SQLiteDatabase database = this.getWritableDatabase();

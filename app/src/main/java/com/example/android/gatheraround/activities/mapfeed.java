@@ -1,4 +1,4 @@
-package com.example.android.gatheraround;
+package com.example.android.gatheraround.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,10 +9,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.gatheraround.Calculations;
+import com.example.android.gatheraround.R;
+import com.example.android.gatheraround.SectionsPageAdapter;
 import com.example.android.gatheraround.custom_classes.Events;
+import com.example.android.gatheraround.fragments.ContactFragmentTab;
+import com.example.android.gatheraround.fragments.FeedFragmentTab;
+import com.example.android.gatheraround.fragments.MapFragmenttab;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 

@@ -23,7 +23,7 @@ c    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".InitialActivity"
+            android:name=".activities.InitialActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,7 +35,7 @@ c    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
             android:name=".MainActivity"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".mapfeed"
+            android:name=".activities.mapfeed"
             android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
@@ -51,8 +51,8 @@ c    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
         <!-- "AIzaSyDphN4bVaQHzDfIcE5XL3ESwi5t7C_h-1k" -->
         <!-- "AIzaSyDYeT85TEsG18YZpABHVVll6nBebRcbJZU" -->
 
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".MyInfoActivity" />
+        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.MyInfoActivity" />
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat"/>
     </application>
