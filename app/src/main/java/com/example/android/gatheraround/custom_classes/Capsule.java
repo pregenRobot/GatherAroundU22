@@ -16,20 +16,31 @@ public class Capsule {
     private String mCapsuleId;
     private String userId;
 
-    public Capsule(LatLng location, String details, EventDate Date, String uid){
+    public Capsule(LatLng location, String details, EventDate Date, String uid, String capsuleId){
         latlng = location;
         information = details;
         eventDate = Date;
         userId = uid;
+        mCapsuleId = capsuleId;
     }
 
     public LatLng getLocation(){
         return latlng;
     }
+
     public String getInformation(){
         return information;
     }
+
     public EventDate getDate(){
         return eventDate;
+    }
+
+    public String getUid(){
+        return userId;
+    }
+
+    public String getCapsuleId(){
+        return mCapsuleId;
     }
 }
