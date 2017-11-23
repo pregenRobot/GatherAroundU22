@@ -105,10 +105,9 @@ public class InitialActivity extends AppCompatActivity {
 
                             Intent intent = new Intent(InitialActivity.this, mapfeed.class);
                             intent.putExtras(bundle);
-
                             startActivity(intent);
 
-                            InitialActivity.this.finish();
+                            finish();
                         }
                         @Override
                         public void onCancelled(FirebaseError firebaseError) {
@@ -129,7 +128,7 @@ public class InitialActivity extends AppCompatActivity {
         }
     }
 
-    // following two are necessary for auth(account check)
+    // following two (onStart, onStop) are necessary for auth(account check)
     @Override
     public void onStart(){
         super.onStart();

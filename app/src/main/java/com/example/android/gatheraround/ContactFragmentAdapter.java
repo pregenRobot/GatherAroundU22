@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -50,6 +51,8 @@ public class ContactFragmentAdapter extends RecyclerView.Adapter<ContactFragment
         this.profileList = list;
         this.mContext = context;
         Log.v("Contact Adapter","Creating Constructor");
+
+        Toast.makeText(mContext, "Temp. Message: Showing " + list.size() + " contacts", Toast.LENGTH_SHORT).show();
     }
 
     @Override

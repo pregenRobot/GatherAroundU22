@@ -187,6 +187,9 @@ public class LoginActivity extends AppCompatActivity {
             if(!(profileUri == null || backgroundUri == null)){
                 if (password.equals(confirm)) {
                     if (!(password.length() < 6)) {
+
+                        Toast.makeText(LoginActivity.this, "Creating account", Toast.LENGTH_SHORT).show();
+
                         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {

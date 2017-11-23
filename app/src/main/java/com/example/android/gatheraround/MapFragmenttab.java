@@ -189,9 +189,8 @@ public class MapFragmenttab extends Fragment {
             e.printStackTrace();
         }
 
+        //post
         final ArrayList<Post> postsList = new ArrayList<>();
-
-
 
         Firebase firebase1 = new Firebase(DataSenderToServer.FIREBASE_POST_URL);
         firebase1.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -240,6 +239,7 @@ public class MapFragmenttab extends Fragment {
             }
         });
 
+        //event
         final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_EVENT_URL);
         firebase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -369,6 +369,39 @@ public class MapFragmenttab extends Fragment {
             }
         });
 
+        //capsule
+        Firebase firebase2 = new Firebase(DataSenderToServer.FIREBASE_CAPSULE_URL);
+        firebase2.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+
+                    String startYear = snapshot.child("mYear").getValue().toString();
+                    String startMonth = snapshot.child("mMonth").getValue().toString();
+                    String startDay = snapshot.child("mDay").getValue().toString();
+                    String dueHour = snapshot.child("mHour").getValue().toString();
+                    String dueMinute = snapshot.child("mMinute").getValue().toString();
+
+                    String key = snapshot.child("key").getValue().toString();
+
+                    long latitude = (long)snapshot.child("latitude").getValue();
+                    long longitude = (long)snapshot.child("longitude").getValue();
+
+                    String message = snapshot.child("message").getValue().toString();
+
+                    LatLng location = new LatLng(latitude, longitude);
+
+                    EventDate date = new EventDate(startYear, startMonth, startDay, dueHour, dueMinute, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME);
+
+                    Capsule capsule = new Capsule(location, message, date, key);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
 
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
