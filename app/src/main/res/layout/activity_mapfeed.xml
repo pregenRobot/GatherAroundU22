@@ -10,41 +10,6 @@
     android:fitsSystemWindows="true"
     >
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/scanMain1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="36dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="24dp"
-        android:layout_marginTop="8dp"
-        android:clickable="true"
-        android:src="@drawable/scanner"
-        app:backgroundTint="@color/cardbackground2"
-        app:borderWidth="-120000dp"
-        app:fabSize="normal"
-        app:layout_anchor="@id/mapfragbottomsheet"
-        app:layout_anchorGravity="top|end"
-        />
-    <android.support.design.widget.FloatingActionButton
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/follow1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="36dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="24dp"
-        android:layout_marginTop="8dp"
-        android:visibility="gone"
-        android:clickable="true"
-        android:src="@drawable/like"
-        app:backgroundTint="@color/cardbackground2"
-        app:borderWidth="-120000dp"
-        app:fabSize="normal"
-        app:layout_anchor="@id/mapfragbottomsheet"
-        app:layout_anchorGravity="top|end"
-        />
-
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
@@ -203,6 +168,7 @@
 
             </LinearLayout>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -293,9 +259,42 @@
 
         </LinearLayout>
 
-
     </LinearLayout>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/scanMain1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="36dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:src="@drawable/scanner"
+        app:backgroundTint="@color/cardbackground2"
+        app:borderWidth="-120000dp"
+        app:fabSize="normal"
+        app:layout_anchor="@id/mapfragbottomsheet"
+        app:layout_anchorGravity="top|end"
+        />
 
+    <android.support.design.widget.FloatingActionButton
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/follow1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="36dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        android:clickable="true"
+        android:src="@drawable/like"
+        app:backgroundTint="@color/cardbackground2"
+        app:borderWidth="-120000dp"
+        app:fabSize="normal"
+        app:layout_anchor="@id/mapfragbottomsheet"
+        app:layout_anchorGravity="top|end"
+        />
 
 </android.support.design.widget.CoordinatorLayout>

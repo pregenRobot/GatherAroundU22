@@ -856,8 +856,6 @@ public class MapFragmenttab extends Fragment {
 
                                         Capsule capsule = new Capsule(latLng, message, eventDate, user.getUid(), "temporary");
 
-                                        // TODO: 2017/11/23 write capsule function
-
                                         DataSenderToServer senderToServer = new DataSenderToServer();
                                         senderToServer.sendNewCapsule(capsule);
 

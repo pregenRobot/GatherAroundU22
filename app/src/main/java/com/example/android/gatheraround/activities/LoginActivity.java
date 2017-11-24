@@ -78,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                     flipAnimation = new FlipAnimation(loginBackView, signInFaceView);
                     flipAnimation.reverse();
                     loginCoordinate.startAnimation(flipAnimation);
-                    switcher.setText("Create a new account?");
+                    switcher.setText(getResources().getString(R.string.text_createAcount));
                 }else if(signInFaceView.getVisibility() == View.GONE){
                     flipAnimation = new FlipAnimation(signInFaceView, loginBackView);
                     flipAnimation.reverse();
@@ -152,7 +152,7 @@ public class LoginActivity extends AppCompatActivity {
         builder = (SpannableStringBuilder)loginPasswordEditText.getText();
         final String password = builder.toString();
 
-        Toast.makeText(this, "Login on going", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getResources().getString(R.string.message_loginOnGoing), Toast.LENGTH_SHORT).show();
 
         if(!email.isEmpty() && !password.isEmpty()){
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -164,12 +164,12 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     }else{
-                        Toast.makeText(LoginActivity.this, "Seems failed to login. Please try again.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.message_loginFailed), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
         } else{
-            Toast.makeText(this, "Please fill up the form to login.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.message_filleUpForm), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -191,13 +191,13 @@ public class LoginActivity extends AppCompatActivity {
                 if (password.equals(confirm)) {
                     if (!(password.length() < 6)) {
 
-                        Toast.makeText(LoginActivity.this, "Creating account", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, getResources().getString(R.string.message_creatingAccount), Toast.LENGTH_SHORT).show();
 
                         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(LoginActivity.this, "Successfully created a new account", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.message_successfullyCreatedAccount), Toast.LENGTH_SHORT).show();
 
                                     DataSenderToServer sender = new DataSenderToServer();
 
@@ -212,7 +212,7 @@ public class LoginActivity extends AppCompatActivity {
                                     startActivity(intent);
                                     finish();
                                 } else {
-                                    Toast.makeText(LoginActivity.this, "Failed created a new account", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.message_failedToCreateAccount), Toast.LENGTH_SHORT).show();
 
                                     Log.i("Failed", "Failed:" + task.getException().getMessage());
                                 }
@@ -225,10 +225,10 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, getResources().getString(R.string.passwordConfirmationNoMatchMessage_text), Toast.LENGTH_SHORT).show();
                 }
             }else{
-                Toast.makeText(this, "Please set a profile image", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.selectImageDescription_text), Toast.LENGTH_SHORT).show();
             }
         }else{
-            Toast.makeText(this, "Please fill up the form", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.fillInAllFields), Toast.LENGTH_SHORT).show();
         }
     }
 

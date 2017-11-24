@@ -22,7 +22,7 @@
     <string name="select_start_time">SELECT START TIME</string>
     <string name="select_end_time">SELECT END TIME</string>
     <string name="done">Done</string>
-    <string name="eventname">EventName</string>
+    <string name="eventname">Event Name</string>
     <string name="location_name">Location Name</string>
     <string name="lol">lol</string>
     <string name="followers">Followers</string>
@@ -53,7 +53,18 @@
     <string name="selectImageDescription_text">Please select image from your phone for your profile picture.</string>
     <string name="passwordLengthErrorMessage_text">Password should be more than 6 characters.</string>
     <string name="passwordConfirmationNoMatchMessage_text">Password and confirmation does not match. Please try again.</string>
-    <string name="contrary_to_popular_belief_lorem_ipsum_is_not_simply_random_text_it_has_roots_in_a_piece_of_classical_latin_literatu_re_from_45_bc_making_it_over_2000_years_old_richard_mcclintock_a_latin_professor_at_ham_pden_sydney_college_in_virginia_looked_up_one_of_the_more_obscure_latin_words_consectetu_r_from_a_lorem_ipsum_passage_and_going_t_hrough_the_cites_of_the_word_in_classical_litera_ture_discovered_the_undoubtable_source_lorem_ipsum_comes_from_sections_1_10_32_and_1_10_33_o_f_the_extremes_of_good_and_evil_by_cicero_wr_itten_in_45_bc_this_book_is_a_treatise_on_the_theory_of_ethics_very_popular_during_the_renai_ssance_the_first_line_of_lorem_ipsum_comes_from_a">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literatu re from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Ham pden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetu r, from a Lorem Ipsum passage, and going t hrough the cites of the word in classical litera ture, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 o f (The Extremes of Good and Evil) by Cicero, wr itten in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renai ssance. The first line of Lorem Ipsum,comes from a</string>
+    <!--<string name="contrary_to_popular_belief_lorem_ipsum_is_not_simply_random_text_it_has_roots_in_a_piece_of_classical_latin_literatu_re_from_45_bc_making_it_over_2000_years_old_richard_mcclintock_a_latin_professor_at_ham_pden_sydney_college_in_virginia_looked_up_one_of_the_more_obscure_latin_words_consectetu_r_from_a_lorem_ipsum_passage_and_going_t_hrough_the_cites_of_the_word_in_classical_litera_ture_discovered_the_undoubtable_source_lorem_ipsum_comes_from_sections_1_10_32_and_1_10_33_o_f_the_extremes_of_good_and_evil_by_cicero_wr_itten_in_45_bc_this_book_is_a_treatise_on_the_theory_of_ethics_very_popular_during_the_renai_ssance_the_first_line_of_lorem_ipsum_comes_from_a">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literatu re from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Ham pden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetu r, from a Lorem Ipsum passage, and going t hrough the cites of the word in classical litera ture, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 o f (The Extremes of Good and Evil) by Cicero, wr itten in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renai ssance. The first line of Lorem Ipsum,comes from a</string>-->
     <string name="contactsAlreadyExists">Already exists in contacts.</string>
     <string name="contactsAddedToList">Added this user to contact</string>
+    <string name="text_createAcount">Create a new account?</string>
+    <string name="text_alreadyHaveAcount">Already have an account?</string>
+    <string name="message_loginOnGoing">Login on going</string>
+    <string name="message_loginFailed">Seems failed to login. Please try again.</string>
+    <string name="message_filleUpForm">Please fill up the form to login.</string>
+    <string name="message_creatingAccount">Creating account</string>
+    <string name="message_successfullyCreatedAccount">Successfully created a new account</string>
+    <string name="message_failedToCreateAccount">Failed created a new account</string>
+    <string name="text_createUserName">Pick a user name</string>
+    <string name="text_typeProfileText">Type your profile text</string>
+    <string name="text_selectImage">Select profile image and background pictures</string>
 </resources>

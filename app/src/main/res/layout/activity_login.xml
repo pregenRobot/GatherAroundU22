@@ -104,7 +104,7 @@
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:ems="10"
-                    android:hint="Create user name"
+                    android:hint="@string/text_createUserName"
                     android:inputType="text"
                     android:padding="16dp"
                     android:textColor="@color/white"
@@ -118,7 +118,7 @@
                         android:layout_marginTop="18dp"
                         android:background="@android:color/transparent"
                         android:ems="10"
-                        android:hint="Type your profile text"
+                        android:hint="@string/text_typeProfileText"
                         android:inputType="text"
                         android:padding="16dp"
                         android:textColor="@color/white"
@@ -131,8 +131,7 @@
                     android:layout_marginTop="18dp"
                     android:layout_weight="1"
                     android:padding="16dp"
-                    android:text="Select image and background pictures"
-
+                    android:text="@string/text_selectImage"
                     />
 
                 <LinearLayout
@@ -231,7 +230,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/cardbackground2"
-        android:text="Already Have an Account?"
+        android:text="@string/text_alreadyHaveAcount"
         android:textColor="@color/cardbackground"
         />
 </LinearLayout>
