@@ -35,6 +35,7 @@ import com.example.android.gatheraround.R;
 import com.example.android.gatheraround.custom_classes.UserProfile;
 import com.example.android.gatheraround.custom_classes.UserProfileForFragment;
 import com.example.android.gatheraround.data.DatabaseHelper;
+import com.example.android.gatheraround.processes.Calculations;
 import com.example.android.gatheraround.scroll_adapters.ContactFragmentAdapter;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
@@ -54,6 +55,7 @@ public class ContactFragmentTab extends Fragment {
 
     Bitmap bitmap;
     ArrayList<UserProfileForFragment> contactContents;
+    Calculations calculations = new Calculations();
 
     @Nullable
     @Override
@@ -127,8 +129,9 @@ public class ContactFragmentTab extends Fragment {
                         public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                             Log.v("Glider1","imageReady");
                             bitmap = resource;
-                            contactContents.add(new UserProfileForFragment(profile.getUid(), profile.getName(), getCroppedBitmap(bitmap), profile.getProfileText()));
+                            contactContents.add(new UserProfileForFragment(profile.getUid(), profile.getName(), calculations.getCroppedBitmap(bitmap), profile.getProfileText()));
                             contactFragmentAdapter.notifyDataSetChanged();
+                            
 
                         }
                     });
@@ -155,25 +158,5 @@ public class ContactFragmentTab extends Fragment {
     public void onPause() {
         super.onPause();
     }
-    public Bitmap getCroppedBitmap(Bitmap bitmap) {
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
-                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
 
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-        canvas.drawCircle(bitmap.getWidth() / 2, bitmap.getHeight() / 2,
-                bitmap.getWidth() / 2, paint);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-        //Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
-        //return _bmp;
-        return output;
-    }
 }

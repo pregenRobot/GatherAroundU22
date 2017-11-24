@@ -1,5 +1,7 @@
 package com.example.android.gatheraround.custom_classes;
 
+import java.util.ArrayList;
+
 /**
  * Created by chiharu_miyoshi on 2017/10/15.
  */
@@ -10,6 +12,7 @@ public class UserProfile {
     public String mEmail;
     public String mName;
     public String mProfileText;
+    public static final ArrayList<String> posts = new ArrayList<>();
 
     public static final String TITLE_UID = "mUid";
     public static final String TITLE_EMAIL = "mEmail";
@@ -22,6 +25,7 @@ public class UserProfile {
         mName = name;
         mProfileText = profileText;
     }
+
 
     public String getUid(){
         return mUid;

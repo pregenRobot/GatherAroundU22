@@ -146,7 +146,7 @@ public class MyInfoActivity extends AppCompatActivity {
         }
     }
 
-    public void showProfile(String uid){
+    private void showProfile(String uid){
 
         WindowManager manager = getWindowManager();
         Display display = manager.getDefaultDisplay();

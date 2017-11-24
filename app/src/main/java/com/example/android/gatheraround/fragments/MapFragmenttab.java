@@ -5,7 +5,9 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -26,9 +28,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -39,6 +43,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.example.android.gatheraround.activities.MyInfoActivity;
+import com.example.android.gatheraround.custom_classes.UserProfileForFragment;
 import com.example.android.gatheraround.processes.Calculations;
 import com.example.android.gatheraround.DataGetterFromServer;
 import com.example.android.gatheraround.DataSenderToServer;
@@ -57,6 +67,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -65,6 +76,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.Algorithm;
 import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm;
@@ -78,47 +91,80 @@ import java.util.Calendar;
 
 public class MapFragmenttab extends Fragment {
 
-    View rootView;
-
-    MapView mMapView;
     public static GoogleMap mMap;
-    EventDate eventDate;
-    Calendar calendar = Calendar.getInstance();
-    ClusterManager<EventMarker> mClusterManager;
-    private Algorithm<EventMarker> clusterManagerAlgorithm;
     public static ArrayList<Events> receivedEvents;
-    Calculations calculations = new Calculations();
-
-    DatabaseHelper eventsDBHelper;
-    float down = 0;
-
     public static BottomSheetBehavior bottomSheetBehavior;
-
     public static TextView eventNamebot;
     public static TextView eventDatebot;
     public static TextView eventTimebot;
     public static TextView eventLocationbot;
     public static TextView eventSummarybot;
     public static TextView eventfollowersbot;
-
     public static TextView postinfo;
     public static TextView posttime;
-
     public static View bottomSheet;
-
     public static View maincontent;
-
+    public static ArrayList<Capsule> capsules = new ArrayList<>();
+    View rootView;
+    MapView mMapView;
+    EventDate eventDate;
+    Calendar calendar = Calendar.getInstance();
+    ClusterManager<EventMarker> mClusterManager;
+    Calculations calculations = new Calculations();
+    DatabaseHelper eventsDBHelper;
+    float down = 0;
     int width;
     int height;
-    public static ArrayList<Capsule> capsules = new ArrayList<>();
-
-    private FusedLocationProviderClient mFusedLocationClient;
     LocationManager mLocationManager;
+    FirebaseStorage storage;
+    LocationListener locationListenerGPS=new LocationListener() {
+        @Override
+        public void onLocationChanged(android.location.Location location) {
+            double latitude=location.getLatitude();
+            double longitude=location.getLongitude();
+            String msg=" Tamim New Latitude: "+latitude + "New Longitude: "+longitude;
+            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+
+            final ArrayList<LatLng> latLngs = new ArrayList<>();
+
+            for(Capsule capsule:MapFragmenttab.capsules){
+                latLngs.add(capsule.getLocation());
+            }
+            latLngs.add(new LatLng(35.65440,139.72269));
+
+            Log.v("You","Activated Capsule");
+            if (location != null) for (LatLng lng : latLngs) {
+                if (calculations.checkcloseness(lng,new LatLng(latitude,longitude))==1) {
+                    Toast.makeText(getContext(), "Close!", Toast.LENGTH_SHORT).show();
+                }else if (calculations.checkcloseness(lng,new LatLng(latitude,longitude))==2) {
+                    Toast.makeText(getContext(), "Accurate!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
+    private Algorithm<EventMarker> clusterManagerAlgorithm;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        storage = FirebaseStorage.getInstance();
 
         rootView = inflater.inflate(R.layout.tabmapfragment, container, false);
         bottomSheet = getActivity().findViewById(R.id.mapfragbottomsheet);
@@ -1211,7 +1257,7 @@ public class MapFragmenttab extends Fragment {
 
         try {
 
-        mLocationManager.removeUpdates(locationListenerGPS);
+            mLocationManager.removeUpdates(locationListenerGPS);
 
             mLocationManager = null;
         }catch (NullPointerException e){
@@ -1255,48 +1301,6 @@ public class MapFragmenttab extends Fragment {
         mMap.setOnMarkerClickListener(mClusterManager);
     }
 
-    LocationListener locationListenerGPS=new LocationListener() {
-        @Override
-        public void onLocationChanged(android.location.Location location) {
-            double latitude=location.getLatitude();
-            double longitude=location.getLongitude();
-            String msg=" Tamim New Latitude: "+latitude + "New Longitude: "+longitude;
-            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
-
-            final ArrayList<LatLng> latLngs = new ArrayList<>();
-
-            for(Capsule capsule:MapFragmenttab.capsules){
-                latLngs.add(capsule.getLocation());
-            }
-            latLngs.add(new LatLng(35.65440,139.72269));
-
-            Log.v("You","Activated Capsule");
-            if (location != null) for (LatLng lng : latLngs) {
-                if (calculations.checkcloseness(lng,new LatLng(latitude,longitude))==1) {
-                    Toast.makeText(getContext(), "Close!", Toast.LENGTH_SHORT).show();
-                }else if (calculations.checkcloseness(lng,new LatLng(latitude,longitude))==2) {
-                    Toast.makeText(getContext(), "Accurate!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
-    };
-
-
     public void bottomSheetCreator2(Post post){
         final Post nowpost = post;
         mapfeed.layoutevent.setVisibility(View.GONE);
@@ -1312,6 +1316,33 @@ public class MapFragmenttab extends Fragment {
         posttime.setText("on" + calculations.concatenate(nowpost.getPostDate(),false,false)[0]);
         postinfo.setText(nowpost.getPostContent());
 
+
+        final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_PROFILE_URL).child(post.getPosterUid());
+        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                try {
+                    mapfeed.usernameBottom.setText(dataSnapshot.child("mName").getValue().toString());
+                }catch (NullPointerException e){
+                    Toast.makeText(getContext(),"Cannot Display info",Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+        StorageReference imageReference = storage.getReference().child(DataSenderToServer.IMAGE_REFERENCE_TITLE).child(post.getPosterUid()).child(DataSenderToServer.IMAGE_REFERENCE_PROFILE);
+        Glide.with(this).using(new FirebaseImageLoader()).load(imageReference).asBitmap().into(mapfeed.imageBottom);
+        mapfeed.viewfly.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToMyInfo(nowpost.getPosterUid());
+            }
+        });
 
     }
     public void bottomSheetCreator( Events events){
@@ -1373,7 +1404,8 @@ public class MapFragmenttab extends Fragment {
 
     }
 
-//    private void isLocationEnabled() {
+
+    //    private void isLocationEnabled() {
 //
 //        if(!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
 //            AlertDialog.Builder alertDialog=new AlertDialog.Builder(getContext());
@@ -1406,5 +1438,11 @@ public class MapFragmenttab extends Fragment {
 //            alert.show();
 //        }
 //    }
+    public void goToMyInfo(String uid){
+        final Intent intent = new Intent(getContext(), MyInfoActivity.class);
+        intent.putExtra(MyInfoActivity.isMyProfile_Intent, false);
+        intent.putExtra(MyInfoActivity.userId_Intent, uid);
+        getContext().startActivity(intent);
+    }
 
 }

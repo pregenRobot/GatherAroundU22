@@ -9,6 +9,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.gatheraround.processes.Calculations;
@@ -39,6 +41,9 @@ public class mapfeed extends AppCompatActivity {
 
     public static View layoutevent;
     public static View layoutpost;
+    public static TextView usernameBottom;
+    public static ImageView imageBottom;
+    public static View viewfly;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +76,9 @@ public class mapfeed extends AppCompatActivity {
         follow = findViewById(R.id.follow1);
 
         scanFunctionality();
+        usernameBottom = findViewById(R.id.userNameBottomView);
+        imageBottom = findViewById(R.id.imageBottomItem);
+        viewfly = findViewById(R.id.flytoprofile);
 
     }
 
