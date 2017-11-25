@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="150dp"
     android:orientation="vertical"
     android:background="@color/cardbackground"
     android:layout_marginHorizontal="4dp"
     android:layout_marginVertical="8dp"
+    android:id="@+id/posterparentCard"
     >
     <TextView
         android:layout_width="match_parent"
@@ -33,10 +35,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Event Date"
+        android:text="Post Date"
         android:padding="8dp"
         android:id="@+id/postdate"
-
         />
 
 </LinearLayout>

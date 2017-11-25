@@ -26,7 +26,6 @@ public class UserProfile {
         mProfileText = profileText;
     }
 
-
     public String getUid(){
         return mUid;
     }

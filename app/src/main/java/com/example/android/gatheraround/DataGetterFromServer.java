@@ -70,7 +70,7 @@ public class DataGetterFromServer {
 
                     String uid = snapshot.child("posterUid").getValue().toString();
                     String postContent = snapshot.child("postContent").getValue().toString();
-                    int likes = ((Long)snapshot.child("likes").getValue()).intValue();
+//                    int likes = ((Long)snapshot.child("likes").getValue()).intValue();
 
                     String year = snapshot.child("postDate").child("mYear").getValue().toString();
                     String month = snapshot.child("postDate").child("mMonth").getValue().toString();
@@ -87,7 +87,7 @@ public class DataGetterFromServer {
 
                     String postId = snapshot.child("postId").getValue().toString();
 
-                    Post individualPost = new Post(uid, postContent, date, location, locationName, postId, likes);
+                    Post individualPost = new Post(uid, postContent, date, location, locationName, postId);
 
                     EventMarker eventMarker = new EventMarker(individualPost,context);
                     eventMarkers.add(eventMarker);

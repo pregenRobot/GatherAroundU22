@@ -1,5 +1,6 @@
 package com.example.android.gatheraround.fragments;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -96,6 +97,8 @@ public class MapFragmenttab extends Fragment {
     public static TextView posttime;
     public static View bottomSheet;
     public static View maincontent;
+
+
     public static ArrayList<Capsule> capsules = new ArrayList<>();
 
     View rootView;
@@ -110,29 +113,43 @@ public class MapFragmenttab extends Fragment {
     int height;
     LocationManager mLocationManager;
     FirebaseStorage storage;
-    LocationListener locationListenerGPS=new LocationListener() {
+    public static ArrayList<Post> serverPosts;
+
+    LocationListener locationListenerGPS = new LocationListener() {
         @Override
         public void onLocationChanged(android.location.Location location) {
-            double latitude=location.getLatitude();
-            double longitude=location.getLongitude();
-            String msg=" Tamim New Latitude: "+latitude + "New Longitude: "+longitude;
-            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+            String msg = " Tamim New Latitude: " + latitude + "New Longitude: " + longitude;
+            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
 
-            final ArrayList<LatLng> latLngs = new ArrayList<>();
+            Log.v("You", "Activated Capsule");
+            if (location != null)
+                for (Capsule lng : capsules) {
+                    if (calculations.checkcloseness(lng.getLocation(), new LatLng(latitude, longitude)) == 1) {
+                        Toast.makeText(getContext(), "Close!", Toast.LENGTH_SHORT).show();
+                    } else if (calculations.checkcloseness(lng.getLocation(), new LatLng(latitude, longitude)) == 2) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        View view = getLayoutInflater().inflate(R.layout.capsuledialog, null);
+                        builder.setView(view);
+                        final AlertDialog dialog = builder.create();
+                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        TextView textView = view.findViewById(R.id.messagecapsule);
+                        textView.setText(lng.getInformation());
+                        Button close = view.findViewById(R.id.closebutton);
+                        close.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialog.dismiss();
+                            }
+                        });
+                        Toast.makeText(getActivity(), "You arrived at somewhere", Toast.LENGTH_SHORT);
 
-            for(Capsule capsule:MapFragmenttab.capsules){
-                latLngs.add(capsule.getLocation());
-            }
-            latLngs.add(new LatLng(35.65440,139.72269));
+                        dialog.show();
 
-            Log.v("You","Activated Capsule");
-            if (location != null) for (LatLng lng : latLngs) {
-                if (calculations.checkcloseness(lng,new LatLng(latitude,longitude))==1) {
-                    Toast.makeText(getContext(), "Close!", Toast.LENGTH_SHORT).show();
-                }else if (calculations.checkcloseness(lng,new LatLng(latitude,longitude))==2) {
-                    Toast.makeText(getContext(), "Accurate!", Toast.LENGTH_SHORT).show();
+
+                    }
                 }
-            }
         }
 
         @Override
@@ -155,6 +172,8 @@ public class MapFragmenttab extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        serverPosts = new ArrayList<>();
 
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         storage = FirebaseStorage.getInstance();
@@ -198,8 +217,7 @@ public class MapFragmenttab extends Fragment {
             public void onClick(View view) {
                 FlipAnimation flipAnimation = new FlipAnimation(cardfront, cardback);
 
-                if (cardfront.getVisibility() == View.GONE)
-                {
+                if (cardfront.getVisibility() == View.GONE) {
                     flipAnimation.reverse();
                 }
                 rootView.startAnimation(flipAnimation);
@@ -210,8 +228,7 @@ public class MapFragmenttab extends Fragment {
             public void onClick(View view) {
                 FlipAnimation flipAnimation = new FlipAnimation(cardback, cardfront);
 
-                if (cardback.getVisibility() == View.GONE)
-                {
+                if (cardback.getVisibility() == View.GONE) {
                     flipAnimation.reverse();
                 }
                 rootView.startAnimation(flipAnimation);
@@ -234,19 +251,17 @@ public class MapFragmenttab extends Fragment {
         final ArrayList<Post> postsList = new ArrayList<>();
 
 
-
         Firebase firebase1 = new Firebase(DataSenderToServer.FIREBASE_POST_URL);
         firebase1.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<EventMarker> eventMarkers = new ArrayList<>();
                 final ArrayList<EventMarker> clusterItemArray = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                     String uid = snapshot.child("posterUid").getValue().toString();
                     String postContent = snapshot.child("postContent").getValue().toString();
-                    int likes;
-                    likes = Integer.parseInt(snapshot.child("likes").getValue().toString());
+                    int likes = Integer.parseInt(snapshot.child("likes").getValue().toString());
 
                     String year = snapshot.child("postDate").child("mYear").getValue().toString();
                     String month = snapshot.child("postDate").child("mMonth").getValue().toString();
@@ -255,19 +270,20 @@ public class MapFragmenttab extends Fragment {
                     String minute = snapshot.child("postDate").child("mMinute").getValue().toString();
                     EventDate date = new EventDate(year, month, day, hour, minute, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME, EventDate.DEFAULT_TIME);
 
-                    double latitude = (double)snapshot.child("location").child("latitude").getValue();
-                    double longitude = (double)snapshot.child("location").child("longitude").getValue();
+                    double latitude = (double) snapshot.child("location").child("latitude").getValue();
+                    double longitude = (double) snapshot.child("location").child("longitude").getValue();
 
 
-                    LatLng location = new LatLng(latitude,longitude);
+                    LatLng location = new LatLng(latitude, longitude);
                     String locationName = snapshot.child("locationName").getValue().toString();
                     String postId = snapshot.child("postId").getValue().toString();
-                    Post individualPost = new Post(uid, postContent, date, location, locationName, postId, likes);
+                    Post individualPost = new Post(uid, postContent, date, location, locationName, postId);
 
-                    EventMarker eventMarker = new EventMarker(individualPost,getContext());
+                    EventMarker eventMarker = new EventMarker(individualPost, getContext());
                     mClusterManager.addItem(eventMarker);
 
                     postsList.add(individualPost);
+                    serverPosts.add(individualPost);
                 }
 
                 clusterItemFunctionality();
@@ -286,14 +302,13 @@ public class MapFragmenttab extends Fragment {
         firebase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final ArrayList<EventMarker> clusterItemArray = new ArrayList<>();
 
 //                idsOnLocal = new ArrayList<>();
 //                idsOnLocal = eventsDBHelper.getAllIds();
 
                 ArrayList<String> idsOnServer = new ArrayList<>();
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                     String year = snapshot.child("date/mYear").getValue().toString();
                     String month = snapshot.child("date/mMonth").getValue().toString();
@@ -311,8 +326,8 @@ public class MapFragmenttab extends Fragment {
 
                     String event_name = snapshot.child("name").getValue().toString();
                     int participants = Integer.parseInt(snapshot.child("participants").getValue().toString());
-                    double longitude = (double)snapshot.child("location/longitude").getValue();
-                    double latitude = (double)snapshot.child("location/latitude").getValue();
+                    double longitude = (double) snapshot.child("location/longitude").getValue();
+                    double latitude = (double) snapshot.child("location/latitude").getValue();
                     String locationName = snapshot.child("locationName").getValue().toString();
                     String summary = snapshot.child("eventSummary").getValue().toString();
                     String category = snapshot.child("category").getValue().toString();
@@ -320,11 +335,11 @@ public class MapFragmenttab extends Fragment {
 
                     idsOnServer.add(globalId);
 
-                    LatLng location = new LatLng(latitude,longitude);
+                    LatLng location = new LatLng(latitude, longitude);
 
                     Events newEvents = new Events(date, event_name, participants, location, locationName, summary, category, globalId, true);
 
-                    EventMarker eventMarker = new EventMarker(newEvents,getContext());
+                    EventMarker eventMarker = new EventMarker(newEvents, getContext());
                     mClusterManager.addItem(eventMarker);
                     receivedEvents.add(newEvents);
                 }
@@ -335,7 +350,7 @@ public class MapFragmenttab extends Fragment {
 
                 clusterItemFunctionality();
                 mClusterManager.setRenderer(new OwnIconRendered(getContext(), mMap, mClusterManager));
-                Log.v("serverevents",receivedEvents.toString());
+                Log.v("serverevents", receivedEvents.toString());
                 setList(receivedEvents);
 
                 Log.i("idsOnServer", "count: " + idsOnServer.size());
@@ -358,12 +373,12 @@ public class MapFragmenttab extends Fragment {
                 LinearLayout linlear = getActivity().findViewById(R.id.bottomsheeteventdate);
                 TextView evLoc = getActivity().findViewById(R.id.eventLocationMark);
 
-                int peekheight = evName.getHeight() + linlear.getHeight() + evLoc.getHeight()+ evLoc.getPaddingBottom();
-                Log.v("Bottomsheet ",peekheight+"");
+                int peekheight = evName.getHeight() + linlear.getHeight() + evLoc.getHeight() + evLoc.getPaddingBottom();
+                Log.v("Bottomsheet ", peekheight + "");
 
                 bottomSheet.getLayoutParams().height = maincontent.getHeight();
-                Log.v("Bottomsheet params:",bottomSheet.getLayoutParams().height+"");
-                Log.v("Container params:",bottomSheet.getLayoutParams().height+"");
+                Log.v("Bottomsheet params:", bottomSheet.getLayoutParams().height + "");
+                Log.v("Container params:", bottomSheet.getLayoutParams().height + "");
                 bottomSheetBehavior.setPeekHeight(peekheight);
                 width = mapfeed.scanButton.getWidth();
                 height = mapfeed.scanButton.getHeight();
@@ -378,7 +393,7 @@ public class MapFragmenttab extends Fragment {
                                 @Override
                                 public void run() {
                                     //Do something after 100ms
-                                    if(down > 0) {
+                                    if (down > 0) {
                                         mapfeed.followButton.setVisibility(View.VISIBLE);
                                         mapfeed.scanButton.animate().scaleX(0).scaleY(0).setDuration(300).start();
                                         mapfeed.followButton.animate().scaleX(1).scaleY(1).setDuration(300).start();
@@ -394,16 +409,17 @@ public class MapFragmenttab extends Fragment {
 
                     @Override
                     public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                        if(slideOffset > 0){
+                        if (slideOffset > 0) {
                             down = 1;
-                        }else if (slideOffset < 0){
+                        } else if (slideOffset < 0) {
                             down = -1;
-                        }else {
+                        } else {
                             down = 0;
                         }
                     }
                 });
             }
+
             @Override
             public void onCancelled(FirebaseError firebaseError) {
                 internetStatus();
@@ -415,7 +431,7 @@ public class MapFragmenttab extends Fragment {
         firebase2.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                     String startYear = snapshot.child("date").child("mYear").getValue().toString();
                     String startMonth = snapshot.child("date").child("mMonth").getValue().toString();
@@ -423,9 +439,10 @@ public class MapFragmenttab extends Fragment {
                     String dueHour = snapshot.child("date").child("mHour").getValue().toString();
                     String dueMinute = snapshot.child("date").child("mMinute").getValue().toString();
 
-                    String key = snapshot.child("key").getValue().toString();
-                    double latitude = (double)snapshot.child("location").child("latitude").getValue();
-                    double longitude = (double)snapshot.child("location").child("longitude").getValue();
+//                    String key = snapshot.child("key").getValue().toString();
+                    double latitude = (double) snapshot.child("location").child("latitude").getValue();
+                    double longitude = (double) snapshot.child("location").child("longitude").getValue();
+                    String key = "temp key";
 
                     String message = snapshot.child("information").getValue().toString();
                     LatLng location = new LatLng(latitude, longitude);
@@ -434,12 +451,28 @@ public class MapFragmenttab extends Fragment {
 
                     Capsule capsule = new Capsule(location, message, date, user.getUid(), key);
 
-                    EventMarker eventMarker = new EventMarker(capsule,getContext());
+                    EventMarker eventMarker = new EventMarker(capsule, getContext());
 
-                    Log.v("CapsuleMarker",eventMarker.getCapsule().toString());
+                    Log.v("CapsuleMarker", eventMarker.getCapsule().toString());
                     mClusterManager.addItem(eventMarker);
                     capsules.add(capsule);
                 }
+
+
+                mLocationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        2000,
+                        10, locationListenerGPS);
 
                 clusterItemFunctionality();
                 mClusterManager.setRenderer(new OwnIconRendered(getContext(), mMap, mClusterManager));
@@ -556,7 +589,6 @@ public class MapFragmenttab extends Fragment {
 
                                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
                                 View mView = getActivity().getLayoutInflater().inflate(R.layout.capsulecreator,null);
-                                mView.setBackgroundColor(Color.TRANSPARENT);
 
                                 eventDate = new EventDate(EventDate.DEFAULT_TIME,
                                         EventDate.DEFAULT_TIME,EventDate.DEFAULT_TIME,EventDate.DEFAULT_TIME,
@@ -570,6 +602,7 @@ public class MapFragmenttab extends Fragment {
 
                                 mBuilder.setView(mView);
                                 final AlertDialog dialog = mBuilder.create();
+
 
                                 datepicker.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -1408,40 +1441,6 @@ public class MapFragmenttab extends Fragment {
 
     }
 
-
-    //    private void isLocationEnabled() {
-//
-//        if(!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-//            AlertDialog.Builder alertDialog=new AlertDialog.Builder(getContext());
-//            alertDialog.setTitle("Enable Location");
-//            alertDialog.setMessage("Your locations setting is not enabled. Please enabled it in settings menu.");
-//            alertDialog.setPositiveButton("Location Settings", new DialogInterface.OnClickListener(){
-//                public void onClick(DialogInterface dialog, int which){
-//                    Intent intent=new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                    startActivity(intent);
-//                }
-//            });
-//            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
-//                public void onClick(DialogInterface dialog, int which){
-//                    dialog.cancel();
-//                }
-//            });
-//            AlertDialog alert=alertDialog.create();
-//            alert.show();
-//        }
-//        else{
-//            AlertDialog.Builder alertDialog=new AlertDialog.Builder(getContext());
-//            alertDialog.setTitle("Confirm Location");
-//            alertDialog.setMessage("Your Location is enabled, please enjoy");
-//            alertDialog.setNegativeButton("Back to interface",new DialogInterface.OnClickListener(){
-//                public void onClick(DialogInterface dialog, int which){
-//                    dialog.cancel();
-//                }
-//            });
-//            AlertDialog alert=alertDialog.create();
-//            alert.show();
-//        }
-//    }
     public void goToMyInfo(String uid){
         final Intent intent = new Intent(getContext(), MyInfoActivity.class);
         intent.putExtra(MyInfoActivity.isMyProfile_Intent, false);

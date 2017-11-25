@@ -35,6 +35,14 @@ public class Post {
         mPostId = postId;
         mLikes = likes;
     }
+    public Post(String posterUid, String postContent, EventDate postDate, LatLng location, String locationName, String postId) {
+        mPosterUid = posterUid;
+        mPostContent = postContent;
+        mPostDate = postDate;
+        mLocation = location;
+        mLocationName = locationName;
+        mPostId = postId;
+    }
 
 
     public String getPosterUid(){

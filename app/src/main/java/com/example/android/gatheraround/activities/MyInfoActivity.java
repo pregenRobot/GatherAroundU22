@@ -5,6 +5,9 @@ import android.graphics.Point;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -16,19 +19,32 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.android.gatheraround.DataGetterFromServer;
 import com.example.android.gatheraround.DataSenderToServer;
+import com.example.android.gatheraround.MainActivity;
 import com.example.android.gatheraround.R;
+import com.example.android.gatheraround.custom_classes.EventDate;
+import com.example.android.gatheraround.custom_classes.EventMarker;
+import com.example.android.gatheraround.custom_classes.Post;
+import com.example.android.gatheraround.custom_classes.PostForFragment;
 import com.example.android.gatheraround.custom_classes.UserProfile;
 import com.example.android.gatheraround.data.DatabaseHelper;
+import com.example.android.gatheraround.fragments.MapFragmenttab;
+import com.example.android.gatheraround.scroll_adapters.ContactFragmentAdapter;
+import com.example.android.gatheraround.scroll_adapters.MyInfoScrollAdapter;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mikhaellopez.circularimageview.CircularImageView;
+
+import java.util.ArrayList;
+
+import static java.security.AccessController.getContext;
 
 
 public class MyInfoActivity extends AppCompatActivity {
@@ -38,6 +54,8 @@ public class MyInfoActivity extends AppCompatActivity {
     ImageView backgroundImageView;
     FloatingActionButton addToContactButton;
     Button logoutButton;
+    ArrayList<String> myPostsString;
+    ArrayList<Post> myPostArray;
 
     boolean isMyProfile;
     String userId;
@@ -53,6 +71,8 @@ public class MyInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_info);
+        myPostArray = MapFragmenttab.serverPosts;
+        myPostsString = new ArrayList<String>();
 
         userNameTextView = (TextView)findViewById(R.id.userNameTextView);
         profileTextView = (TextView)findViewById(R.id.profileTextView);
@@ -131,6 +151,17 @@ public class MyInfoActivity extends AppCompatActivity {
                                 }else{
                                     Toast.makeText(MyInfoActivity.this, getResources().getString(R.string.contactsAddedToList), Toast.LENGTH_SHORT).show();
                                 }
+                                final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.myinforecyclerview);
+
+                                ArrayList<PostForFragment> postForFragments = new ArrayList<>();
+                                for(Post myPost:myPostArray){
+                                    postForFragments.add(new PostForFragment(myPost,userId));
+                                }
+                                MyInfoScrollAdapter contactFragmentAdapter = new MyInfoScrollAdapter(MyInfoActivity.this,postForFragments);
+
+                                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(MyInfoActivity.this);
+                                recyclerView.setLayoutManager(layoutManager);
+                                recyclerView.setAdapter(contactFragmentAdapter);
 
                             }
 
@@ -144,6 +175,8 @@ public class MyInfoActivity extends AppCompatActivity {
                 });
             }
         }
+
+
     }
 
     private void showProfile(String uid){
@@ -152,13 +185,29 @@ public class MyInfoActivity extends AppCompatActivity {
         Display display = manager.getDefaultDisplay();
         Point size = new Point();
         display.getRealSize(size);
-        int width = size.x;
 
-        userNameTextView.setTextSize((float)(width/20));
-        profileTextView.setTextSize((float)(width/20));
 
 //                profileImageView.setMaxWidth(width/10);
 //                profileImageView.setMaxHeight(width/10);
+        final Firebase firebase1 = new Firebase(DataSenderToServer.FIREBASE_PROFILE_URL).child(uid).child("myposts");
+        firebase1.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    myPostsString.add(snapshot.getValue().toString());
+                }
+
+                for (String x:myPostsString){
+                    Log.v("Posts1", x);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
 
         final Firebase firebase = new Firebase(DataSenderToServer.FIREBASE_PROFILE_URL).child(uid);
         firebase.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -168,6 +217,8 @@ public class MyInfoActivity extends AppCompatActivity {
                 try {
                     userNameTextView.setText(dataSnapshot.child("mName").getValue().toString());
                     profileTextView.setText(dataSnapshot.child("mProfileText").getValue().toString());
+
+
                 }catch (NullPointerException e){
                     Toast.makeText(MyInfoActivity.this,"Cannot Display info",Toast.LENGTH_SHORT).show();
                 }

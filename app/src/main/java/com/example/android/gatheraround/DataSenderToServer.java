@@ -13,6 +13,8 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.MutableData;
 import com.firebase.client.Transaction;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.firebase.client.ValueEventListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -101,6 +103,13 @@ public class DataSenderToServer{
         String key = push.getKey();
         firebase.child(key).child("postId").setValue(key);
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String id = user.getUid();
+        Log.v("Currentuser:",id);
+
+        Firebase firebase2 = new Firebase(FIREBASE_PROFILE_URL + "/" + id+"/myposts");
+        firebase2.push().setValue(key);
+        Log.v("Currentuser:",key);
         return key;
     }
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/cardbackground"
+    android:orientation="vertical"
     >
 
     <LinearLayout
@@ -14,8 +14,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:orientation="vertical"
-            android:layout_weight="9">
+            android:layout_weight="9"
+            android:orientation="vertical">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -30,11 +30,11 @@
                     android:id="@+id/profileImageView"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
-                    android:src="@drawable/duckhead"
                     android:layout_gravity="center_horizontal"
+                    android:src="@drawable/duckhead"
                     app:civ_border="true"
-                    app:civ_border_width="10dp"
                     app:civ_border_color="@color/cardbackground2"
+                    app:civ_border_width="10dp"
                     />
 
             </FrameLayout>
@@ -51,26 +51,37 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_weight="3">
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:id="@+id/userNameTextView"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginLeft="15dp"
-                        android:textColor="@color/white"/>
-
-                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="30dp"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        />
+                    <TextView
                         android:id="@+id/profileTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginLeft="10dp"
                         android:paddingLeft="20dp"
-                        android:textColor="@color/white_for_hint"/>
+                        android:textColor="@color/fourdigit"
+                        android:textSize="12sp"
+                        />
+                    <android.support.v7.widget.RecyclerView
+                        android:layout_marginTop="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/myinforecyclerview"
+                        >
+
+                    </android.support.v7.widget.RecyclerView>
 
                 </LinearLayout>
 
@@ -79,13 +90,13 @@
         </LinearLayout>
 
         <Button
+            android:id="@+id/logoutButton"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="Logout"
             android:background="@color/cardbackground2"
+            android:text="Logout"
             android:textColor="@color/white"
-            android:id="@+id/logoutButton"
             />
 
     </LinearLayout>
@@ -95,8 +106,8 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="right"
-        android:layout_marginTop="125dp"
         android:layout_marginRight="20dp"
+        android:layout_marginTop="125dp"
         android:src="@drawable/follow"/>
 
 </FrameLayout>
