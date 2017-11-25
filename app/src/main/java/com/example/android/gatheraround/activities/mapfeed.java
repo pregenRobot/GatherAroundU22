@@ -56,6 +56,7 @@ public class mapfeed extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        mViewPager.setCurrentItem(1);
 
         ArrayList<String> testparcelstring = new ArrayList<>();
         ArrayList<Events> testparcelevents = new ArrayList<>();
@@ -79,6 +80,8 @@ public class mapfeed extends AppCompatActivity {
         usernameBottom = findViewById(R.id.userNameBottomView);
         imageBottom = findViewById(R.id.imageBottomItem);
         viewfly = findViewById(R.id.flytoprofile);
+
+
 
     }
 

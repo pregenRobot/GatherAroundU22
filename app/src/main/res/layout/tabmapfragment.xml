@@ -32,11 +32,7 @@
 
     </RelativeLayout>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="flip"
-        android:id="@+id/flipback"/>
+
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -63,4 +59,11 @@
         </android.support.v7.widget.RecyclerView>
 
     </RelativeLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="flip"
+        android:id="@+id/flipback"
+        android:background="@color/cardbackground"
+        />
 </android.support.design.widget.CoordinatorLayout>

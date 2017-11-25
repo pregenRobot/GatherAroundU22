@@ -118,24 +118,22 @@ public class DataSenderToServer{
 
     public void addLikeToPost(String postId){
 
-        Log.i("likes_sender", "id: " + postId);
-
-        final Firebase firebase = new Firebase(FIREBASE_POST_URL);
-        firebase.child(postId).child("likes");
+//        final Firebase firebase = new Firebase(FIREBASE_POST_URL);
+//        firebase.child(postId).child("likes");
 //        firebase.runTransaction(new Transaction.Handler() {
 //            @Override
 //            public Transaction.Result doTransaction(MutableData mutableData) {
 //
-//                Long count = mutableData.getValue(Long.class);
+////                Long count = mutableData.getValue(Long.class);
+////
+////                Log.i("likes_sender_ongoing", "Likes: " + String.valueOf(count));
 //
-//                Log.i("likes_sender_ongoing", "Likes: " + String.valueOf(count));
+//                int count = Integer.parseInt(mutableData.getValue(Long.class).toString());
 //
-//                int countInt = mutableData.getValue(Integer.class);
+//                Log.i("likes_sender_ongoing", "Likes_int: " + String.valueOf(count));
 //
-//                Log.i("likes_sender_ongoing", "Likes_int: " + String.valueOf(countInt));
-//
-//                count++;
-//                mutableData.setValue(count);
+////                count++;
+////                mutableData.setValue(count);
 //
 //                return Transaction.success(mutableData);
 //            }
