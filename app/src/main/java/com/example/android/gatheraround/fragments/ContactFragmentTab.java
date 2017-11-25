@@ -98,10 +98,6 @@ public class ContactFragmentTab extends Fragment {
             Log.v("Youhavenofriends",profile.toString());
         }
 
-        Toast.makeText(getActivity(), "Temp. Message: There are " + profiles.size() + " users in contact", Toast.LENGTH_SHORT).show();
-
-
-
         for (final UserProfile profile : profiles){
 
             FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -139,7 +135,6 @@ public class ContactFragmentTab extends Fragment {
             contactFragmentAdapter.notifyDataSetChanged();
         }
 
-        Toast.makeText(getActivity(), "Tem. Message: Showing " + contactContents.size() + " contacts", Toast.LENGTH_SHORT).show();
         return rootView;
     }
 

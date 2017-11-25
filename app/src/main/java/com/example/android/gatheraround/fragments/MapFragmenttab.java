@@ -26,6 +26,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -423,7 +424,7 @@ public class MapFragmenttab extends Fragment {
                     String dueHour = snapshot.child("date").child("mHour").getValue().toString();
                     String dueMinute = snapshot.child("date").child("mMinute").getValue().toString();
 
-                    String key = snapshot.child("key").getValue().toString();
+                    String key = snapshot.child("capsuleId").getValue().toString();
                     double latitude = (double)snapshot.child("location").child("latitude").getValue();
                     double longitude = (double)snapshot.child("location").child("longitude").getValue();
 
@@ -1442,11 +1443,11 @@ public class MapFragmenttab extends Fragment {
 //            alert.show();
 //        }
 //    }
+
     public void goToMyInfo(String uid){
         final Intent intent = new Intent(getContext(), MyInfoActivity.class);
         intent.putExtra(MyInfoActivity.isMyProfile_Intent, false);
         intent.putExtra(MyInfoActivity.userId_Intent, uid);
         getContext().startActivity(intent);
     }
-
 }

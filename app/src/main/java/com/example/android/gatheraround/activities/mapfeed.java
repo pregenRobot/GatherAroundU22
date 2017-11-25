@@ -8,6 +8,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -133,7 +134,12 @@ public class mapfeed extends AppCompatActivity {
                 }
             }
         }
-        Log.v("ScannedQR",result.getContents());
+
+        try{
+            Log.v("ScannedQR",result.getContents());
+        }finally {
+
+        }
 
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -172,5 +178,16 @@ public class mapfeed extends AppCompatActivity {
         MapFragmenttab.eventfollowersbot.setText(nowevents.getParticipants()+"");
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+        if(keyCode == KeyEvent.KEYCODE_BACK){
 
+            finish();
+
+            return super.onKeyDown(keyCode, event);
+
+        }else{
+            return false;
+        }
+    }
 }
