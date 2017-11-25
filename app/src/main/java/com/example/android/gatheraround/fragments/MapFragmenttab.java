@@ -5,9 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -28,11 +26,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -44,11 +40,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.android.gatheraround.activities.MyInfoActivity;
-import com.example.android.gatheraround.custom_classes.UserProfileForFragment;
 import com.example.android.gatheraround.processes.Calculations;
 import com.example.android.gatheraround.DataGetterFromServer;
 import com.example.android.gatheraround.DataSenderToServer;
@@ -105,6 +97,7 @@ public class MapFragmenttab extends Fragment {
     public static View bottomSheet;
     public static View maincontent;
     public static ArrayList<Capsule> capsules = new ArrayList<>();
+
     View rootView;
     MapView mMapView;
     EventDate eventDate;
@@ -252,7 +245,8 @@ public class MapFragmenttab extends Fragment {
 
                     String uid = snapshot.child("posterUid").getValue().toString();
                     String postContent = snapshot.child("postContent").getValue().toString();
-                    int likes = ((Long)snapshot.child("mLikes").getValue()).intValue();
+                    int likes;
+                    likes = Integer.parseInt(snapshot.child("likes").getValue().toString());
 
                     String year = snapshot.child("postDate").child("mYear").getValue().toString();
                     String month = snapshot.child("postDate").child("mMonth").getValue().toString();
@@ -385,16 +379,16 @@ public class MapFragmenttab extends Fragment {
                                 public void run() {
                                     //Do something after 100ms
                                     if(down > 0) {
-                                        mapfeed.follow.setVisibility(View.VISIBLE);
+                                        mapfeed.followButton.setVisibility(View.VISIBLE);
                                         mapfeed.scanButton.animate().scaleX(0).scaleY(0).setDuration(300).start();
-                                        mapfeed.follow.animate().scaleX(1).scaleY(1).setDuration(300).start();
+                                        mapfeed.followButton.animate().scaleX(1).scaleY(1).setDuration(300).start();
                                     }
                                 }
                             }, 100);
                         } else if (BottomSheetBehavior.STATE_COLLAPSED == newState) {
                             mapfeed.scanButton.animate().scaleX(1).scaleY(1).setDuration(300).start();
-                            mapfeed.follow.animate().scaleX(0).scaleY(0).setDuration(300).start();
-                            mapfeed.follow.setVisibility(View.GONE);
+                            mapfeed.followButton.animate().scaleX(0).scaleY(0).setDuration(300).start();
+                            mapfeed.followButton.setVisibility(View.GONE);
                         }
                     }
 
@@ -1300,6 +1294,7 @@ public class MapFragmenttab extends Fragment {
     }
 
     public void bottomSheetCreator2(Post post){
+
         final Post nowpost = post;
         mapfeed.layoutevent.setVisibility(View.GONE);
         mapfeed.layoutpost.setVisibility(View.VISIBLE);
@@ -1342,8 +1337,18 @@ public class MapFragmenttab extends Fragment {
             }
         });
 
+        mapfeed.followButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                DataSenderToServer senderToServer = new DataSenderToServer();
+                senderToServer.addLikeToPost(nowpost.getPostId());
+            }
+        });
     }
-    public void bottomSheetCreator( Events events){
+
+    public void bottomSheetCreator(Events events){
+
         final Events nowevents = events;
 
         mapfeed.layoutpost.setVisibility(View.GONE);
@@ -1366,9 +1371,10 @@ public class MapFragmenttab extends Fragment {
         eventSummarybot.setText(nowevents.getEventSummary());
         eventfollowersbot.setText(nowevents.getParticipants()+"");
 
-        mapfeed.follow.setOnClickListener(new View.OnClickListener() {
+        mapfeed.followButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 boolean insertData = eventsDBHelper.addParticipant(nowevents);
 
                 if (insertData) {

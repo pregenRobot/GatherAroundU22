@@ -60,4 +60,8 @@ public class Post {
     public String getPostId(){
         return mPostId;
     }
+
+    public int getLikes(){
+        return mLikes;
+    }
 }

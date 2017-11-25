@@ -37,7 +37,7 @@ public class mapfeed extends AppCompatActivity {
     private ViewPager mViewPager;
     public static FloatingActionButton scanButton;
     Calculations calculations = new Calculations();
-    public static FloatingActionButton follow;
+    public static FloatingActionButton followButton;
 
     public static View layoutevent;
     public static View layoutpost;
@@ -73,7 +73,7 @@ public class mapfeed extends AppCompatActivity {
         }
 
         scanButton = findViewById(R.id.scanMain1);
-        follow = findViewById(R.id.follow1);
+        followButton = findViewById(R.id.follow1);
 
         scanFunctionality();
         usernameBottom = findViewById(R.id.userNameBottomView);

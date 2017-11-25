@@ -155,6 +155,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean addParticipant(Events events){
+
         long result = -1;
         if(!this.checkForExistingEvent(events.getGlobalId())){
 

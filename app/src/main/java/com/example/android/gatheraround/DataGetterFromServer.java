@@ -70,7 +70,7 @@ public class DataGetterFromServer {
 
                     String uid = snapshot.child("posterUid").getValue().toString();
                     String postContent = snapshot.child("postContent").getValue().toString();
-                    int likes = ((Long)snapshot.child("mLikes").getValue()).intValue();
+                    int likes = ((Long)snapshot.child("likes").getValue()).intValue();
 
                     String year = snapshot.child("postDate").child("mYear").getValue().toString();
                     String month = snapshot.child("postDate").child("mMonth").getValue().toString();

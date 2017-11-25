@@ -2,6 +2,7 @@ package com.example.android.gatheraround;
 
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.android.gatheraround.custom_classes.Capsule;
 import com.example.android.gatheraround.custom_classes.Events;
@@ -12,6 +13,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.MutableData;
 import com.firebase.client.Transaction;
+import com.firebase.client.ValueEventListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -97,7 +99,7 @@ public class DataSenderToServer{
         Firebase push = firebase.push();
         push.setValue(post);
         String key = push.getKey();
-        firebase.child(key).child("key").setValue(key);
+        firebase.child(key).child("postId").setValue(key);
 
         return key;
     }
@@ -109,8 +111,56 @@ public class DataSenderToServer{
         Firebase push = firebase.push();
         push.setValue(capsule);
         String key = push.getKey();
-        firebase.child(key).child("key").setValue(key);
+        firebase.child(key).child("capsuleId").setValue(key);
 
         return key;
+    }
+
+    public void addLikeToPost(String postId){
+
+        Log.i("likes_sender", "id: " + postId);
+
+        final Firebase firebase = new Firebase(FIREBASE_POST_URL);
+        firebase.child(postId).child("likes");
+//        firebase.runTransaction(new Transaction.Handler() {
+//            @Override
+//            public Transaction.Result doTransaction(MutableData mutableData) {
+//
+//                Long count = mutableData.getValue(Long.class);
+//
+//                Log.i("likes_sender_ongoing", "Likes: " + String.valueOf(count));
+//
+//                int countInt = mutableData.getValue(Integer.class);
+//
+//                Log.i("likes_sender_ongoing", "Likes_int: " + String.valueOf(countInt));
+//
+//                count++;
+//                mutableData.setValue(count);
+//
+//                return Transaction.success(mutableData);
+//            }
+//
+//            @Override
+//            public void onComplete(FirebaseError firebaseError, boolean b, DataSnapshot dataSnapshot) {
+//                if (!b){
+//                    Log.i("likes_sender", "Failed to add likes");
+//                }
+//            }
+//        });
+
+        final Firebase firebase1 = new Firebase(FIREBASE_POST_URL).child(postId).child("likes");
+        firebase1.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int count = Integer.parseInt(dataSnapshot.getValue().toString());
+                count++;
+                firebase1.setValue(count);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
     }
 }
