@@ -284,6 +284,7 @@ public class MapFragmenttab extends Fragment {
 
                     postsList.add(individualPost);
                     serverPosts.add(individualPost);
+                    //test
                 }
 
                 clusterItemFunctionality();
