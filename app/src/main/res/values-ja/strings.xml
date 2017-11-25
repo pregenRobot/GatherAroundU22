@@ -29,7 +29,7 @@
     <string name="genrated_qr_code">QRコードを作成</string>
     <string name="search">検索</string>
     <string name="cancelledScan">スキャンがキャンセルされました</string>
-    <string name="addedParticipants">フォローしたイベント</string>
+    <string name="addedParticipants">イベントをフォローしました</string>
     <string name="event_exists">イベントはすでに存在します</string>
     <string name="no_internet">インターネットに接続されていません</string>
     <string name="invalidQRCode">QRコードが無効です</string>

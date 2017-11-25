@@ -295,6 +295,8 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData){
         // TODO: 2017/11/07 requestCodeを理解する
