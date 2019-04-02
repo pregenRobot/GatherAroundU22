@@ -31,7 +31,7 @@ The QR code functionality allows event creators to past a unique QR on their web
 
 ## Videos and Pictures
 
-https://drive.google.com/file/d/1vqMT9exvFEKjg1ACwbGFjz2rz5kiyNv5/view?usp=sharing
+https://drive.google.com/drive/folders/1e0RdNqvKkY65S7VyDV4kSGdM760swYUW?usp=sharing
 
 
 ## API and Dependency Details
