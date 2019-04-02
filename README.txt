@@ -1,5 +1,11 @@
 #Welcome to the Gather Around project!
 
+## NOTE!
+All the source code is in this location!
+
+GatherAroundU22/app/src/main/java/com/example/android/gatheraround/
+
+
 ## Objective:
 
 Gather Around is a service that aims to build a democratic platform where all users have the same, if not, similar advertisement and broadcasting power. We are able to achieve this by discarding the traditional “scroll-feed” UI that social networking services such as Facebook, Twitter, and Instagram use, that forces the users to gain new information in a linear format. Although this is how we traditionally read information, it gives too much power to their algorithms that feed us information. The users needs to have the right to explore information as if it was the real world - like a map!
